@@ -22,9 +22,6 @@ class NepaliDateTime {
     this.microsecond = 0,
   ]);
 
-  DateTime v = DateTime(2012);
-  //var x = v.weekday;
-
   int get weekDay {
     //Reference date 2000/1/1 Wednesday
     int difference = NepaliDateTime(year, month, day)
@@ -44,6 +41,8 @@ class NepaliDateTime {
   bool isBefore(NepaliDateTime date) =>
       DateConverter.toAD(NepaliDateTime(year, month, day))
           .isBefore(DateConverter.toAD(date));
+
+  static NepaliDateTime now()=> DateConverter.toBS(DateTime.now());
 
   ///
   ///Constructs a new [DateTime] instance based on [formattedString].
