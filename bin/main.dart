@@ -25,7 +25,7 @@ main(List<String> arguments) {
   print(date5.format(gorkhaEarthQuake));
 
   heading('Nepali Number');
-  print(NepaliNumber(123456).convert);
+  print('123456 -> ${NepaliNumber(123456).convert}');
 }
 
 void heading(String text) {
