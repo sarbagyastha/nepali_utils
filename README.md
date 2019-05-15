@@ -54,6 +54,12 @@ print(NepaliNumber.from(123456)); // १२३४५६
 print(NepaliNumber.fromString('1,23,456')); // १,२३,४५६
 ```
 
+Also includes a method to format number with Nepali style place value `commas`.
+```dart
+print(NepaliNumber.formatWithComma('123456')); // 1,23,456
+print(NepaliNumber.formatWithComma('१२३४५६')); // १,२३,४५६
+```
+
 ## Example
 Find more detailed example [here](https://github.com/sarbagyastha/nepali_utils/tree/master/bin/main.dart).
 
