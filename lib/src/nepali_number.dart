@@ -1,21 +1,26 @@
 class NepaliNumber {
-  static String from(int number) {
+  static String from(int number, [bool formatWithComma = false]) {
     assert(number != null, 'Number cannot be null');
     String _number = number.toString();
-    return _number.replaceAllMapped(
+    var _num = _number.replaceAllMapped(
       RegExp(r'\d'),
       (match) => _map[int.parse(match.group(0))][match.group(0)],
     );
+    return formatWithComma ? NepaliNumber.formatWithComma(_num) : _num;
   }
 
-  static String fromString(String number) {
-    return number.replaceAllMapped(
+  static String fromString(String number, [bool formatWithComma = false]) {
+    assert(number != null, 'Number cannot be null');
+    var _num = number.replaceAllMapped(
       RegExp(r'\d'),
       (match) => _map[int.parse(match.group(0))][match.group(0)],
     );
+    return formatWithComma ? NepaliNumber.formatWithComma(_num) : _num;
   }
 
   static String formatWithComma(String number) {
+    assert(RegExp(r'^\d*$').hasMatch(number),
+        'Number should only contain digits.');
     String _number = number;
     if (number.length > 3) {
       int j = number.length - 3;
