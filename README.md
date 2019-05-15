@@ -61,7 +61,7 @@ print(NepaliNumber.formatWithComma('१२३४५६')); // १,२३,४५�
 ```
 
 ## Example
-Find more detailed example [here](https://github.com/sarbagyastha/nepali_utils/tree/master/bin/main.dart).
+Find more detailed example [here](https://github.com/sarbagyastha/nepali_utils/tree/master/example/main.dart).
 
 ## Contribute
 If you want to contribute to the package, please feel free to submit issues or PR at [Github Repo](https://github.com/sarbagyastha/nepali_utils).
