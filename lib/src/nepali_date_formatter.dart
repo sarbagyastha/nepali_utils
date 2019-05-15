@@ -54,7 +54,8 @@ class NepaliDateFormatter {
       _pattern = _pattern.replaceFirst("\'\'", "\'");
       --_index;
     } else {
-      _pattern = _pattern.replaceFirst(match, match.substring(1, match.length-1));
+      _pattern =
+          _pattern.replaceFirst(match, match.substring(1, match.length - 1));
       _index -= 2;
       if (match.contains("\'\'")) {
         _pattern = _pattern.replaceFirst("\'\'", "\'");
@@ -81,21 +82,21 @@ class NepaliDateFormatter {
             match,
             language == Language.ENGLISH
                 ? '${dateTime.year}'
-                : '${NepaliNumber(dateTime.year).convert}');
+                : '${NepaliNumber.from(dateTime.year)}');
         break;
       case 'yy':
         _replacer(
             match,
             language == Language.ENGLISH
                 ? '${dateTime.year.toString().substring(2)}'
-                : '${NepaliNumber(int.parse(dateTime.year.toString().substring(2))).convert}');
+                : '${NepaliNumber.fromString(dateTime.year.toString().substring(2))}');
         break;
       case 'yyyy':
         _replacer(
             match,
             language == Language.ENGLISH
                 ? '${dateTime.year}'
-                : '${NepaliNumber(dateTime.year).convert}');
+                : '${NepaliNumber.from(dateTime.year)}');
         break;
       case 'Q':
         _replacer(match, '${_getQuarter(dateTime.month)}');
@@ -115,7 +116,7 @@ class NepaliDateFormatter {
             match,
             language == Language.ENGLISH
                 ? '${dateTime.month}'
-                : '${NepaliNumber(dateTime.month).convert}');
+                : '${NepaliNumber.from(dateTime.month)}');
         break;
       case 'MM':
         _replacer(match, _prependZero(dateTime.month));
@@ -131,7 +132,7 @@ class NepaliDateFormatter {
             match,
             language == Language.ENGLISH
                 ? '${dateTime.day}'
-                : '${NepaliNumber(dateTime.day).convert}');
+                : '${NepaliNumber.from(dateTime.day)}');
         break;
       case 'dd':
         _replacer(match, _prependZero(dateTime.day));
@@ -188,7 +189,7 @@ class NepaliDateFormatter {
             match,
             language == Language.ENGLISH
                 ? '${dateTime.hour}'
-                : NepaliNumber(dateTime.hour).convert);
+                : NepaliNumber.from(dateTime.hour));
         break;
       case 'HH':
         _replacer(match, _prependZero(dateTime.hour));
@@ -198,7 +199,7 @@ class NepaliDateFormatter {
             match,
             language == Language.ENGLISH
                 ? '${dateTime.minute}'
-                : NepaliNumber(dateTime.minute).convert);
+                : NepaliNumber.from(dateTime.minute));
         break;
       case 'mm':
         _replacer(match, _prependZero(dateTime.minute));
@@ -208,7 +209,7 @@ class NepaliDateFormatter {
             match,
             language == Language.ENGLISH
                 ? '${dateTime.second}'
-                : NepaliNumber(dateTime.second).convert);
+                : NepaliNumber.from(dateTime.second));
         break;
       case 'ss':
         _replacer(match, _prependZero(dateTime.second));
@@ -251,37 +252,37 @@ class NepaliDateFormatter {
     if (numString.length == 1) {
       return language == Language.ENGLISH
           ? '00$numString'
-          : '००${NepaliNumber(number).convert}';
+          : '००${NepaliNumber.from(number)}';
     }
     if (numString.length == 2) {
       return language == Language.ENGLISH
           ? '0$numString'
-          : '०${NepaliNumber(number).convert}';
+          : '०${NepaliNumber.from(number)}';
     }
     return language == Language.ENGLISH
         ? numString.substring(0, 3)
-        : NepaliNumber(int.parse(numString.substring(0, 3))).convert;
+        : NepaliNumber.fromString(numString.substring(0, 3));
   }
 
   String _clockHour(int hour, {bool prependZero = false}) {
     if (hour > 12) {
       return language == Language.ENGLISH
           ? '${hour - 12}'
-          : '${NepaliNumber(hour - 12).convert}';
+          : '${NepaliNumber.from(hour - 12)}';
     } else if (hour == 12) {
       return language == Language.ENGLISH ? '12' : '१२';
     } else {
       return language == Language.ENGLISH
           ? prependZero ? _prependZero(hour) : '${hour}'
-          : prependZero ? _prependZero(hour) : '${NepaliNumber(hour).convert}';
+          : prependZero ? _prependZero(hour) : '${NepaliNumber.from(hour)}';
     }
   }
 
   String _prependZero(int number) => number < 10
       ? language == Language.ENGLISH
           ? '0$number'
-          : '०${NepaliNumber(number).convert}'
-      : language == Language.ENGLISH ? '$number' : NepaliNumber(number).convert;
+          : '०${NepaliNumber.from(number)}'
+      : language == Language.ENGLISH ? '$number' : NepaliNumber.from(number);
 
   void _replacer(String match, String replaceWith) {
     _pattern = _pattern.replaceFirst(match, replaceWith, _index);

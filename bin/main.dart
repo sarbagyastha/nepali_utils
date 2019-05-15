@@ -3,15 +3,18 @@ import 'package:nepali_utils/nepali_utils.dart';
 main(List<String> arguments) {
   heading('Nepali Date Time');
   NepaliDateTime gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
-  print('Gorkha Earquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}');
+  print(
+      'Gorkha Earquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}');
   print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
-  
+
   heading('Date Converter');
-  NepaliDateTime nt = DateConverter.toBS(DateTime(2019,5,14));
+  NepaliDateTime nt = DateConverter.toBS(DateTime(2019, 5, 14));
   print('In BS = $nt');
   DateTime dt = DateConverter.toAD(nt);
   print('In AD = $dt');
-  
+
+  print(NepaliDateTime.now().toIso8601String());
+
   heading('Nepali Date Formatter');
   var date1 = NepaliDateFormatter("yyyy.MM.dd G 'at' HH:mm:ss");
   var date2 = NepaliDateFormatter("EEE, MMM d, ''yy");
@@ -25,15 +28,18 @@ main(List<String> arguments) {
   print(date5.format(gorkhaEarthQuake));
 
   heading('Nepali Number');
-  print('123456 -> ${NepaliNumber(123456).convert}');
+  print('123456 -> ${NepaliNumber.from(123456)}');
+  print('1,23,456 -> ${NepaliNumber.fromString('1,23,456')}');
+
+  
 }
 
 void heading(String text) {
-  String starLine='', padString = '';
+  String starLine = '', padString = '';
   int padding = (40 - text.length) ~/ 2;
   for (int i = 0; i < 40; i++) starLine += '*';
   for (int i = 0; i < padding; i++) padString += ' ';
   print(starLine);
-  print(padString+text+padString);
+  print(padString + text + padString);
   print(starLine);
 }
