@@ -19,8 +19,6 @@ class NepaliNumber {
   }
 
   static String formatWithComma(String number) {
-    assert(RegExp(r'^\d*$').hasMatch(number),
-        'Number should only contain digits.');
     String _number = number;
     if (number.length > 3) {
       int j = number.length - 3;
