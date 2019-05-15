@@ -42,7 +42,7 @@ class NepaliDateTime {
       DateConverter.toAD(NepaliDateTime(year, month, day))
           .isBefore(DateConverter.toAD(date));
 
-  static NepaliDateTime now()=> DateConverter.toBS(DateTime.now());
+  static NepaliDateTime now() => DateConverter.toBS(DateTime.now());
 
   ///
   ///Constructs a new [DateTime] instance based on [formattedString].

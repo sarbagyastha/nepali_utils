@@ -1,3 +1,6 @@
 ## 1.0.0
-
-- Initial version, created by Stagehand
+**Initial Version with**
+* NepaliDateTime
+* DateConverter
+* NepaliDateFormatter
+* NepaliNumber
