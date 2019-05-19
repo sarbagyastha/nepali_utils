@@ -151,12 +151,16 @@ class DateConverter {
     int nepaliMonth = 1;
     int nepaliDay = 1;
 
-    int difference = date.difference(DateTime(1943, 4, 14)).inDays;
+    // Time was causing error while differencing dates. 
+    
+    DateTime _date = DateTime(date.year, date.month, date.day);
+
+    int difference = _date.difference(DateTime(1943, 4, 14)).inDays;
 
     // 1970-1-1 is epoch and it's duration is only 18 hours 15 minutes in dart
     // You can test using `print(DateTime(1970,1,2).difference(DateTime(1970,1,1)))`;
     // So, in order to compensate it one extra day is added from this date.
-    if (date.isAfter(DateTime(1970, 1, 1))) difference++;
+    if (_date.isAfter(DateTime(1970, 1, 1))) difference++;
 
     //Getting nepali year until the difference remains less than 365
     int index = 0;
