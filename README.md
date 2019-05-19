@@ -1,6 +1,6 @@
 # Nepali Utilities for Dart
 
-[![Pub](https://img.shields.io/badge/pub-v1.0.0+3-green.svg)](https://pub.dev/packages/nepali_utils) [![licence](https://img.shields.io/badge/Licence-MIT-orange.svg)](https://github.com/sarbagyastha/nepali_utils/blob/master/LICENSE) 
+[![Pub](https://img.shields.io/badge/pub-v1.0.1-green.svg)](https://pub.dev/packages/nepali_utils) [![licence](https://img.shields.io/badge/Licence-MIT-orange.svg)](https://github.com/sarbagyastha/nepali_utils/blob/master/LICENSE) 
 
 A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Numbers and many more.
 
