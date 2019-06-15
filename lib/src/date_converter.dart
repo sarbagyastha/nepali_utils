@@ -151,8 +151,8 @@ class DateConverter {
     int nepaliMonth = 1;
     int nepaliDay = 1;
 
-    // Time was causing error while differencing dates. 
-    
+    // Time was causing error while differencing dates.
+
     DateTime _date = DateTime(date.year, date.month, date.day);
 
     int difference = _date.difference(DateTime(1943, 4, 14)).inDays;

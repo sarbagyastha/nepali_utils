@@ -6,10 +6,10 @@ class NepaliUnicode {
       return _unicode(text);
     }
     _text = '';
-    for(int index=0; index<text.length;index++){
-      if(index==0){
+    for (int index = 0; index < text.length; index++) {
+      if (index == 0) {
         _text = _unicode(text[0]);
-      }else{
+      } else {
         _text = _unicode(_text + text[index]);
       }
     }

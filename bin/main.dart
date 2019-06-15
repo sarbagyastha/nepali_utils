@@ -7,7 +7,6 @@ main(List<String> arguments) {
   print(
       'Gorkha Earquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}');
   print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
-  
 
   heading('Date Converter');
   NepaliDateTime nt = DateConverter.toBS(DateTime(2019, 5, 19));
@@ -34,8 +33,10 @@ main(List<String> arguments) {
   print('1,23,456 -> ${NepaliNumber.fromString('1,23,456')}');
 
   heading('Nepali Unicode');
-  print(NepaliUnicode.convert("sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"));
-  print(NepaliUnicode.convert("saarwabhauma bhai failiekaa, mecii-mahaakaalii\n"));
+  print(NepaliUnicode.convert(
+      "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"));
+  print(NepaliUnicode.convert(
+      "saarwabhauma bhai failiekaa, mecii-mahaakaalii\n"));
 }
 
 void heading(String text) {
