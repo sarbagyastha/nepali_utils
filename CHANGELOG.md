@@ -1,3 +1,7 @@
+## 1.1.0
+* **ADDED** `NepaliUnicode` class.
+* Updated Dart Constraint to `>=2.2.2 <3.0.0`.
+
 ## 1.0.1
 * **Fixed** Wrong current datetime retrieval.
 

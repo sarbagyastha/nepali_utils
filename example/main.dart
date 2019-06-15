@@ -30,6 +30,12 @@ main(List<String> arguments) {
   heading('Nepali Number');
   print('123456 -> ${NepaliNumber.from(123456)}');
   print('1,23,456 -> ${NepaliNumber.fromString('1,23,456')}');
+
+  heading('Nepali Unicode');
+  print(NepaliUnicode.convert(
+      "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"));
+  print(NepaliUnicode.convert(
+      "saarwabhauma bhai failiekaa, mecii-mahaakaalii\n"));
 }
 
 void heading(String text) {

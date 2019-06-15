@@ -1,6 +1,6 @@
 # Nepali Utilities for Dart
 
-[![Pub](https://img.shields.io/badge/pub-v1.0.1-green.svg)](https://pub.dev/packages/nepali_utils) [![licence](https://img.shields.io/badge/Licence-MIT-orange.svg)](https://github.com/sarbagyastha/nepali_utils/blob/master/LICENSE) 
+[![Pub](https://img.shields.io/badge/pub-v1.1.0-green.svg)](https://pub.dev/packages/nepali_utils) [![licence](https://img.shields.io/badge/Licence-MIT-orange.svg)](https://github.com/sarbagyastha/nepali_utils/blob/master/LICENSE) 
 
 A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Numbers and many more.
 
@@ -9,6 +9,7 @@ A pure dart package with collection of Nepali Utilities like Date converter, Dat
 * **DateConverter**
 * **NepaliDateFormatter**
 * **NepaliNumber**
+* **NepaliUnicode** *since v1.1.0*
 * many yet to come
 
 ### Nepali Date Time
@@ -47,6 +48,8 @@ print(date4.format(gorkhaEarthQuake)); // 11 o'clock AM
 print(date5.format(gorkhaEarthQuake)); // 2072.Baishakh.12 Bikram Sambat 11:56 am
 ```
 
+**Note:** Always wrap pattern string in double quote (`"`).
+
 ### Nepali Number
 Converts English numbers into Nepali  number literals.
 ```dart
@@ -59,6 +62,24 @@ Also includes a method to format number with Nepali style place value `commas`.
 print(NepaliNumber.formatWithComma('123456')); // 1,23,456
 print(NepaliNumber.formatWithComma('१२३४५६')); // १,२३,४५६
 ```
+
+### Nepali Unicode
+Converts English literal (Roman Literals) into Nepali Unicode.
+```dart
+print(NepaliUnicode.convert("sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"));
+print(NepaliUnicode.convert("saarwabhauma bhai failiekaa, mecii-mahaakaalii\n"));
+
+// स​यौं थुँगा फूलका हामी, एउटै माला नेपाली
+// सार्वभौम भै फैलिएका, मेची-महाकाली
+```
+
+If live conversion is required *i.e. conversion as you type*, then set `live: true`.
+```dart
+NepaliUnicode.convert(textFromTextField, live: true);
+```
+
+
+
 
 ## Example
 Find more detailed example [here](https://github.com/sarbagyastha/nepali_utils/tree/master/example/main.dart).
