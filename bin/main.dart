@@ -37,6 +37,14 @@ main(List<String> arguments) {
       "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"));
   print(NepaliUnicode.convert(
       "saarwabhauma bhai failiekaa, mecii-mahaakaalii\n"));
+
+  heading('Nepali Moment');
+  print(NepaliMoment.fromBS(NepaliDateTime.parse('2076-03-22T08:41:14')));
+
+  print(NepaliMoment.fromBS(NepaliDateTime.parse('2076-02-32T18:25:14'),
+      referenceDate: NepaliDateTime.parse('2076-02-32T18:34:14')));
+  print(NepaliMoment.fromAD(DateTime.parse('2019-06-02T18:22:14'),
+      referenceDate: DateTime.parse('2019-06-15T18:34:14')));
 }
 
 void heading(String text) {

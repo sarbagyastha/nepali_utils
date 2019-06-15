@@ -1,8 +1,8 @@
 # Nepali Utilities for Dart
 
-[![Pub](https://img.shields.io/badge/pub-v1.1.0-green.svg)](https://pub.dev/packages/nepali_utils) [![licence](https://img.shields.io/badge/Licence-MIT-orange.svg)](https://github.com/sarbagyastha/nepali_utils/blob/master/LICENSE) 
+[![Pub](https://img.shields.io/badge/pub-v1.1.0+1-green.svg)](https://pub.dev/packages/nepali_utils) [![licence](https://img.shields.io/badge/Licence-MIT-orange.svg)](https://github.com/sarbagyastha/nepali_utils/blob/master/LICENSE) 
 
-A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Numbers and many more.
+A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Numbers, Nepali Unicode, Nepali Moments and many more.
 
 ## Package Includes
 * **NepaliDateTime**
@@ -10,6 +10,7 @@ A pure dart package with collection of Nepali Utilities like Date converter, Dat
 * **NepaliDateFormatter**
 * **NepaliNumber**
 * **NepaliUnicode** *since v1.1.0*
+* **NepaliMoment** *since v1.1.0*
 * many yet to come
 
 ### Nepali Date Time
@@ -78,7 +79,22 @@ If live conversion is required *i.e. conversion as you type*, then set `live: tr
 NepaliUnicode.convert(textFromTextField, live: true);
 ```
 
+### Nepali Moment
+Generates a fuzzy timestamp using dates provided.
+```dart
+print(NepaliMoment.fromBS(NepaliDateTime.parse('2076-03-22T08:41:14')));
+// २२ दिन पछि
+```
+Here, the current DateTime is 2076-02-32 19:09:25 *i.e. reference date*
 
+```dart
+print(NepaliMoment.fromBS(NepaliDateTime.parse('2076-02-32T18:25:14'),
+      referenceDate: NepaliDateTime.parse('2076-02-32T18:34:14')));
+// ९ मिनेट पहिले
+print(NepaliMoment.fromAD(DateTime.parse('2019-06-02T18:22:14'),
+      referenceDate: DateTime.parse('2019-06-15T18:34:14')));
+// १३ दिन पहिले
+```
 
 
 ## Example

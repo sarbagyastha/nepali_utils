@@ -1,3 +1,6 @@
+## 1.1.0+1
+* **ADDED** `NepaliMoment` class.
+
 ## 1.1.0
 * **ADDED** `NepaliUnicode` class.
 * Updated Dart Constraint to `>=2.2.2 <3.0.0`.
