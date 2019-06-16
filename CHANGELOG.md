@@ -1,4 +1,4 @@
-## 1.1.0+1
+## 1.1.0+2
 * **ADDED** `NepaliMoment` class.
 
 ## 1.1.0
