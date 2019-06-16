@@ -20,27 +20,28 @@ class NepaliMoment {
     final num months = days / 30;
     final num years = days / 365;
 
-    if (seconds < 45)
+    if (seconds < 45) {
       return 'केही क्षण ${isFuture ? 'पछि' : 'पहिले'}';
-    else if (seconds < 90)
+    } else if (seconds < 90) {
       return 'एक मिनेट ${isFuture ? 'पछि' : 'पहिले'}';
-    else if (minutes < 45)
+    } else if (minutes < 45) {
       return '${NepaliNumber.from(minutes.round())} मिनेट ${isFuture ? 'पछि' : 'पहिले'}';
-    else if (minutes < 90)
+    } else if (minutes < 90) {
       return 'लगभग एक घण्टा ${isFuture ? 'पछि' : 'पहिले'}';
-    else if (hours < 24)
+    } else if (hours < 24) {
       return '${NepaliNumber.from(hours.round())} घण्टा ${isFuture ? 'पछि' : 'पहिले'}';
-    else if (hours < 48)
+    } else if (hours < 48) {
       return 'एक दिन ${isFuture ? 'पछि' : 'पहिले'}';
-    else if (days < 30)
+    } else if (days < 30) {
       return '${NepaliNumber.from(days.round())} दिन ${isFuture ? 'पछि' : 'पहिले'}';
-    else if (days < 60)
+    } else if (days < 60) {
       return 'लगभग एक महिना ${isFuture ? 'पछि' : 'पहिले'}';
-    else if (days < 365)
+    } else if (days < 365) {
       return '${NepaliNumber.from(months.round())} दिन ${isFuture ? 'पछि' : 'पहिले'}';
-    else if (years < 2)
+    } else if (years < 2) {
       return 'लगभग एक वर्ष ${isFuture ? 'पछि' : 'पहिले'}';
-    else
+    } else {
       return '${NepaliNumber.from(years.round())} वर्ष ${isFuture ? 'पछि' : 'पहिले'}';
+    }
   }
 }

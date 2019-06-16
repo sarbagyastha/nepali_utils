@@ -50,8 +50,12 @@ main(List<String> arguments) {
 void heading(String text) {
   String starLine = '', padString = '';
   int padding = (40 - text.length) ~/ 2;
-  for (int i = 0; i < 40; i++) starLine += '*';
-  for (int i = 0; i < padding; i++) padString += ' ';
+  for (int i = 0; i < 40; i++) {
+    starLine += '*';
+  }
+  for (int i = 0; i < padding; i++) {
+    padString += ' ';
+  }
   print(starLine);
   print(padString + text + padString);
   print(starLine);
