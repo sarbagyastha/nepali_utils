@@ -1,4 +1,7 @@
-## 2.0.0
+# 2.0.0+2
+* **ADDED** `mergeTime` method to NepaliDateTime.
+
+## 2.0.0+1
 **BREAKING CHANGES** 
 * DateConvertor is now integrated to NepaliDateTime class.
 * NepaliNumber is renamed into NepaliNumberFormat.

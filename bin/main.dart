@@ -6,8 +6,9 @@ main(List<String> arguments) {
   print(
       'Gorkha Earquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}');
   print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
+  print(gorkhaEarthQuake.mergeTime(10, 20, 30));
 
-  heading('Date Converter');
+  heading('Date Conversion');
   NepaliDateTime nt =
       NepaliDateTime.fromDateTime(DateTime(2019, 8, 03, 14, 30, 15));
   print('In BS = $nt');

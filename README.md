@@ -1,6 +1,6 @@
 # Nepali Utilities for Dart
 
-[![Pub](https://img.shields.io/badge/pub-v2.0.0+1-green.svg)](https://pub.dev/packages/nepali_utils) [![licence](https://img.shields.io/badge/Licence-MIT-orange.svg)](https://github.com/sarbagyastha/nepali_utils/blob/master/LICENSE) 
+[![Pub](https://img.shields.io/badge/pub-v2.0.0+2-green.svg)](https://pub.dev/packages/nepali_utils) [![licence](https://img.shields.io/badge/Licence-MIT-orange.svg)](https://github.com/sarbagyastha/nepali_utils/blob/master/LICENSE) 
 
 A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Number, Nepali Unicode, Nepali Moments and many more.
 
@@ -20,7 +20,9 @@ NepaliDateTime gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
 print(gorkhaEarthQuake.year); // 2072
 
 NepaliDateTime currentTime = NepaliDateTime.now();
-print(currentTime.toIso8601String()); // 2076-02-01T11:25:46.490980
+print(currentTime.toIso8601String()); //2076-02-01T11:25:46.490980
+print(gorkhaEarthQuake.mergeTime(10, 20, 30));
+// 2072-01-12 10:20:30.000
 ```
 
 ### Date Conversion

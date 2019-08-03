@@ -46,6 +46,9 @@ class NepaliDateTime {
           .toDateTime()
           .isBefore(nepaliDateTime.toDateTime());
 
+  NepaliDateTime mergeTime(int hour, int minute, int second) =>
+      NepaliDateTime(year, month, day, hour, minute, second);
+
   static NepaliDateTime now() => NepaliDateTime.fromDateTime(DateTime.now());
 
   ///
