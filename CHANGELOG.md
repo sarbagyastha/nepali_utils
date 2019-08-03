@@ -1,3 +1,13 @@
+## 2.0.0
+**BREAKING CHANGES** 
+* DateConvertor is now integrated to NepaliDateTime class.
+* NepaliNumber is renamed into NepaliNumberFormat.
+* NepaliDateFormatter is renamed into NepaliDateFormat.
+* **FEATURE** The package now supports from 2000 B.S. upto 2099 B.S. 
+* Preconfigured constructors are added for quick formatting in NepaliDateFormat class.
+  
+See ReadMe section to about using newer APIs.
+
 ## 1.1.0+2
 * **ADDED** `NepaliMoment` class.
 

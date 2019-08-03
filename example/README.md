@@ -22,12 +22,23 @@ print(englishDate); // 2019-05-14 00:00:00.000
 
 ### Nepali Date Formatter
 Formats NepaliDateTime into desired format.
+
 ```dart
-var date1 = NepaliDateFormatter("yyyy.MM.dd G 'at' HH:mm:ss");
-var date2 = NepaliDateFormatter("EEE, MMM d, ''yy");
-var date3 = NepaliDateFormatter("h:mm a");
-var date4 = NepaliDateFormatter("hh 'o''clock' aa");
-var date5 = NepaliDateFormatter("yyyy.MMMM.dd GGG hh:mm a");
+var date1 = NepaliDateFormat.MEd();
+var date2 = NepaliDateFormat.MMMMEEEEd();
+var date3 = NepaliDateFormat.jms();
+
+print(date1.format(gorkhaEarthQuake)); // Sat, 1/12 
+print(date2.format(gorkhaEarthQuake)); // Saturday, Baisakh 18
+print(date3.format(gorkhaEarthQuake)); // 11:56:00 AM
+```
+
+```dart
+var date1 = NepaliDateFormat("yyyy.MM.dd G 'at' HH:mm:ss");
+var date2 = NepaliDateFormat("EEE, MMM d, ''yy");
+var date3 = NepaliDateFormat("h:mm a");
+var date4 = NepaliDateFormat("hh 'o''clock' aa");
+var date5 = NepaliDateFormat("yyyy.MMMM.dd GGG hh:mm a");
 
 print(date1.format(gorkhaEarthQuake)); // 2072.01.12 BS at 11:56:25
 print(date2.format(gorkhaEarthQuake)); // Saturday, Bai 12, '72
@@ -39,12 +50,24 @@ print(date5.format(gorkhaEarthQuake)); // 2072.Baishakh.12 Bikram Sambat 11:56 a
 ### Nepali Number
 Converts English numbers into Nepali  number literals.
 ```dart
-print(NepaliNumber.from(123456)); // १२३४५६
-print(NepaliNumber.fromString('1,23,456')); // १,२३,४५६
-```
+var currencyFormat = NepaliNumberFormat(
+    symbol: 'Rs.',
+);
+var commaSeparated = NepaliNumberFormat(
+    decimalDigits: 2,
+);
+var inWords = NepaliNumberFormat(
+    inWords: true,
+    language: Language.NEPALI,
+);
+var currencyInWords = NepaliNumberFormat(
+    inWords: true,
+    language: Language.NEPALI,
+    isMonetory: true,
+);
 
-Also includes a method to format number with Nepali style place value `commas`.
-```dart
-print(NepaliNumber.formatWithComma('123456')); // 1,23,456
-print(NepaliNumber.formatWithComma('१२३४५६')); // १,२३,४५६
+print('123456 -> ${currencyFormat.format(123456)}');
+print('123456789.6548 -> ${commaSeparated.format(123456789.6548)}');
+print('123456 -> ${inWords.format(123456)}');
+print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
 ```

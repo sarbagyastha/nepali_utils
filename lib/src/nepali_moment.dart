@@ -1,5 +1,5 @@
 import 'nepali_date_time.dart';
-import 'nepali_number.dart';
+import 'nepali_unicode.dart';
 
 class NepaliMoment {
   static String fromBS(NepaliDateTime date, {NepaliDateTime referenceDate}) {
@@ -25,23 +25,23 @@ class NepaliMoment {
     } else if (seconds < 90) {
       return 'एक मिनेट ${isFuture ? 'पछि' : 'पहिले'}';
     } else if (minutes < 45) {
-      return '${NepaliNumber.from(minutes.round())} मिनेट ${isFuture ? 'पछि' : 'पहिले'}';
+      return '${NepaliUnicode.convert('${minutes.round()}')} मिनेट ${isFuture ? 'पछि' : 'पहिले'}';
     } else if (minutes < 90) {
       return 'लगभग एक घण्टा ${isFuture ? 'पछि' : 'पहिले'}';
     } else if (hours < 24) {
-      return '${NepaliNumber.from(hours.round())} घण्टा ${isFuture ? 'पछि' : 'पहिले'}';
+      return '${NepaliUnicode.convert('${hours.round()}')} घण्टा ${isFuture ? 'पछि' : 'पहिले'}';
     } else if (hours < 48) {
       return 'एक दिन ${isFuture ? 'पछि' : 'पहिले'}';
     } else if (days < 30) {
-      return '${NepaliNumber.from(days.round())} दिन ${isFuture ? 'पछि' : 'पहिले'}';
+      return '${NepaliUnicode.convert('${days.round()}')} दिन ${isFuture ? 'पछि' : 'पहिले'}';
     } else if (days < 60) {
       return 'लगभग एक महिना ${isFuture ? 'पछि' : 'पहिले'}';
     } else if (days < 365) {
-      return '${NepaliNumber.from(months.round())} दिन ${isFuture ? 'पछि' : 'पहिले'}';
+      return '${NepaliUnicode.convert('${months.round()}')} दिन ${isFuture ? 'पछि' : 'पहिले'}';
     } else if (years < 2) {
       return 'लगभग एक वर्ष ${isFuture ? 'पछि' : 'पहिले'}';
     } else {
-      return '${NepaliNumber.from(years.round())} वर्ष ${isFuture ? 'पछि' : 'पहिले'}';
+      return '${NepaliUnicode.convert('${years.round()}')} वर्ष ${isFuture ? 'पछि' : 'पहिले'}';
     }
   }
 }

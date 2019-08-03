@@ -1,16 +1,16 @@
 # Nepali Utilities for Dart
 
-[![Pub](https://img.shields.io/badge/pub-v1.1.0+2-green.svg)](https://pub.dev/packages/nepali_utils) [![licence](https://img.shields.io/badge/Licence-MIT-orange.svg)](https://github.com/sarbagyastha/nepali_utils/blob/master/LICENSE) 
+[![Pub](https://img.shields.io/badge/pub-v2.0.0-green.svg)](https://pub.dev/packages/nepali_utils) [![licence](https://img.shields.io/badge/Licence-MIT-orange.svg)](https://github.com/sarbagyastha/nepali_utils/blob/master/LICENSE) 
 
-A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Numbers, Nepali Unicode, Nepali Moments and many more.
+A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Number, Nepali Unicode, Nepali Moments and many more.
 
 ## Package Includes
 * **NepaliDateTime**
-* **DateConverter**
-* **NepaliDateFormatter**
-* **NepaliNumber**
-* **NepaliUnicode** *since v1.1.0*
-* **NepaliMoment** *since v1.1.0*
+* **DateConversion**
+* **NepaliDateFormat**
+* **NepaliNumberFormat**
+* **NepaliUnicode**
+* **NepaliMoment**
 * many yet to come
 
 ### Nepali Date Time
@@ -23,24 +23,119 @@ NepaliDateTime currentTime = NepaliDateTime.now();
 print(currentTime.toIso8601String()); // 2076-02-01T11:25:46.490980
 ```
 
-### Date Converter
+### Date Conversion
 Converts dates from AD to BS and vice versa.
-```dart
-NepaliDateTime nepaliDate = DateConverter.toBS(DateTime(2019, 5, 14));
-print(nepaliDate); // 2076-01-31 00:00:00.000
+**Note** Since v2.x.x DateConverter has been integrated into NepaliDateTime class.
 
-DateTime englishDate = DateConverter.toAD(nepaliDate);
-print(englishDate); // 2019-05-14 00:00:00.000
+```dart
+NepaliDateTime nt =
+      NepaliDateTime.fromDateTime(DateTime(2019, 8, 03, 14, 30, 15));
+print('In BS = $nt'); //2076-04-18 14:30:15.000
+DateTime dt = nt.toDateTime(); //2019-08-03 14:30:15.000
+print('In AD = $dt');
 ```
 
 ### Nepali Date Formatter
 Formats NepaliDateTime into desired format.
+Formats NepaliDateTime into desired format.
+
+Constructor table for quick formatting:
+
+Constructor|Result
+:----------|:----:
+d|18
+E|Sat
+EEEE|Saturday
+LLL|Shr
+LLLL|Shrawan
+M|4
+Md|4/18
+MEd|Sat, 4/18
+MMM|Shr
+MMMd|Shr 18
+MMMEd|Saturday, Shr 18
+MMMM|Shrawan
+MMMMd|Shrawan 18
+MMMMEEEEd|Saturday, Shrawan 18
+QQQ|Q2
+QQQQ|2nd quarter
+y|2076
+yM|2076/04
+yMd|2076/04/18
+yMEd|Sat, 2076/04/18
+yMMM|Shr 2076
+yMMMd|Shr 18, 2076
+yMMMEd|Sat, Shr 18, 2076
+yMMMMM|Shrawan 2076
+yMMMMd|Shrawan 18, 2076
+yMMMMEEEEd|Saturday, Shrawan 18, 2076
+yQQQ|Q2 2076
+yQQQQ|2nd quarter 2076
+H|21
+Hm|21:04
+Hms|21:17:56
+j|9 PM
+jm|9:17 PM
+jms|9:17:56 PM
+m|9
+ms|9:17
+s|56
+
+#### Example:
 ```dart
-var date1 = NepaliDateFormatter("yyyy.MM.dd G 'at' HH:mm:ss");
-var date2 = NepaliDateFormatter("EEE, MMM d, ''yy");
-var date3 = NepaliDateFormatter("h:mm a");
-var date4 = NepaliDateFormatter("hh 'o''clock' aa");
-var date5 = NepaliDateFormatter("yyyy.MMMM.dd GGG hh:mm a");
+var date1 = NepaliDateFormat.MEd();
+var date2 = NepaliDateFormat.MMMMEEEEd();
+var date3 = NepaliDateFormat.jms();
+
+print(date1.format(gorkhaEarthQuake)); // Sat, 1/12 
+print(date2.format(gorkhaEarthQuake)); // Saturday, Baisakh 18
+print(date3.format(gorkhaEarthQuake)); // 11:56:00 AM
+```
+
+Formats can also be specified with a pattern string.
+
+Symbol|Meaning|Presentation|Example (en / np)
+:-----|:------|:-----------|:------
+G|era designator|(Text)|BS / बि सं
+GG|era designator|(Text)|B.S.  / बि.सं.
+GGG|era designator|(Text)|Bikram Sambat  / बिक्रम संबत
+y|year|(Number)|1996 / १९९६
+yy|year|(Number)|96 / ९६
+yyyy|year|(Number)|1996 / १९९६
+Q|quarter|(Text)|3
+QQ|quarter|(Text)|03
+QQQ|quarter|(Text)|Q3
+QQQQ|quarter|(Text)|3rd quarter
+M|month in year|(Text & Number)|1 / १
+MM|month in year|(Text & Number)|01 / ०१
+MMM|month in year|(Text & Number)|Bai / बै
+MMMM|month in year|(Text & Number)|Baishakh / बैशाख
+d|day in month|(Number)|9 / ९
+dd|day in month|(Number)|09 / ०९
+E|day of week|(Text)|M / सो
+EE|day of week|(Text)|Mon / सोम
+EEE|day of week|(Text)|Monday / सोमबार
+a|am/pm marker|(Text)|pm / बेलुकी
+aa|am/pm marker|(Text)|PM / बेलुकी
+h|hour in am/pm(1~12)|(Number)|2 / २
+hh|hour in am/pm(1~12)|(Number)|02 / ०२
+H|hour in day (0~23)|(Number)|14 / १४
+HH|hour in day (0~23)|(Number)|14 / १४
+m|minute in hour|(Number)|3 / ३
+mm|minute in hour|(Number)|03 / ०३  
+s|second in minute|(Number)|55 / ५५
+s|second in minute|(Number)|55 / ५५
+S|fractional second|(Number)|978 / ९७८
+'|escape for text|(Delimiter)|'Date='
+''|single quote|(Literal)|'o''clock'
+
+#### Example:
+```dart
+var date1 = NepaliDateFormat("yyyy.MM.dd G 'at' HH:mm:ss");
+var date2 = NepaliDateFormat("EEE, MMM d, ''yy");
+var date3 = NepaliDateFormat("h:mm a");
+var date4 = NepaliDateFormat("hh 'o''clock' aa");
+var date5 = NepaliDateFormat("yyyy.MMMM.dd GGG hh:mm a");
 
 print(date1.format(gorkhaEarthQuake)); // 2072.01.12 BS at 11:56:25
 print(date2.format(gorkhaEarthQuake)); // Saturday, Bai 12, '72
@@ -54,14 +149,33 @@ print(date5.format(gorkhaEarthQuake)); // 2072.Baishakh.12 Bikram Sambat 11:56 a
 ### Nepali Number
 Converts English numbers into Nepali  number literals.
 ```dart
-print(NepaliNumber.from(123456)); // १२३४५६
-print(NepaliNumber.fromString('1,23,456')); // १,२३,४५६
-```
+var currencyFormat = NepaliNumberFormat(
+    symbol: 'Rs.',
+);
+var commaSeparated = NepaliNumberFormat(
+    decimalDigits: 2,
+);
+var inWords = NepaliNumberFormat(
+    inWords: true,
+    language: Language.NEPALI,
+);
+var currencyInWords = NepaliNumberFormat(
+    inWords: true,
+    language: Language.NEPALI,
+    isMonetory: true,
+    decimalDigits: 2,
+);
+print('123456 -> ${currencyFormat.format(123456)}');
+// 123456 -> 1,23,456
 
-Also includes a method to format number with Nepali style place value `commas`.
-```dart
-print(NepaliNumber.formatWithComma('123456')); // 1,23,456
-print(NepaliNumber.formatWithComma('१२३४५६')); // १,२३,४५६
+print('123456789.6548 -> ${commaSeparated.format(123456789.6548)}');
+// 123456789.6548 -> 12,34,56,789.65
+
+print('123456 -> ${inWords.format(123456)}');
+// 123456 -> 1 lakh 23 thousand 4 hundred 56
+
+print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
+// 123456789.6548 -> १२ करोड ३४ लाख ५६ हजार ७ सय ८९ रुपैया ६५ पैसा
 ```
 
 ### Nepali Unicode

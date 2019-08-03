@@ -1,5 +1,4 @@
 import 'dart:core';
-import 'date_converter.dart';
 
 class NepaliDateTime {
   final int year;
@@ -22,8 +21,11 @@ class NepaliDateTime {
     this.microsecond = 0,
   ]);
 
+  static List<List<int>> _nepaliMonths;
+  static List<int> _englishMonths, _englishLeapMonths;
+
   int get weekDay {
-    //Reference date 2000/1/1 Wednesday
+    //ReferencenepaliDateTime 2000/1/1 Wednesday
     int difference = NepaliDateTime(year, month, day)
         .difference(NepaliDateTime(2000, 1, 1))
         .inDays;
@@ -34,15 +36,17 @@ class NepaliDateTime {
     return weekday == 0 ? 7 : weekday;
   }
 
-  bool isAfter(NepaliDateTime date) =>
-      DateConverter.toAD(NepaliDateTime(year, month, day))
-          .isAfter(DateConverter.toAD(date));
+  bool isAfter(NepaliDateTime nepaliDateTime) =>
+      NepaliDateTime(year, month, day)
+          .toDateTime()
+          .isAfter(nepaliDateTime.toDateTime());
 
-  bool isBefore(NepaliDateTime date) =>
-      DateConverter.toAD(NepaliDateTime(year, month, day))
-          .isBefore(DateConverter.toAD(date));
+  bool isBefore(NepaliDateTime nepaliDateTime) =>
+      NepaliDateTime(year, month, day)
+          .toDateTime()
+          .isBefore(nepaliDateTime.toDateTime());
 
-  static NepaliDateTime now() => DateConverter.toBS(DateTime.now());
+  static NepaliDateTime now() => NepaliDateTime.fromDateTime(DateTime.now());
 
   ///
   ///Constructs a new [DateTime] instance based on [formattedString].
@@ -54,10 +58,10 @@ class NepaliDateTime {
   ///
   ///The accepted inputs are currently:
   ///
-  /// A date: A signed four-to-six digit year, two digit month and
+  /// AnepaliDateTime: A signed four-to-six digit year, two digit month and
   ///  two digit day, optionally separated by `-` characters.
   ///  Examples: "19700101", "-0004-12-24", "81030-04-01".
-  /// An optional time part, separated from the date by either `T` or a space.
+  /// An optional time part, separated from thenepaliDateTime by either `T` or a space.
   ///  The time part is a two digit hour,
   ///  then optionally a two digit minutes value,
   ///  then optionally a two digit seconds value, and
@@ -128,7 +132,7 @@ class NepaliDateTime {
       return NepaliDateTime(
           years, month, day, hour, minute, second, millisecond, microsecond);
     } else {
-      throw FormatException("Invalid date format", formattedString);
+      throw FormatException("InvalidnepaliDateTime format", formattedString);
     }
   }
 
@@ -141,7 +145,7 @@ class NepaliDateTime {
   }
 
   Duration difference(NepaliDateTime other) {
-    var thisDate = DateConverter.toAD(NepaliDateTime(year, month, day));
+    DateTime thisDate = NepaliDateTime(year, month, day).toDateTime();
     thisDate = DateTime(
       thisDate.year,
       thisDate.month,
@@ -153,7 +157,7 @@ class NepaliDateTime {
       microsecond,
     );
 
-    var otherDate = DateConverter.toAD(other);
+    DateTime otherDate = other.toDateTime();
     otherDate = DateTime(
       otherDate.year,
       otherDate.month,
@@ -252,4 +256,240 @@ class NepaliDateTime {
       r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)' // Day part.
       r'(?:[ T](\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,6}))?)?)?' // Time part.
       r'( ?[zZ]| ?([-+])(\d\d)(?::?(\d\d))?)?)?$'); // Timezone part.
+
+  factory NepaliDateTime.fromDateTime(DateTime dateTime) {
+    _initializeLists();
+    //Setting nepali reference to 2000/1/1 with englishnepaliDateTime 1943/4/14
+    int nepaliYear = 2000;
+    int nepaliMonth = 1;
+    int nepaliDay = 1;
+
+    // Time was causing error while differencing dates.
+    DateTime _date = DateTime(dateTime.year, dateTime.month, dateTime.day);
+    int difference = _date.difference(DateTime(1943, 4, 14)).inDays;
+
+    // 1970-1-1 is epoch and it's duration is only 18 hours 15 minutes in dart
+    // You can test using `print(DateTime(1970,1,2).difference(DateTime(1970,1,1)))`;
+    // So, in order to compensate it one extra day is added from thisnepaliDateTime.
+    if (_date.isAfter(DateTime(1970, 1, 1))) difference++;
+
+    //Getting nepali year until the difference remains less than 365
+    int index = 0;
+    while (difference >= _nepaliYearDays(index)) {
+      nepaliYear++;
+      difference = difference - _nepaliYearDays(index);
+      index++;
+    }
+
+    //Getting nepali month until the difference remains less than 31
+    int i = 0;
+    while (difference >= _nepaliMonths[index][i]) {
+      difference = difference - _nepaliMonths[index][i];
+      nepaliMonth++;
+      i++;
+    }
+
+    //Remaning days is the actual day;
+    nepaliDay += difference;
+
+    return NepaliDateTime(
+      nepaliYear,
+      nepaliMonth,
+      nepaliDay,
+      dateTime.hour,
+      dateTime.minute,
+      dateTime.second,
+      dateTime.millisecond,
+      dateTime.microsecond,
+    );
+  }
+
+  DateTime toDateTime() {
+    //Setting english reference to 1944/1/1 with nepali nepaliDateTime 2000/9/17
+    int englishYear = 1944;
+    int englishMonth = 1;
+    int englishDay = 1;
+
+    int difference = _nepaliDateDifference(
+      NepaliDateTime(year, month, day),
+      NepaliDateTime(2000, 9, 17),
+    );
+
+    //Getting english year until the difference remains less than 365
+    while (difference >= (_isLeapYear(englishYear) ? 366 : 365)) {
+      difference = difference - (_isLeapYear(englishYear) ? 366 : 365);
+      englishYear++;
+    }
+
+    //Getting english month until the difference remains less than 31
+    var monthDays =
+        _isLeapYear(englishYear) ? _englishLeapMonths : _englishMonths;
+    int i = 0;
+    while (difference >= monthDays[i]) {
+      englishMonth++;
+      difference = difference - monthDays[i];
+      i++;
+    }
+
+    //Remaining days is the nepaliDateTime;
+    englishDay += difference;
+
+    return DateTime(
+      englishYear,
+      englishMonth,
+      englishDay,
+      hour,
+      minute,
+      second,
+      millisecond,
+      microsecond,
+    );
+  }
+
+  static int _nepaliYearDays(int index) {
+    int total = 0;
+    for (int i = 0; i < 12; i++) {
+      total += _nepaliMonths[index][i];
+    }
+    return total;
+  }
+
+  int _nepaliDateDifference(
+      NepaliDateTime nepaliDateTime, NepaliDateTime refDate) {
+    //Getting difference from the current nepaliDateTime with the nepaliDateTime provided
+    int difference = _countTotalNepaliDays(
+            nepaliDateTime.year, nepaliDateTime.month, nepaliDateTime.day) -
+        _countTotalNepaliDays(refDate.year, refDate.month, refDate.day);
+    return (difference < 0 ? -difference : difference);
+  }
+
+  int _countTotalNepaliDays(int year, int month, int nepaliDateTime) {
+    int total = 0;
+    if (year < 2000) {
+      return 0;
+    }
+
+    total = total + (nepaliDateTime - 1);
+
+    int yearIndex = year - 2000;
+    for (int i = 0; i < month - 1; i++) {
+      total = total + _nepaliMonths[yearIndex][i];
+    }
+
+    for (int i = 0; i < yearIndex; i++) {
+      total = total + _nepaliYearDays(i);
+    }
+
+    return total;
+  }
+
+  bool _isLeapYear(int year) =>
+      (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
+
+  static _initializeLists() {
+    _englishMonths ??= [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    _englishLeapMonths ??= [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    _nepaliMonths ??= [
+      [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], //2000
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 29, 31],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], //2010
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
+      [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30], //2020
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
+      [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 31, 32, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], //2030
+      [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [30, 32, 31, 32, 31, 31, 29, 30, 30, 29, 29, 31],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], //2040
+      [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], //2050
+      [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 31, 32, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], //2060
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [30, 32, 31, 32, 31, 31, 29, 30, 29, 30, 29, 31],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 29, 31],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30], //2070
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
+      [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
+      [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30], //2080
+      [31, 31, 32, 32, 31, 30, 30, 30, 29, 30, 30, 30],
+      [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30],
+      [31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30, 30],
+      [31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30, 30],
+      [31, 32, 31, 32, 30, 31, 30, 30, 29, 30, 30, 30],
+      [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30],
+      [31, 31, 32, 31, 31, 31, 30, 30, 29, 30, 30, 30],
+      [30, 31, 32, 32, 30, 31, 30, 30, 29, 30, 30, 30],
+      [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30],
+      [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30], //2090
+      [31, 31, 32, 31, 31, 31, 30, 30, 29, 30, 30, 30],
+      [30, 31, 32, 32, 31, 30, 30, 30, 29, 30, 30, 30],
+      [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30],
+      [31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30, 30],
+      [31, 31, 32, 31, 31, 31, 30, 29, 30, 30, 30, 30],
+      [30, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+      [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30],
+      [31, 31, 32, 31, 31, 31, 29, 30, 29, 30, 29, 31],
+      [31, 31, 32, 31, 31, 31, 30, 29, 29, 30, 30, 30], //2099
+    ];
+  }
 }

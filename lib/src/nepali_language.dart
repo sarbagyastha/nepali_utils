@@ -1,0 +1,1 @@
+enum Language { ENGLISH, NEPALI }

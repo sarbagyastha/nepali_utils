@@ -8,28 +8,45 @@ main(List<String> arguments) {
   //print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
 
   heading('Date Converter');
-  NepaliDateTime nt = DateConverter.toBS(DateTime(2019, 5, 14));
+  NepaliDateTime nt = NepaliDateTime.fromDateTime(DateTime(2019, 5, 14));
   print('In BS = $nt');
-  DateTime dt = DateConverter.toAD(nt);
+  DateTime dt = nt.toDateTime();
   print('In AD = $dt');
 
   print(NepaliDateTime.now().toIso8601String());
 
   heading('Nepali Date Formatter');
-  var date1 = NepaliDateFormatter("yyyy.MM.dd G 'at' HH:mm:ss");
-  var date2 = NepaliDateFormatter("EEE, MMM d, ''yy");
-  var date3 = NepaliDateFormatter("h:mm a");
-  var date4 = NepaliDateFormatter("hh 'o''clock' aa");
-  var date5 = NepaliDateFormatter("yyyy.MMMM.dd GGG hh:mm a");
+  var date1 = NepaliDateFormat("yyyy.MM.dd G 'at' HH:mm:ss");
+  var date2 = NepaliDateFormat("EEE, MMM d, ''yy");
+  var date3 = NepaliDateFormat("h:mm a");
+  var date4 = NepaliDateFormat("hh 'o''clock' aa");
+  var date5 = NepaliDateFormat("yyyy.MMMM.dd GGG hh:mm a");
   print(date1.format(gorkhaEarthQuake));
   print(date2.format(gorkhaEarthQuake));
   print(date3.format(gorkhaEarthQuake));
   print(date4.format(gorkhaEarthQuake));
   print(date5.format(gorkhaEarthQuake));
 
-  heading('Nepali Number');
-  print('123456 -> ${NepaliNumber.from(123456)}');
-  print('1,23,456 -> ${NepaliNumber.fromString('1,23,456')}');
+  heading('Nepali Number Format');
+  var currencyFormat = NepaliNumberFormat(
+    symbol: 'Rs.',
+  );
+  var commaSeparated = NepaliNumberFormat(
+    decimalDigits: 2,
+  );
+  var inWords = NepaliNumberFormat(
+    inWords: true,
+    language: Language.NEPALI,
+  );
+  var currencyInWords = NepaliNumberFormat(
+    inWords: true,
+    language: Language.NEPALI,
+    isMonetory: true,
+  );
+  print('123456 -> ${currencyFormat.format(123456)}');
+  print('123456789.6548 -> ${commaSeparated.format(123456789.6548)}');
+  print('123456 -> ${inWords.format(123456)}');
+  print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
 
   heading('Nepali Unicode');
   print(NepaliUnicode.convert(
