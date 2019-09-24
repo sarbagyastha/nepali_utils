@@ -1,7 +1,6 @@
 import 'dart:math';
 
-import 'package:nepali_utils/nepali_utils.dart';
-
+import '../nepali_utils.dart';
 import 'nepali_language.dart';
 
 class NepaliNumberFormat {
@@ -38,6 +37,9 @@ class NepaliNumberFormat {
   }
 
   String _placeSymbol(String number) {
+    if (number == null) {
+      return '';
+    }
     if (symbol == null) {
       return number;
     } else if (symbolOnLeft) {
@@ -158,19 +160,35 @@ class NepaliNumberFormat {
     for (int i = 8; i >= 0; i--) {
       _formattedNumber += _formatDigits(i, digitGroups[i]);
     }
-    return _formattedNumber.trimRight() +
-        '${decimalDigits == 0 ? "" : ".${language == Language.ENGLISH ? _decimal : NepaliUnicode.convert(_decimal)}"}';
+    String formattedNumber = _formattedNumber.trimRight();
+    if (_num != 0) {
+      formattedNumber +=
+          '${decimalDigits == 0 ? "" : ".${language == Language.ENGLISH ? _decimal : NepaliUnicode.convert(_decimal)}"}';
+    }
+    for (int i = 0; i < formattedNumber.length; i++) {
+      if (formattedNumber[i] != '0' && formattedNumber[i] != ',') {
+        return formattedNumber.substring(i);
+      }
+    }
+    return '';
   }
 
   String _formatDigits(int index, int number) {
-    if (number == 0) {
-      return '';
-    }
     if (index == 0) {
+      if (number == 0) {
+        return language == Language.ENGLISH
+            ? '000'
+            : NepaliUnicode.convert('000');
+      }
       return language == Language.ENGLISH
           ? '$number'
           : NepaliUnicode.convert('$number');
     } else {
+      if (number == 0) {
+        return language == Language.ENGLISH
+            ? '00,'
+            : '${NepaliUnicode.convert('00')},';
+      }
       return language == Language.ENGLISH
           ? '$number,'
           : '${NepaliUnicode.convert('$number')},';

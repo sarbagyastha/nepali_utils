@@ -1,3 +1,6 @@
+# 2.0.0+3
+* **FIXED** Issue with comma formatting in `NepaliNumberFormat`.
+
 # 2.0.0+2
 * **ADDED** `mergeTime` method to NepaliDateTime.
 
