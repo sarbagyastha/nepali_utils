@@ -9,8 +9,7 @@ main(List<String> arguments) {
   print(gorkhaEarthQuake.mergeTime(10, 20, 30));
 
   heading('Date Conversion');
-  NepaliDateTime nt =
-      NepaliDateTime.fromDateTime(DateTime(2019, 8, 03, 14, 30, 15));
+  NepaliDateTime nt = NepaliDateTime.fromDateTime(DateTime(2019, 8, 03, 14, 30, 15));
   print('In BS = $nt');
   DateTime dt = nt.toDateTime();
   print('In AD = $dt');
@@ -41,6 +40,8 @@ main(List<String> arguments) {
   );
   var commaSeparated = NepaliNumberFormat(
     decimalDigits: 2,
+    isMonetory: true,
+    language: Language.NEPALI,
   );
   var inWords = NepaliNumberFormat(
     inWords: true,
@@ -59,8 +60,7 @@ main(List<String> arguments) {
 
   heading('Nepali Unicode');
   print(
-    NepaliUnicode.convert(
-        "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"),
+    NepaliUnicode.convert("sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"),
   );
   print(
     NepaliUnicode.convert("saarwabhauma bhai failiekaa, mecii-mahaakaalii\n"),

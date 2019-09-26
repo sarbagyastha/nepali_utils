@@ -26,9 +26,7 @@ class NepaliNumberFormat {
     assert(number != null, 'Number cannot be null');
     assert(number < 999999999999999999, 'Number is too large for formatting');
     if (inWords) {
-      return isMonetory
-          ? _placeSymbol(_formatInWords(number.abs()))
-          : _formatInWords(number.abs());
+      return isMonetory ? _placeSymbol(_formatInWords(number.abs())) : _formatInWords(number.abs());
     } else {
       return isMonetory
           ? _placeSymbol(_formatWithComma(number.abs()))
@@ -80,8 +78,7 @@ class NepaliNumberFormat {
       return '';
     }
     if (index == 0) {
-      String hundreds =
-          '${_languageNumber((number / 100).truncate())} ${_language('hundred')} ';
+      String hundreds = '${_languageNumber((number / 100).truncate())} ${_language('hundred')} ';
       String tens = '${_languageNumber(number % 100)}';
       return '$hundreds$tens';
     }
@@ -161,13 +158,19 @@ class NepaliNumberFormat {
       _formattedNumber += _formatDigits(i, digitGroups[i]);
     }
     String formattedNumber = _formattedNumber.trimRight();
-    if (_num != 0) {
+    if (number != 0) {
       formattedNumber +=
           '${decimalDigits == 0 ? "" : ".${language == Language.ENGLISH ? _decimal : NepaliUnicode.convert(_decimal)}"}';
     }
     for (int i = 0; i < formattedNumber.length; i++) {
-      if (formattedNumber[i] != '0' && formattedNumber[i] != ',') {
-        return formattedNumber.substring(i);
+      if (language == Language.ENGLISH) {
+        if (formattedNumber[i] != '0' && formattedNumber[i] != ',') {
+          return formattedNumber.substring(i);
+        }
+      } else {
+        if (formattedNumber[i] != '०' && formattedNumber[i] != ',') {
+          return formattedNumber.substring(i);
+        }
       }
     }
     return '';
@@ -176,22 +179,14 @@ class NepaliNumberFormat {
   String _formatDigits(int index, int number) {
     if (index == 0) {
       if (number == 0) {
-        return language == Language.ENGLISH
-            ? '000'
-            : NepaliUnicode.convert('000');
+        return language == Language.ENGLISH ? '000' : NepaliUnicode.convert('000');
       }
-      return language == Language.ENGLISH
-          ? '$number'
-          : NepaliUnicode.convert('$number');
+      return language == Language.ENGLISH ? '$number' : NepaliUnicode.convert('$number');
     } else {
       if (number == 0) {
-        return language == Language.ENGLISH
-            ? '00,'
-            : '${NepaliUnicode.convert('00')},';
+        return language == Language.ENGLISH ? '00,' : '${NepaliUnicode.convert('00')},';
       }
-      return language == Language.ENGLISH
-          ? '$number,'
-          : '${NepaliUnicode.convert('$number')},';
+      return language == Language.ENGLISH ? '$number,' : '${NepaliUnicode.convert('$number')},';
     }
   }
 }
