@@ -1,17 +1,21 @@
+// Copyright 2019 Sarbagya Dhaubanjar. All rights reserved.
+// Use of this source code is governed by a MIT license that can be
+// found in the LICENSE file.
+
 import 'package:nepali_utils/nepali_utils.dart';
 
-main(List<String> arguments) {
+void main(List<String> arguments) {
   heading('Nepali Date Time');
-  NepaliDateTime gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
+  var gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
   print(
       'Gorkha Earquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}');
   print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
   print(gorkhaEarthQuake.mergeTime(10, 20, 30));
 
   heading('Date Conversion');
-  NepaliDateTime nt = NepaliDateTime.fromDateTime(DateTime(2019, 8, 03, 14, 30, 15));
+  var nt = NepaliDateTime.fromDateTime(DateTime(2019, 8, 03, 14, 30, 15));
   print('In BS = $nt');
-  DateTime dt = nt.toDateTime();
+  var dt = nt.toDateTime();
   print('In AD = $dt');
 
   print(NepaliDateTime.now().toIso8601String());
@@ -41,26 +45,27 @@ main(List<String> arguments) {
   var commaSeparated = NepaliNumberFormat(
     decimalDigits: 2,
     isMonetory: true,
-    language: Language.NEPALI,
+    language: Language.nepali,
   );
   var inWords = NepaliNumberFormat(
     inWords: true,
-    language: Language.ENGLISH,
+    language: Language.english,
   );
   var currencyInWords = NepaliNumberFormat(
     inWords: true,
-    language: Language.NEPALI,
+    language: Language.nepali,
     isMonetory: true,
     decimalDigits: 2,
   );
-  print('123456 -> ${currencyFormat.format(123456)}');
-  print('123456789.6548 -> ${commaSeparated.format(123456789.6548)}');
-  print('123456 -> ${inWords.format(123456)}');
-  print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
+  print('123456 -> ${currencyFormat.format<int>(123456)}');
+  print('123456789.6548 -> ${commaSeparated.format<double>(123456789.6548)}');
+  print('123456 -> ${inWords.format<String>('123456')}');
+  print('123456789.6548 -> ${currencyInWords.format<num>(123456789.6548)}');
 
   heading('Nepali Unicode');
   print(
-    NepaliUnicode.convert("sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"),
+    NepaliUnicode.convert(
+        "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"),
   );
   print(
     NepaliUnicode.convert("saarwabhauma bhai failiekaa, mecii-mahaakaalii\n"),
@@ -88,12 +93,12 @@ main(List<String> arguments) {
 }
 
 void heading(String text) {
-  String starLine = '', padString = '';
-  int padding = (40 - text.length) ~/ 2;
-  for (int i = 0; i < 40; i++) {
+  var starLine = '', padString = '';
+  var padding = (40 - text.length) ~/ 2;
+  for (var i = 0; i < 40; i++) {
     starLine += '*';
   }
-  for (int i = 0; i < padding; i++) {
+  for (var i = 0; i < padding; i++) {
     padString += ' ';
   }
   print(starLine);

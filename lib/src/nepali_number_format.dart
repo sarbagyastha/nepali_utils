@@ -1,20 +1,51 @@
-import 'dart:math';
+// Copyright 2019 Sarbagya Dhaubanjar. All rights reserved.
+// Use of this source code is governed by a MIT license that can be
+// found in the LICENSE file.
 
-import '../nepali_utils.dart';
 import 'nepali_language.dart';
+import 'nepali_unicode.dart';
 
+/// Provides the ability to format a number in a Nepali way.
 class NepaliNumberFormat {
+  /// If true, formats the number in words.
+  ///
+  /// Default is false.
   final bool inWords;
+
+  /// Specifies the lanaguage the use in the conversion.
+  ///
+  /// Default is [Language.ENGLISH].
   final Language language;
+
+  /// If true, formats the number as if it is monetary value.
+  /// Also, [symbol] can be added while true.
+  ///
+  /// Default is false.
   final bool isMonetory;
+
+  /// Specifies the number of decimal places to include in formatted number.
+  ///
+  /// Default is 0.
   final int decimalDigits;
+
+  /// Specifies the symbol to use in monetary value.
+  /// [isMonetory] is required to be set as true.
   final String symbol;
+
+  /// If true, place the symbol on left side of the formatted number.
+  ///
+  /// Default is true.
   final bool symbolOnLeft;
+
+  /// If true, places a space between [symbol] and the number.
+  ///
+  /// Default is true.
   final bool spaceBetweenAmountandSymbol;
 
+  ///Create a nepali number format.
   NepaliNumberFormat({
     this.inWords = false,
-    this.language = Language.ENGLISH,
+    this.language = Language.english,
     this.isMonetory = false,
     this.decimalDigits = 0,
     this.symbol,
@@ -22,15 +53,17 @@ class NepaliNumberFormat {
     this.spaceBetweenAmountandSymbol = true,
   });
 
-  String format(double number) {
-    assert(number != null, 'Number cannot be null');
-    assert(number < 999999999999999999, 'Number is too large for formatting');
+  /// Format number according to specified parameters and return the formatted string.
+  String format<T>(T number) {
+    if (number == null) return '';
     if (inWords) {
-      return isMonetory ? _placeSymbol(_formatInWords(number.abs())) : _formatInWords(number.abs());
+      return isMonetory
+          ? _placeSymbol(_formatInWords<T>(number))
+          : _formatInWords<T>(number);
     } else {
       return isMonetory
-          ? _placeSymbol(_formatWithComma(number.abs()))
-          : _formatWithComma(number.abs());
+          ? _placeSymbol(_formatWithComma<T>(number))
+          : _formatWithComma<T>(number);
     }
   }
 
@@ -47,146 +80,137 @@ class NepaliNumberFormat {
     }
   }
 
-  String _formatInWords(double number) {
-    int _num = number.truncate();
-    int _decimal = ((number - _num) * pow(10, decimalDigits)).truncate();
-    List<int> digitGroups = List.filled(9, 0);
-    String numberInWord = '';
-    for (int i = 0; i < 9; i++) {
-      if (i == 0) {
-        digitGroups[i] = _num % 1000;
-        _num = (_num / 1000).truncate();
-      } else {
-        digitGroups[i] = _num % 100;
-        _num = (_num / 100).truncate();
-      }
+  String _formatInWords<T>(T number) {
+    var numberInWord = '';
+    var decimal = '';
+    var commaFormattedNumber = _formatWithComma<T>(number);
+    var digitGroups = commaFormattedNumber.split(',');
+
+    if (commaFormattedNumber.contains('.')) {
+      decimal = digitGroups.last.split('.').last;
     }
-    for (int i = 8; i >= 0; i--) {
-      numberInWord += _digitGroupToWord(i, digitGroups[i]);
+
+    for (var i = 0; i < digitGroups.length - 1; i++) {
+      numberInWord +=
+          _digitGroupToWord(digitGroups.length - i - 2, digitGroups[i]);
     }
+
+    var digit = digitGroups.last;
+    if (digit.contains('.')) {
+      digit = digitGroups.last.split('.').first;
+    }
+
+    if (digit.length == 3) {
+      numberInWord +=
+          '${_languageNumber(digit[0])} ${_language('hundred')} ${_languageNumber(digit.substring(1))}';
+    } else {
+      numberInWord += '${_languageNumber(digit)}';
+    }
+
     if (isMonetory) {
       return numberInWord.trimRight() +
-          (_decimal == 0
+          (decimal.isEmpty
               ? ' ${_language('rupees')}'
-              : ' ${_language('rupees')} ${language == Language.ENGLISH ? _decimal : NepaliUnicode.convert('$_decimal')} ${_language('paisa')}');
+              : ' ${_language('rupees')} ${_isEnglish ? decimal : NepaliUnicode.convert(decimal)} ${_language('paisa')}');
     }
     return numberInWord.trimRight();
   }
 
-  String _digitGroupToWord(int index, int number) {
-    if (number == 0) {
-      return '';
-    }
-    if (index == 0) {
-      String hundreds = '${_languageNumber((number / 100).truncate())} ${_language('hundred')} ';
-      String tens = '${_languageNumber(number % 100)}';
-      return '$hundreds$tens';
-    }
+  String _digitGroupToWord(int index, String number) {
     switch (index) {
-      case 1:
+      case 0:
         return '${_languageNumber(number)} ${_language('thousand')} ';
-      case 2:
+      case 1:
         return '${_languageNumber(number)} ${_language('lakh')} ';
-      case 3:
+      case 2:
         return '${_languageNumber(number)} ${_language('crore')} ';
-      case 4:
+      case 3:
         return '${_languageNumber(number)} ${_language('arab')} ';
-      case 5:
+      case 4:
         return '${_languageNumber(number)} ${_language('kharab')} ';
-      case 6:
+      case 5:
         return '${_languageNumber(number)} ${_language('nil')} ';
-      case 7:
+      case 6:
         return '${_languageNumber(number)} ${_language('padam')} ';
-      case 8:
+      case 7:
         return '${_languageNumber(number)} ${_language('sankha')} ';
       default:
         return '';
     }
   }
 
-  String _languageNumber(int number) {
-    if (language == Language.ENGLISH)
-      return '$number';
-    else
-      return NepaliUnicode.convert('$number');
-  }
+  String _languageNumber(String number) =>
+      _isEnglish ? number : NepaliUnicode.convert('$number');
+
+  bool get _isEnglish => language == Language.english;
 
   String _language(String word) {
     switch (word) {
       case 'rupees':
-        return language == Language.ENGLISH ? word : 'रुपैया';
+        return _isEnglish ? word : 'रुपैया';
       case 'paisa':
-        return language == Language.ENGLISH ? word : 'पैसा';
+        return _isEnglish ? word : 'पैसा';
       case 'hundred':
-        return language == Language.ENGLISH ? word : 'सय';
+        return _isEnglish ? word : 'सय';
       case 'thousand':
-        return language == Language.ENGLISH ? word : 'हजार';
+        return _isEnglish ? word : 'हजार';
       case 'lakh':
-        return language == Language.ENGLISH ? word : 'लाख';
+        return _isEnglish ? word : 'लाख';
       case 'crore':
-        return language == Language.ENGLISH ? word : 'करोड';
+        return _isEnglish ? word : 'करोड';
       case 'arab':
-        return language == Language.ENGLISH ? word : 'अर्ब';
+        return _isEnglish ? word : 'अर्ब';
       case 'kharab':
-        return language == Language.ENGLISH ? word : 'खर्ब';
+        return _isEnglish ? word : 'खर्ब';
       case 'nil':
-        return language == Language.ENGLISH ? word : 'नील';
+        return _isEnglish ? word : 'नील';
       case 'padam':
-        return language == Language.ENGLISH ? word : 'पद्म';
+        return _isEnglish ? word : 'पद्म';
       case 'sankha':
-        return language == Language.ENGLISH ? word : 'शंख';
+        return _isEnglish ? word : 'शंख';
       default:
         return '';
     }
   }
 
-  String _formatWithComma(double number) {
-    int _num = number.truncate();
-    String _decimal = number.toStringAsFixed(decimalDigits).split('.').last;
-    List<int> digitGroups = List.filled(9, 0);
-    String _formattedNumber = '';
-    for (int i = 0; i < 9; i++) {
-      if (i == 0) {
-        digitGroups[i] = _num % 1000;
-        _num = (_num / 1000).truncate();
-      } else {
-        digitGroups[i] = _num % 100;
-        _num = (_num / 100).truncate();
-      }
-    }
-    for (int i = 8; i >= 0; i--) {
-      _formattedNumber += _formatDigits(i, digitGroups[i]);
-    }
-    String formattedNumber = _formattedNumber.trimRight();
-    if (number != 0) {
-      formattedNumber +=
-          '${decimalDigits == 0 ? "" : ".${language == Language.ENGLISH ? _decimal : NepaliUnicode.convert(_decimal)}"}';
-    }
-    for (int i = 0; i < formattedNumber.length; i++) {
-      if (language == Language.ENGLISH) {
-        if (formattedNumber[i] != '0' && formattedNumber[i] != ',') {
-          return formattedNumber.substring(i);
-        }
-      } else {
-        if (formattedNumber[i] != '०' && formattedNumber[i] != ',') {
-          return formattedNumber.substring(i);
-        }
-      }
-    }
-    return '';
-  }
-
-  String _formatDigits(int index, int number) {
-    if (index == 0) {
-      if (number == 0) {
-        return language == Language.ENGLISH ? '000' : NepaliUnicode.convert('000');
-      }
-      return language == Language.ENGLISH ? '$number' : NepaliUnicode.convert('$number');
+  String _formatWithComma<T extends Object>(T number) {
+    String _number, _fractionalPart;
+    if (number is String) {
+      _number = number;
+    } else if (number is num) {
+      _number = '$number';
     } else {
-      if (number == 0) {
-        return language == Language.ENGLISH ? '00,' : '${NepaliUnicode.convert('00')},';
+      throw Exception('number should be either "String" or "num"');
+    }
+
+    var fractionMatches = RegExp(r'\d.\d*').allMatches(_number);
+    _number = fractionMatches.elementAt(0).group(0);
+    if (fractionMatches.length == 2) {
+      _fractionalPart = fractionMatches.elementAt(1).group(0);
+    }
+
+    if (_number.length <= 3) {
+      return _number;
+    } else if (_number.length < 5) {
+      return '${_number[0]},${_number.substring(1)}';
+    } else {
+      var paddedNumber = _number.length.isOdd ? _number : '0$_number';
+      var formattedString = '';
+      var digitMatcher = RegExp(r'\d{1,2}');
+      var matches = digitMatcher.allMatches(paddedNumber);
+      for (var i = 0; i < matches.length; i++) {
+        if (i < matches.length - 2) {
+          formattedString += '${matches.elementAt(i).group(0)},';
+        } else {
+          formattedString +=
+              _number.substring(_number.length - 3, _number.length);
+          break;
+        }
       }
-      return language == Language.ENGLISH ? '$number,' : '${NepaliUnicode.convert('$number')},';
+      formattedString = formattedString[0] == '0'
+          ? formattedString.substring(1)
+          : formattedString;
+      return '$formattedString${_fractionalPart == null ? '' : '.$_fractionalPart'}';
     }
   }
 }

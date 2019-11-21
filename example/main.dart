@@ -1,16 +1,20 @@
+// Copyright 2019 Sarbagya Dhaubanjar. All rights reserved.
+// Use of this source code is governed by a MIT license that can be
+// found in the LICENSE file.
+
 import 'package:nepali_utils/nepali_utils.dart';
 
-main(List<String> arguments) {
+void main(List<String> arguments) {
   heading('Nepali Date Time');
-  NepaliDateTime gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
+  var gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
   //print(
   //    'Gorkha Earquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}');
   //print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
 
   heading('Date Converter');
-  NepaliDateTime nt = NepaliDateTime.fromDateTime(DateTime(2019, 5, 14));
+  var nt = NepaliDateTime.fromDateTime(DateTime(2019, 5, 14));
   print('In BS = $nt');
-  DateTime dt = nt.toDateTime();
+  var dt = nt.toDateTime();
   print('In AD = $dt');
 
   print(NepaliDateTime.now().toIso8601String());
@@ -36,11 +40,11 @@ main(List<String> arguments) {
   );
   var inWords = NepaliNumberFormat(
     inWords: true,
-    language: Language.NEPALI,
+    language: Language.nepali,
   );
   var currencyInWords = NepaliNumberFormat(
     inWords: true,
-    language: Language.NEPALI,
+    language: Language.nepali,
     isMonetory: true,
   );
   print('123456 -> ${currencyFormat.format(123456)}');
@@ -56,10 +60,14 @@ main(List<String> arguments) {
 }
 
 void heading(String text) {
-  String starLine = '', padString = '';
-  int padding = (40 - text.length) ~/ 2;
-  for (int i = 0; i < 40; i++) starLine += '*';
-  for (int i = 0; i < padding; i++) padString += ' ';
+  var starLine = '', padString = '';
+  var padding = (40 - text.length) ~/ 2;
+  for (var i = 0; i < 40; i++) {
+    starLine += '*';
+  }
+  for (var i = 0; i < padding; i++) {
+    padString += ' ';
+  }
   print(starLine);
   print(padString + text + padString);
   print(starLine);

@@ -1,18 +1,32 @@
+// Copyright 2019 Sarbagya Dhaubanjar. All rights reserved.
+// Use of this source code is governed by a MIT license that can be
+// found in the LICENSE file.
+
 import 'nepali_date_time.dart';
 import 'nepali_unicode.dart';
 
+/// NepaliMoment describes the moment in Nepali locale.
+///
+/// Generates a fuzzy timestamp using dates provided.
 class NepaliMoment {
-  static String fromBS(NepaliDateTime date, {NepaliDateTime referenceDate}) {
-    return _calc(date, referenceDate ?? NepaliDateTime.now());
-  }
+  /// Converts the difference between [date] and [referenceDate] in [NepaliDateTime] into moment string.
+  ///
+  /// If [referenceDate] is null, the difference between [date] and the current date is
+  /// converted into moment.
+  static String fromBS(NepaliDateTime date, {NepaliDateTime referenceDate}) =>
+      _calc(date, referenceDate ?? NepaliDateTime.now());
 
+  /// Converts the difference between [date] and [referenceDate] in [DateTime] into moment string.
+  ///
+  /// If [referenceDate] is null, the difference between [date] and the current date is
+  /// converted into moment.
   static String fromAD(DateTime date, {DateTime referenceDate}) =>
       _calc(date, referenceDate ?? DateTime.now());
 
   static String _calc(date, referenceDate) {
     Duration elapsedDuration = referenceDate.difference(date);
-    int elapsed = elapsedDuration.inMilliseconds;
-    bool isFuture = elapsed.isNegative;
+    var elapsed = elapsedDuration.inMilliseconds;
+    var isFuture = elapsed.isNegative;
     final num seconds = elapsed.abs() / 1000;
     final num minutes = seconds / 60;
     final num hours = minutes / 60;

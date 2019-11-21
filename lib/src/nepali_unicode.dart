@@ -1,12 +1,22 @@
+// Copyright 2019 Sarbagya Dhaubanjar. All rights reserved.
+// Use of this source code is governed by a MIT license that can be
+// found in the LICENSE file.
+
+/// Converts English literal (Roman Literals) into Nepali Unicode.
 class NepaliUnicode {
   static String _text;
 
+  /// Converts sepecifies [text] into nepali literals.
+  ///
+  /// if live is true, texts will convert in live manner.
+  /// i.e. as you go on typing
+  /// Default for live is false.
   static String convert(String text, {bool live = false}) {
     if (live) {
       return _unicode(text);
     }
     _text = '';
-    for (int index = 0; index < text.length; index++) {
+    for (var index = 0; index < text.length; index++) {
       if (index == 0) {
         _text = _unicode(text[0]);
       } else {

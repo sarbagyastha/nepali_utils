@@ -1,3 +1,7 @@
+# 2.1.0
+* **[Imrpvement]** Code refactor.
+* Added dart docs.
+
 # 2.0.0+4
 * **FIXED** Issue with comma formatting in `NepaliNumberFormat`.
 
@@ -12,7 +16,7 @@
 * **FEATURE** The package now supports from 2000 B.S. upto 2099 B.S. 
 * Preconfigured constructors are added for quick formatting in NepaliDateFormat class.
   
-See ReadMe section to about using newer APIs.
+See ReadMe section to know about using newer APIs.
 
 ## 1.1.0+2
 * **ADDED** `NepaliMoment` class.
