@@ -1,6 +1,7 @@
 # 2.1.0
-* **[Imrpvement]** Code refactor.
+* **[Improvement]** Code refactor.
 * Added dart docs.
+* Methods in *NepaliNumberFormat* are now generic and supports types `String` and `num`.
 
 # 2.0.0+4
 * **FIXED** Issue with comma formatting in `NepaliNumberFormat`.
