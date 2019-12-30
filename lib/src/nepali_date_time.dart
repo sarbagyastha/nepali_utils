@@ -43,6 +43,9 @@ class NepaliDateTime {
   static List<List<int>> _nepaliMonths;
   static List<int> _englishMonths, _englishLeapMonths;
 
+  /// Returns total days in a month.
+  int get totalDays => _nepaliMonths[year % 2000][month - 1];
+
   /// The day of the week sunday..saturday.
   int get weekDay {
     //ReferencenepaliDateTime 2000/1/1 Wednesday

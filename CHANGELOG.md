@@ -1,3 +1,6 @@
+# 2.1.0+1
+* Added `totalDays` getter for *NepaliDateTime* class.
+
 # 2.1.0
 * **[Improvement]** Code refactor.
 * Added dart docs.

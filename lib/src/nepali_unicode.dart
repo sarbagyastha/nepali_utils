@@ -194,7 +194,7 @@ class NepaliUnicode {
     return _text;
   }
 
-  static _replace(x, y) {
+  static void _replace(x, y) {
     _text = _text.replaceAll(
       x,
       String.fromCharCodes(
@@ -203,7 +203,7 @@ class NepaliUnicode {
     );
   }
 
-  static _replaceRunes(x, y) {
+  static void _replaceRunes(x, y) {
     _text = _text.replaceAll(
       String.fromCharCodes(Runes(x)),
       String.fromCharCodes(
