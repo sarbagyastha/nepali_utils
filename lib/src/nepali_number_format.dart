@@ -25,7 +25,7 @@ class NepaliNumberFormat {
 
   /// Specifies the number of decimal places to include in formatted number.
   ///
-  /// Default is 0.
+  /// Default is 0 for integer input, 2 for other data types.
   final int decimalDigits;
 
   /// Specifies the symbol to use in monetary value.
@@ -47,7 +47,7 @@ class NepaliNumberFormat {
     this.inWords = false,
     this.language = Language.english,
     this.isMonetory = false,
-    this.decimalDigits = 0,
+    this.decimalDigits,
     this.symbol,
     this.symbolOnLeft = true,
     this.spaceBetweenAmountandSymbol = true,
@@ -174,32 +174,43 @@ class NepaliNumberFormat {
   }
 
   String _formatWithComma<T extends Object>(T number) {
-    String _number, _fractionalPart = '';
+    var _decimalDigits = decimalDigits;
+    var _number = '', _fractionalPart = '';
     if (number is String) {
+      _decimalDigits ??= 2;
       _number = number;
-    } else if (number is num) {
+    } else if (number is int) {
+      _decimalDigits ??= 0;
+      _number = '$number';
+    } else if (number is double) {
+      _decimalDigits ??= 2;
       _number = '$number';
     } else {
-      throw Exception('number should be either "String" or "num"');
+      throw ArgumentError('number should be either "String" or "num"');
     }
 
-    var fractionMatches = RegExp(r'\d.\d*').allMatches(_number);
-    _number = fractionMatches.elementAt(0).group(0);
-    if (fractionMatches.length == 2) {
-      _fractionalPart = fractionMatches.elementAt(1).group(0);
+    var fractionMatches = RegExp(r'^(\d*)\.?(\d*)$').allMatches(_number);
+    if (fractionMatches.isNotEmpty) {
+      _number = fractionMatches.first.group(1);
+      _fractionalPart = fractionMatches.first.group(2);
+    } else {
+      throw Exception('Inexpected input: $number');
     }
-    if (_fractionalPart.isNotEmpty) {
-      _fractionalPart =
-          _fractionalPart.padRight(decimalDigits).substring(0, decimalDigits);
-      _fractionalPart =
-          _isEnglish ? _fractionalPart : NepaliUnicode.convert(_fractionalPart);
+
+    _fractionalPart = _fractionalPart
+        .padRight(_decimalDigits, '0')
+        .substring(0, _decimalDigits);
+    _fractionalPart =
+        _isEnglish ? _fractionalPart : NepaliUnicode.convert(_fractionalPart);
+    if (_decimalDigits > 0) {
       _fractionalPart = '.$_fractionalPart';
     }
 
     if (_number.length <= 3) {
-      return _isEnglish ? _number : NepaliUnicode.convert(_number);
+      return '${_isEnglish ? _number : NepaliUnicode.convert(_number)}$_fractionalPart';
     } else if (_number.length < 5) {
-      return '${_number[0]},${_number.substring(1)}';
+      var localizedNum = _isEnglish ? _number : NepaliUnicode.convert(_number);
+      return '${localizedNum[0]},${localizedNum.substring(1)}$_fractionalPart';
     } else {
       var paddedNumber = _number.length.isOdd ? _number : '0$_number';
       var formattedString = '';

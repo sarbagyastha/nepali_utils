@@ -58,6 +58,9 @@ void main(List<String> arguments) {
     decimalDigits: 2,
   );
   print('123456 -> ${currencyFormat.format<int>(123456)}');
+  print('57.0 -> ${commaSeparated.format<double>(57.0)}');
+  print('100.0 -> ${commaSeparated.format<String>('100.0')}');
+  print('9999.0 -> ${commaSeparated.format<String>('9999.0')}');
   print('123456789.6548 -> ${commaSeparated.format<double>(123456789.6548)}');
   print('123456 -> ${inWords.format<String>('123456')}');
   print('123456789.6548 -> ${currencyInWords.format<num>(123456789.6548)}');
