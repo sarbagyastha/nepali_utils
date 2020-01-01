@@ -8,7 +8,7 @@ void main(List<String> arguments) {
   heading('Nepali Date Time');
   var gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
   print(
-      'Gorkha Earquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}');
+      'Gorkha Earthquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}');
   print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
   print(gorkhaEarthQuake.mergeTime(10, 20, 30));
 
@@ -26,9 +26,9 @@ void main(List<String> arguments) {
   var date3 = NepaliDateFormat.jms();
   var date4 = NepaliDateFormat("yyyy.MM.dd G 'at' HH:mm:ss");
   var date5 = NepaliDateFormat("EEE, MMM d, ''yy");
-  var date6 = NepaliDateFormat("h:mm a");
+  var date6 = NepaliDateFormat('h:mm a');
   var date7 = NepaliDateFormat("hh 'o''clock' aa");
-  var date8 = NepaliDateFormat("yyyy.MMMM.dd GGG hh:mm a");
+  var date8 = NepaliDateFormat('yyyy.MMMM.dd GGG hh:mm a');
   print(date1.format(gorkhaEarthQuake));
   print(date2.format(gorkhaEarthQuake));
   print(date3.format(gorkhaEarthQuake));
@@ -68,7 +68,7 @@ void main(List<String> arguments) {
         "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"),
   );
   print(
-    NepaliUnicode.convert("saarwabhauma bhai failiekaa, mecii-mahaakaalii\n"),
+    NepaliUnicode.convert('saarwabhauma bhai failiekaa, mecii-mahaakaalii\n'),
   );
 
   heading('Nepali Moment');

@@ -60,3 +60,4 @@ linter:
     - avoid_positional_boolean_parameters # avoid
     - hash_and_equals
     - avoid_null_checks_in_equality_operators
+    - prefer_single_quotes

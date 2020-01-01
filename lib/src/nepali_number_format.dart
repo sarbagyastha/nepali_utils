@@ -174,7 +174,7 @@ class NepaliNumberFormat {
   }
 
   String _formatWithComma<T extends Object>(T number) {
-    String _number, _fractionalPart;
+    String _number, _fractionalPart = '';
     if (number is String) {
       _number = number;
     } else if (number is num) {
@@ -188,9 +188,16 @@ class NepaliNumberFormat {
     if (fractionMatches.length == 2) {
       _fractionalPart = fractionMatches.elementAt(1).group(0);
     }
+    if (_fractionalPart.isNotEmpty) {
+      _fractionalPart =
+          _fractionalPart.padRight(decimalDigits).substring(0, decimalDigits);
+      _fractionalPart =
+          _isEnglish ? _fractionalPart : NepaliUnicode.convert(_fractionalPart);
+      _fractionalPart = '.$_fractionalPart';
+    }
 
     if (_number.length <= 3) {
-      return _number;
+      return _isEnglish ? _number : NepaliUnicode.convert(_number);
     } else if (_number.length < 5) {
       return '${_number[0]},${_number.substring(1)}';
     } else {
@@ -210,7 +217,10 @@ class NepaliNumberFormat {
       formattedString = formattedString[0] == '0'
           ? formattedString.substring(1)
           : formattedString;
-      return '$formattedString${_fractionalPart == null ? '' : '.$_fractionalPart'}';
+      formattedString =
+          _isEnglish ? formattedString : NepaliUnicode.convert(formattedString);
+
+      return '$formattedString$_fractionalPart';
     }
   }
 }

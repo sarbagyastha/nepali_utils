@@ -22,9 +22,9 @@ void main(List<String> arguments) {
   heading('Nepali Date Formatter');
   var date1 = NepaliDateFormat("yyyy.MM.dd G 'at' HH:mm:ss");
   var date2 = NepaliDateFormat("EEE, MMM d, ''yy");
-  var date3 = NepaliDateFormat("h:mm a");
+  var date3 = NepaliDateFormat('h:mm a');
   var date4 = NepaliDateFormat("hh 'o''clock' aa");
-  var date5 = NepaliDateFormat("yyyy.MMMM.dd GGG hh:mm a");
+  var date5 = NepaliDateFormat('yyyy.MMMM.dd GGG hh:mm a');
   print(date1.format(gorkhaEarthQuake));
   print(date2.format(gorkhaEarthQuake));
   print(date3.format(gorkhaEarthQuake));
@@ -56,7 +56,7 @@ void main(List<String> arguments) {
   print(NepaliUnicode.convert(
       "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"));
   print(NepaliUnicode.convert(
-      "saarwabhauma bhai failiekaa, mecii-mahaakaalii\n"));
+      'saarwabhauma bhai failiekaa, mecii-mahaakaalii\n'));
 }
 
 void heading(String text) {

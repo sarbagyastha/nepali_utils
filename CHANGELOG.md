@@ -1,3 +1,6 @@
+# 2.1.0+2
+* Fixes in *NepaliNumberFormat*.
+
 # 2.1.0+1
 * Added `totalDays` getter for *NepaliDateTime* class.
 
