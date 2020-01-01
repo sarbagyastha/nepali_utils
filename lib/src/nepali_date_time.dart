@@ -239,6 +239,7 @@ class NepaliDateTime {
   ///
   ///The resulting string can be parsed back using [parse].
   ///
+  @override
   String toString() {
     var y = _fourDigits(year);
     var m = _twoDigits(month);
@@ -424,7 +425,7 @@ class NepaliDateTime {
   bool _isLeapYear(int year) =>
       (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
 
-  static _initializeLists() {
+  static void _initializeLists() {
     _englishMonths ??= [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     _englishLeapMonths ??= [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     _nepaliMonths ??= [

@@ -40,6 +40,7 @@ linter:
     - unnecessary_const
     - avoid_catches_without_on_clauses # avoid
     - use_rethrow_when_possible
+    - annotate_overrides
 
     # DESIGN
     - use_to_and_as_if_applicable # prefer

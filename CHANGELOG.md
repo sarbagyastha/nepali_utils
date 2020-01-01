@@ -1,5 +1,6 @@
-# 2.1.0+2
+# 2.1.0+3
 * Fixes in *NepaliNumberFormat*.
+* Fixed lint warning.
 
 # 2.1.0+1
 * Added `totalDays` getter for *NepaliDateTime* class.
