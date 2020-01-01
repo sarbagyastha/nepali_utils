@@ -227,7 +227,7 @@ Also show some love by staring the repo :star:, if you like the package.
 
 ## License
 ```
-Copyright (c) 2019 Sarbagya Dhaubanjar
+Copyright (c) 2020 Sarbagya Dhaubanjar
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
