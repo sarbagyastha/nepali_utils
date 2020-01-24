@@ -2,6 +2,59 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
+import 'nepali_date_format.dart';
+import 'nepali_language.dart';
+
+///
+extension ENepaliDateTime on DateTime {
+  /// Converts the [DateTime] to [NepaliDateTime].
+  NepaliDateTime toNepaliDateTime() {
+    //Setting nepali reference to 2000/1/1 with englishnepaliDateTime 1943/4/14
+    var nepaliYear = 2000;
+    var nepaliMonth = 1;
+    var nepaliDay = 1;
+
+    // Time was causing error while differencing dates.
+    var _date = DateTime(year, month, day);
+    var difference = _date.difference(DateTime(1943, 4, 14)).inDays;
+
+    // 1970-1-1 is epoch and it's duration is only 18 hours 15 minutes in dart
+    // You can test using `print(DateTime(1970,1,2).difference(DateTime(1970,1,1)))`;
+    // So, in order to compensate it one extra day is added from thisnepaliDateTime.
+    if (_date.isAfter(DateTime(1970, 1, 1))) difference++;
+
+    //Getting nepali year until the difference remains less than 365
+    var index = 0;
+    while (difference >= _nepaliYearDays(index)) {
+      nepaliYear++;
+      difference = difference - _nepaliYearDays(index);
+      index++;
+    }
+
+    //Getting nepali month until the difference remains less than 31
+    var i = 0;
+    while (difference >= _nepaliMonths[index][i]) {
+      difference = difference - _nepaliMonths[index][i];
+      nepaliMonth++;
+      i++;
+    }
+
+    //Remaning days is the actual day;
+    nepaliDay += difference;
+
+    return NepaliDateTime(
+      nepaliYear,
+      nepaliMonth,
+      nepaliDay,
+      hour,
+      minute,
+      second,
+      millisecond,
+      microsecond,
+    );
+  }
+}
+
 /// An instant in time, such as Mangsir 05, 2076, 11:05am
 class NepaliDateTime {
   /// The year.
@@ -40,43 +93,28 @@ class NepaliDateTime {
     this.microsecond = 0,
   ]);
 
-  static List<List<int>> _nepaliMonths;
-  static List<int> _englishMonths, _englishLeapMonths;
+  List<int> get _englishMonths =>
+      [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  List<int> get _englishLeapMonths =>
+      [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
   /// Returns total days in a month.
   int get totalDays => _nepaliMonths[year % 2000][month - 1];
 
-  /// The day of the week sunday..saturday.
-  int get weekDay {
-    //ReferencenepaliDateTime 2000/1/1 Wednesday
-    var difference = NepaliDateTime(year, month, day)
-        .difference(NepaliDateTime(2000, 1, 1))
-        .inDays;
-    if (NepaliDateTime(year, month, day).isAfter(NepaliDateTime(2026, 9, 17))) {
-      difference++;
-    }
-    var weekday = (3 + (difference % 7)) % 7;
-    return weekday == 0 ? 7 : weekday;
-  }
-
   /// Returns true if this occurs after other
   bool isAfter(NepaliDateTime nepaliDateTime) =>
-      NepaliDateTime(year, month, day)
-          .toDateTime()
-          .isAfter(nepaliDateTime.toDateTime());
+      toDateTime().isAfter(nepaliDateTime.toDateTime());
 
   /// Returns true if this occurs before other.
   bool isBefore(NepaliDateTime nepaliDateTime) =>
-      NepaliDateTime(year, month, day)
-          .toDateTime()
-          .isBefore(nepaliDateTime.toDateTime());
+      toDateTime().isBefore(nepaliDateTime.toDateTime());
 
   /// Merges specified time to current date.
   NepaliDateTime mergeTime(int hour, int minute, int second) =>
       NepaliDateTime(year, month, day, hour, minute, second);
 
   /// Constructs a DateTime instance with current date and time
-  factory NepaliDateTime.now() => NepaliDateTime.fromDateTime(DateTime.now());
+  factory NepaliDateTime.now() => DateTime.now().toNepaliDateTime();
 
   ///
   ///Constructs a new [DateTime] instance based on [formattedString].
@@ -160,7 +198,15 @@ class NepaliDateTime {
           milliAndMicroseconds.remainder(Duration.microsecondsPerMillisecond);
 
       return NepaliDateTime(
-          years, month, day, hour, minute, second, millisecond, microsecond);
+        years,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        millisecond,
+        microsecond,
+      );
     } else {
       throw FormatException('InvalidnepaliDateTime format', formattedString);
     }
@@ -175,32 +221,33 @@ class NepaliDateTime {
     }
   }
 
-  /// Returns a Duration with the difference between this and other.
-  Duration difference(NepaliDateTime other) {
-    var thisDate = NepaliDateTime(year, month, day).toDateTime();
-    thisDate = DateTime(
-      thisDate.year,
-      thisDate.month,
-      thisDate.day,
-      hour,
-      minute,
-      second,
-      millisecond,
-      microsecond,
-    );
+  /// Returns a [Duration] with the difference between [this] and [other].
+  Duration difference(NepaliDateTime other) =>
+      toDateTime().difference(other.toDateTime());
 
-    var otherDate = other.toDateTime();
-    otherDate = DateTime(
-      otherDate.year,
-      otherDate.month,
-      otherDate.day,
-      other.hour,
-      other.minute,
-      other.second,
-      other.millisecond,
-      other.microsecond,
-    );
-    return thisDate.difference(otherDate);
+  /// Returns a new [NepaliDateTime] instance with [Duration] added to [this].
+  NepaliDateTime add(Duration duration) =>
+      toDateTime().add(duration).toNepaliDateTime();
+
+  /// Returns a new [NepaliDateTime] instance with [Duration] substracted to [this].
+  NepaliDateTime subtract(Duration duration) =>
+      toDateTime().subtract(duration).toNepaliDateTime();
+
+  /// The number of milliseconds since the "Unix epoch" 1970-01-01T00:00:00Z (UTC).
+  int get millisecondsSinceEpoch => toDateTime().millisecondsSinceEpoch;
+
+  /// The number of microseconds since the "Unix epoch" 1970-01-01T00:00:00Z (UTC).
+  int get microsecondsSinceEpoch => toDateTime().microsecondsSinceEpoch;
+
+  /// The day of the week sunday..saturday.
+  int get weekDay {
+    //ReferencenepaliDateTime 2000/1/1 Wednesday
+    var difference = this.difference(NepaliDateTime(2000, 1, 1)).inDays;
+    if (isAfter(NepaliDateTime(2026, 9, 17))) {
+      difference++;
+    }
+    var weekday = (3 + (difference % 7)) % 7;
+    return weekday == 0 ? 7 : weekday;
   }
 
   static String _fourDigits(int n) {
@@ -292,9 +339,9 @@ class NepaliDateTime {
 
   /// Converts the specified [DateTime] to [NepaliDateTime].
   ///
-  /// Can be used to convert AD to BS.
+  /// Use [toNepaliDateTime()] exposed to [DateTime] object instead.
+  @deprecated
   factory NepaliDateTime.fromDateTime(DateTime dateTime) {
-    _initializeLists();
     //Setting nepali reference to 2000/1/1 with englishnepaliDateTime 1943/4/14
     var nepaliYear = 2000;
     var nepaliMonth = 1;
@@ -339,6 +386,12 @@ class NepaliDateTime {
       dateTime.microsecond,
     );
   }
+
+  /// Formats [NepaliDateTime] as per the pattern provided.
+  ///
+  /// For wider set of formatting, use [NepaliDateFormat].
+  String format(String pattern, [Language language]) =>
+      NepaliDateFormat(pattern, language: language).format(this);
 
   /// Converts the [NepaliDateTime] to corresponding [DateTime].
   ///
@@ -385,14 +438,6 @@ class NepaliDateTime {
     );
   }
 
-  static int _nepaliYearDays(int index) {
-    var total = 0;
-    for (var i = 0; i < 12; i++) {
-      total += _nepaliMonths[index][i];
-    }
-    return total;
-  }
-
   int _nepaliDateDifference(
       NepaliDateTime nepaliDateTime, NepaliDateTime refDate) {
     //Getting difference from the current nepaliDateTime with the nepaliDateTime provided
@@ -424,11 +469,9 @@ class NepaliDateTime {
 
   bool _isLeapYear(int year) =>
       (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
+}
 
-  static void _initializeLists() {
-    _englishMonths ??= [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    _englishLeapMonths ??= [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    _nepaliMonths ??= [
+List<List<int>> get _nepaliMonths => [
       [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], //2000
       [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
       [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
@@ -530,5 +573,11 @@ class NepaliDateTime {
       [31, 31, 32, 31, 31, 31, 29, 30, 29, 30, 29, 31],
       [31, 31, 32, 31, 31, 31, 30, 29, 29, 30, 30, 30], //2099
     ];
+
+int _nepaliYearDays(int index) {
+  var total = 0;
+  for (var i = 0; i < 12; i++) {
+    total += _nepaliMonths[index][i];
   }
+  return total;
 }

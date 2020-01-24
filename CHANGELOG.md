@@ -1,3 +1,7 @@
+# 2.1.0+5
+* `fromDateTime()` is deprecated. Use `toNepaliDateTime()` exposed to `DateTime` instead.
+* Added `add()`, `substract()`, `format()`, `millisecondSinceEpoch`, `microsecondSinceEpoch` to `NepaliDateTime`.
+
 # 2.1.0+4
 * Fixes in *NepaliNumberFormat*.
 * Fixed lint warning.

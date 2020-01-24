@@ -30,11 +30,9 @@ print(gorkhaEarthQuake.mergeTime(10, 20, 30));
 
 ### Date Conversion
 Converts dates from AD to BS and vice versa.
-**Note** Since v2.x.x DateConverter has been integrated into NepaliDateTime class.
 
 ```dart
-NepaliDateTime nt =
-      NepaliDateTime.fromDateTime(DateTime(2019, 8, 03, 14, 30, 15));
+NepaliDateTime nt = DateTime(2019, 8, 03, 14, 30, 15).toNepaliDateTime();
 print('In BS = $nt'); //2076-04-18 14:30:15.000
 DateTime dt = nt.toDateTime(); //2019-08-03 14:30:15.000
 print('In AD = $dt');

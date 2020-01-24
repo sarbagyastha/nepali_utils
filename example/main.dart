@@ -12,7 +12,7 @@ void main(List<String> arguments) {
   //print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
 
   heading('Date Converter');
-  var nt = NepaliDateTime.fromDateTime(DateTime(2019, 5, 14));
+  var nt = DateTime(2019, 5, 14).toNepaliDateTime();
   print('In BS = $nt');
   var dt = nt.toDateTime();
   print('In AD = $dt');

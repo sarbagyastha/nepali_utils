@@ -10,14 +10,14 @@ NepaliDateTime currentTime = NepaliDateTime.now();
 print(currentTime.toIso8601String()); // 2076-02-01T11:25:46.490980
 ```
 
-### Date Converter
+### Date Conversion
 Converts dates from AD to BS and vice versa.
-```dart
-NepaliDateTime nepaliDate = DateConverter.toBS(DateTime(2019, 5, 14));
-print(nepaliDate); // 2076-01-31 00:00:00.000
 
-DateTime englishDate = DateConverter.toAD(nepaliDate);
-print(englishDate); // 2019-05-14 00:00:00.000
+```dart
+NepaliDateTime nt = DateTime(2019, 8, 03, 14, 30, 15).toNepaliDateTime();
+print('In BS = $nt'); //2076-04-18 14:30:15.000
+DateTime dt = nt.toDateTime(); //2019-08-03 14:30:15.000
+print('In AD = $dt');
 ```
 
 ### Nepali Date Formatter
