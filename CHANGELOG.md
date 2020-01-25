@@ -1,3 +1,6 @@
+# 2.2.0+2
+* Improved Date Conversion Speed
+
 # 2.2.0+1
 * Added `weekday` property to NepaliDateTime.
 
