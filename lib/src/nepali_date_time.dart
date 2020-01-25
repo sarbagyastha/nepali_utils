@@ -1,9 +1,9 @@
-// Copyright 2019 Sarbagya Dhaubanjar. All rights reserved.
+// Copyright 2020 Sarbagya Dhaubanjar. All rights reserved.
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
+import 'language.dart';
 import 'nepali_date_format.dart';
-import 'nepali_language.dart';
 
 ///
 extension ENepaliDateTime on DateTime {
@@ -391,7 +391,7 @@ class NepaliDateTime {
   ///
   /// For wider set of formatting, use [NepaliDateFormat].
   String format(String pattern, [Language language]) =>
-      NepaliDateFormat(pattern, language: language).format(this);
+      NepaliDateFormat(pattern, language).format(this);
 
   /// Converts the [NepaliDateTime] to corresponding [DateTime].
   ///

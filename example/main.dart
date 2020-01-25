@@ -38,6 +38,10 @@ void main(List<String> arguments) {
   var commaSeparated = NepaliNumberFormat(
     decimalDigits: 2,
   );
+
+  // Sets default language for nepali utilities to be Nepali.
+  NepaliUtils(Language.nepali);
+
   var inWords = NepaliNumberFormat(
     inWords: true,
     language: Language.nepali,

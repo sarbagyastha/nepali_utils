@@ -45,15 +45,16 @@ void main(List<String> arguments) {
   var commaSeparated = NepaliNumberFormat(
     decimalDigits: 2,
     isMonetory: true,
-    language: Language.nepali,
   );
+
+  // Sets default language for nepali utilities to be Nepali.
+  NepaliUtils(Language.nepali);
+
   var inWords = NepaliNumberFormat(
     inWords: true,
-    language: Language.english,
   );
   var currencyInWords = NepaliNumberFormat(
     inWords: true,
-    language: Language.nepali,
     isMonetory: true,
     decimalDigits: 2,
   );

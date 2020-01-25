@@ -1,3 +1,8 @@
+# 2.2.0
+* Default language for all the utility classes can be set as `NepaliUtils(language);`.
+**Breaking Changes**
+* `language` property is now optional for utility classes.
+
 # 2.1.0+5
 * `fromDateTime()` is deprecated. Use `toNepaliDateTime()` exposed to `DateTime` instead.
 * Added `add()`, `substract()`, `format()`, `millisecondSinceEpoch`, `microsecondSinceEpoch` to `NepaliDateTime`.

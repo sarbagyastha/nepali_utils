@@ -1,9 +1,10 @@
-// Copyright 2019 Sarbagya Dhaubanjar. All rights reserved.
+// Copyright 2020 Sarbagya Dhaubanjar. All rights reserved.
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
-import 'nepali_language.dart';
+import 'language.dart';
 import 'nepali_unicode.dart';
+import 'nepali_utils.dart';
 
 /// Provides the ability to format a number in a Nepali way.
 class NepaliNumberFormat {
@@ -12,10 +13,7 @@ class NepaliNumberFormat {
   /// Default is false.
   final bool inWords;
 
-  /// Specifies the lanaguage the use in the conversion.
-  ///
-  /// Default is [Language.ENGLISH].
-  final Language language;
+  Language _lang;
 
   /// If true, formats the number as if it is monetary value.
   /// Also, [symbol] can be added while true.
@@ -45,13 +43,15 @@ class NepaliNumberFormat {
   ///Create a nepali number format.
   NepaliNumberFormat({
     this.inWords = false,
-    this.language = Language.english,
     this.isMonetory = false,
     this.decimalDigits,
     this.symbol,
     this.symbolOnLeft = true,
     this.spaceBetweenAmountandSymbol = true,
-  });
+    Language language,
+  }) {
+    _lang ??= language ?? NepaliUtils().language;
+  }
 
   /// Format number according to specified parameters and return the formatted string.
   String format<T>(T number) {
@@ -142,7 +142,7 @@ class NepaliNumberFormat {
   String _languageNumber(String number) =>
       _isEnglish ? number : NepaliUnicode.convert('$number');
 
-  bool get _isEnglish => language == Language.english;
+  bool get _isEnglish => _lang == Language.english;
 
   String _language(String word) {
     switch (word) {

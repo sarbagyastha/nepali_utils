@@ -7,7 +7,7 @@
 
 A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Number, Nepali Unicode, Nepali Moments and many more.
 
-## Package Includes
+## Utility Classes
 * **NepaliDateTime**
 * **DateConversion**
 * **NepaliDateFormat**
@@ -15,6 +15,16 @@ A pure dart package with collection of Nepali Utilities like Date converter, Dat
 * **NepaliUnicode**
 * **NepaliMoment**
 * many yet to come
+
+## Language Setup
+Default language for Nepali Utility classes can be set as:
+```dart
+void main(){
+    NepaliUtils(Language.nepali);
+}
+```
+
+This is completely optional. Default language will be English if not set.
 
 ### Nepali Date Time
 The class is similar to `dart:core`'s [DateTime]() class, except that, this works with Bikram Sambat.

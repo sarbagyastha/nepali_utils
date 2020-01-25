@@ -1,4 +1,4 @@
-// Copyright 2019 Sarbagya Dhaubanjar. All rights reserved.
+// Copyright 2020 Sarbagya Dhaubanjar. All rights reserved.
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
@@ -24,38 +24,40 @@ class NepaliMoment {
       _calc(date, referenceDate ?? DateTime.now());
 
   static String _calc(date, referenceDate) {
-    Duration elapsedDuration = referenceDate.difference(date);
-    var elapsed = elapsedDuration.inMilliseconds;
-    var isFuture = elapsed.isNegative;
-    final num seconds = elapsed.abs() / 1000;
-    final num minutes = seconds / 60;
-    final num hours = minutes / 60;
-    final num days = hours / 24;
-    final num months = days / 30;
-    final num years = days / 365;
+    final elapsedDuration = referenceDate.difference(date);
+    final elapsed = elapsedDuration.inMilliseconds;
+    final isFuture = elapsed.isNegative;
+    final seconds = elapsed.abs() / 1000;
+    final minutes = seconds / 60;
+    final hours = minutes / 60;
+    final days = hours / 24;
+    final months = days / 30;
+    final years = days / 365;
+    String _momentString;
 
     if (seconds < 45) {
-      return 'केही क्षण ${isFuture ? 'पछि' : 'पहिले'}';
+      _momentString = 'केही क्षण';
     } else if (seconds < 90) {
-      return 'एक मिनेट ${isFuture ? 'पछि' : 'पहिले'}';
+      _momentString = 'एक मिनेट';
     } else if (minutes < 45) {
-      return '${NepaliUnicode.convert('${minutes.round()}')} मिनेट ${isFuture ? 'पछि' : 'पहिले'}';
+      _momentString = '${NepaliUnicode.convert('${minutes.round()}')} मिनेट';
     } else if (minutes < 90) {
-      return 'लगभग एक घण्टा ${isFuture ? 'पछि' : 'पहिले'}';
+      _momentString = 'लगभग एक घण्टा';
     } else if (hours < 24) {
-      return '${NepaliUnicode.convert('${hours.round()}')} घण्टा ${isFuture ? 'पछि' : 'पहिले'}';
+      _momentString = '${NepaliUnicode.convert('${hours.round()}')} घण्टा';
     } else if (hours < 48) {
-      return 'एक दिन ${isFuture ? 'पछि' : 'पहिले'}';
+      _momentString = 'एक दिन';
     } else if (days < 30) {
-      return '${NepaliUnicode.convert('${days.round()}')} दिन ${isFuture ? 'पछि' : 'पहिले'}';
+      _momentString = '${NepaliUnicode.convert('${days.round()}')} दिन';
     } else if (days < 60) {
-      return 'लगभग एक महिना ${isFuture ? 'पछि' : 'पहिले'}';
+      _momentString = 'लगभग एक महिना';
     } else if (days < 365) {
-      return '${NepaliUnicode.convert('${months.round()}')} दिन ${isFuture ? 'पछि' : 'पहिले'}';
+      _momentString = '${NepaliUnicode.convert('${months.round()}')} दिन';
     } else if (years < 2) {
-      return 'लगभग एक वर्ष ${isFuture ? 'पछि' : 'पहिले'}';
+      _momentString = 'लगभग एक वर्ष';
     } else {
-      return '${NepaliUnicode.convert('${years.round()}')} वर्ष ${isFuture ? 'पछि' : 'पहिले'}';
+      _momentString = '${NepaliUnicode.convert('${years.round()}')} वर्ष';
     }
+    return _momentString += isFuture ? ' पछि' : ' पहिले';
   }
 }

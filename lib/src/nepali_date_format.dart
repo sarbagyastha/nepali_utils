@@ -1,10 +1,11 @@
-// Copyright 2019 Sarbagya Dhaubanjar. All rights reserved.
+// Copyright 2020 Sarbagya Dhaubanjar. All rights reserved.
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
+import 'language.dart';
 import 'nepali_date_time.dart';
-import 'nepali_language.dart';
 import 'nepali_unicode.dart';
+import 'nepali_utils.dart';
 
 /// NepaliDateFormat is for formatting and parsing dates in Bikram Sambat.
 class NepaliDateFormat {
@@ -16,11 +17,11 @@ class NepaliDateFormat {
 
   /// Creates a new NepaliDateFormat, with the [pattern] and [language] specified.
   NepaliDateFormat(
-    String pattern, {
+    String pattern, [
     Language language,
-  }) {
+  ]) {
     _pattern = pattern;
-    _language = language ?? Language.english;
+    _language = language ?? NepaliUtils().language;
   }
 
   /// Return a string representing [date] formatted according assigned [pattern] and [language].
@@ -375,142 +376,127 @@ class NepaliDateFormat {
   ];
 
   /// 2076-08-05 => 5
-  NepaliDateFormat.d([Language language]) : this('d', language: language);
+  NepaliDateFormat.d([Language language]) : this('d', language);
 
   /// 2076-08-05 => Thu
-  NepaliDateFormat.E([Language language]) : this('EE', language: language);
+  NepaliDateFormat.E([Language language]) : this('EE', language);
 
   /// 2076-08-05 => Thursday
-  //non_constant_identifier_names
-  NepaliDateFormat.EEEE([Language language]) : this('EEE', language: language);
+  NepaliDateFormat.EEEE([Language language]) : this('EEE', language);
 
   /// 2076-08-05 => Marga
-  NepaliDateFormat.LLL([Language language]) : this('MMM', language: language);
+  NepaliDateFormat.LLL([Language language]) : this('MMM', language);
 
   /// 2076-08-05 => Mangsir
-  NepaliDateFormat.LLLL([Language language]) : this('MMMM', language: language);
+  NepaliDateFormat.LLLL([Language language]) : this('MMMM', language);
 
   /// 2076-08-05 => 8
-  NepaliDateFormat.M([Language language]) : this('M', language: language);
+  NepaliDateFormat.M([Language language]) : this('M', language);
 
   /// 2076-08-05 => 8/15
-  NepaliDateFormat.Md([Language language]) : this('M/d', language: language);
+  NepaliDateFormat.Md([Language language]) : this('M/d', language);
 
   /// 2076-08-05 => Thu, 8/15
-  NepaliDateFormat.MEd([Language language])
-      : this('EE, M/d', language: language);
+  NepaliDateFormat.MEd([Language language]) : this('EE, M/d', language);
 
   /// 2076-08-05 => Marga
-  NepaliDateFormat.MMM([Language language]) : this('MMM', language: language);
+  NepaliDateFormat.MMM([Language language]) : this('MMM', language);
 
   /// 2076-08-05 => Marga 5
-  NepaliDateFormat.MMMd([Language language])
-      : this('MMM d', language: language);
+  NepaliDateFormat.MMMd([Language language]) : this('MMM d', language);
 
   /// 2076-08-05 => Thursday, Marga 5
-  NepaliDateFormat.MMMEd([Language language])
-      : this('EEE, MMM d', language: language);
+  NepaliDateFormat.MMMEd([Language language]) : this('EEE, MMM d', language);
 
   /// 2076-08-05 => Mangsir
-  NepaliDateFormat.MMMM([Language language]) : this('MMMM', language: language);
+  NepaliDateFormat.MMMM([Language language]) : this('MMMM', language);
 
   /// 2076-08-05 => Mangsir 5
-  NepaliDateFormat.MMMMd([Language language])
-      : this('MMMM d', language: language);
+  NepaliDateFormat.MMMMd([Language language]) : this('MMMM d', language);
 
   /// 2076-08-05 => Thursday, Mangsir 5
   NepaliDateFormat.MMMMEEEEd([Language language])
-      : this('EEE, MMMM d', language: language);
+      : this('EEE, MMMM d', language);
 
   /// 2076-08-05 => Q3
-  NepaliDateFormat.QQQ([Language language]) : this('QQQ', language: language);
+  NepaliDateFormat.QQQ([Language language]) : this('QQQ', language);
 
   /// 2076-08-05 => 3rd quarter
-  NepaliDateFormat.QQQQ([Language language]) : this('QQQQ', language: language);
+  NepaliDateFormat.QQQQ([Language language]) : this('QQQQ', language);
 
   /// 2076-08-05 => 2076
-  NepaliDateFormat.y([Language language]) : this('y', language: language);
+  NepaliDateFormat.y([Language language]) : this('y', language);
 
   /// 2076-08-05 => 2076/08
-  NepaliDateFormat.yM([Language language]) : this('y/MM', language: language);
+  NepaliDateFormat.yM([Language language]) : this('y/MM', language);
 
   /// 2076-08-05 => 2076/08/05
-  NepaliDateFormat.yMd([Language language])
-      : this('y/MM/dd', language: language);
+  NepaliDateFormat.yMd([Language language]) : this('y/MM/dd', language);
 
   /// 2076-08-05 => Thu, 2076/08/05
-  NepaliDateFormat.yMEd([Language language])
-      : this('EE, y/MM/dd', language: language);
+  NepaliDateFormat.yMEd([Language language]) : this('EE, y/MM/dd', language);
 
   /// 2076-08-05 => Marga 2076
-  NepaliDateFormat.yMMM([Language language])
-      : this('MMM y', language: language);
+  NepaliDateFormat.yMMM([Language language]) : this('MMM y', language);
 
   /// 2076-08-05 => Marga 5,2076
-  NepaliDateFormat.yMMMd([Language language])
-      : this('MMM d, y', language: language);
+  NepaliDateFormat.yMMMd([Language language]) : this('MMM d, y', language);
 
   /// 2076-08-05 => Thu, Marga 5,2076
-  NepaliDateFormat.yMMMEd([Language language])
-      : this('EE, MMM d, y', language: language);
+  NepaliDateFormat.yMMMEd([Language language]) : this('EE, MMM d, y', language);
 
   /// 2076-08-05 => Mangsir 2076
-  NepaliDateFormat.yMMMM([Language language])
-      : this('MMMM y', language: language);
+  NepaliDateFormat.yMMMM([Language language]) : this('MMMM y', language);
 
   /// 2076-08-05 => Mangsir 5,2076
-  NepaliDateFormat.yMMMMd([Language language])
-      : this('MMMM d, y', language: language);
+  NepaliDateFormat.yMMMMd([Language language]) : this('MMMM d, y', language);
 
   /// 2076-08-05 => Thursday, Mangsir 5, 2076
   NepaliDateFormat.yMMMMEEEEd([Language language])
-      : this('EEE, MMMM d, y', language: language);
+      : this('EEE, MMMM d, y', language);
 
   /// 2076-08-05 => Q3 2076
-  NepaliDateFormat.yQQQ([Language language])
-      : this('QQQ y', language: language);
+  NepaliDateFormat.yQQQ([Language language]) : this('QQQ y', language);
 
   /// 2076-08-05 => 3rd quarter 2076
-  NepaliDateFormat.yQQQQ([Language language])
-      : this('QQQQ y', language: language);
+  NepaliDateFormat.yQQQQ([Language language]) : this('QQQQ y', language);
 
   /// 2076-08-05T21:04:25 => 21
-  NepaliDateFormat.H([Language language]) : this('H', language: language);
+  NepaliDateFormat.H([Language language]) : this('H', language);
 
   /// 2076-08-05T21:04:25 => 21:04
-  NepaliDateFormat.Hm([Language language]) : this('HH:MM', language: language);
+  NepaliDateFormat.Hm([Language language]) : this('HH:MM', language);
 
   /// 2076-08-05T21:04:25 => 21:04:25
-  NepaliDateFormat.Hms([Language language])
-      : this('HH:mm:ss', language: language);
+  NepaliDateFormat.Hms([Language language]) : this('HH:mm:ss', language);
 
   /// 2076-08-05T21:04:25 => p PM
   NepaliDateFormat.j([Language language])
       : this(
           language == Language.nepali ? 'aa h' : 'h aa',
-          language: language,
+          language,
         );
 
   /// 2076-08-05T21:04:25 => 9:04 PM
   NepaliDateFormat.jm([Language language])
       : this(
           language == Language.nepali ? 'aa h:mm' : 'h:mm aa',
-          language: language,
+          language,
         );
 
   /// 2076-08-05T21:04:25 => 9:04:25 PM
   NepaliDateFormat.jms([Language language])
       : this(
           language == Language.nepali ? 'aa h:mm:ss' : 'h:mm:ss aa',
-          language: language,
+          language,
         );
 
   /// 2076-08-05T21:04:25 => 9
-  NepaliDateFormat.m([Language language]) : this('h', language: language);
+  NepaliDateFormat.m([Language language]) : this('h', language);
 
   /// 2076-08-05T21:04:25 => 9:04
-  NepaliDateFormat.ms([Language language]) : this('hh:mm', language: language);
+  NepaliDateFormat.ms([Language language]) : this('hh:mm', language);
 
   /// 2076-08-05T21:04:25 => 25
-  NepaliDateFormat.s([Language language]) : this('s', language: language);
+  NepaliDateFormat.s([Language language]) : this('s', language);
 }
