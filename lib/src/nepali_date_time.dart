@@ -101,6 +101,9 @@ class NepaliDateTime {
   /// Returns total days in a month.
   int get totalDays => _nepaliMonths[year % 2000][month - 1];
 
+  /// The day of the week [sunday]..[saturday].
+  int get weekDay => toDateTime().weekday % 7 + 1;
+
   /// Returns true if this occurs after other
   bool isAfter(NepaliDateTime nepaliDateTime) =>
       toDateTime().isAfter(nepaliDateTime.toDateTime());
@@ -239,17 +242,6 @@ class NepaliDateTime {
   /// The number of microseconds since the "Unix epoch" 1970-01-01T00:00:00Z (UTC).
   int get microsecondsSinceEpoch => toDateTime().microsecondsSinceEpoch;
 
-  /// The day of the week sunday..saturday.
-  int get weekDay {
-    //ReferencenepaliDateTime 2000/1/1 Wednesday
-    var difference = this.difference(NepaliDateTime(2000, 1, 1)).inDays;
-    if (isAfter(NepaliDateTime(2026, 9, 17))) {
-      difference++;
-    }
-    var weekday = (3 + (difference % 7)) % 7;
-    return weekday == 0 ? 7 : weekday;
-  }
-
   static String _fourDigits(int n) {
     var absN = n.abs();
     var sign = n < 0 ? '-' : '';
@@ -341,51 +333,8 @@ class NepaliDateTime {
   ///
   /// Use [toNepaliDateTime()] exposed to [DateTime] object instead.
   @deprecated
-  factory NepaliDateTime.fromDateTime(DateTime dateTime) {
-    //Setting nepali reference to 2000/1/1 with englishnepaliDateTime 1943/4/14
-    var nepaliYear = 2000;
-    var nepaliMonth = 1;
-    var nepaliDay = 1;
-
-    // Time was causing error while differencing dates.
-    var _date = DateTime(dateTime.year, dateTime.month, dateTime.day);
-    var difference = _date.difference(DateTime(1943, 4, 14)).inDays;
-
-    // 1970-1-1 is epoch and it's duration is only 18 hours 15 minutes in dart
-    // You can test using `print(DateTime(1970,1,2).difference(DateTime(1970,1,1)))`;
-    // So, in order to compensate it one extra day is added from thisnepaliDateTime.
-    if (_date.isAfter(DateTime(1970, 1, 1))) difference++;
-
-    //Getting nepali year until the difference remains less than 365
-    var index = 0;
-    while (difference >= _nepaliYearDays(index)) {
-      nepaliYear++;
-      difference = difference - _nepaliYearDays(index);
-      index++;
-    }
-
-    //Getting nepali month until the difference remains less than 31
-    var i = 0;
-    while (difference >= _nepaliMonths[index][i]) {
-      difference = difference - _nepaliMonths[index][i];
-      nepaliMonth++;
-      i++;
-    }
-
-    //Remaning days is the actual day;
-    nepaliDay += difference;
-
-    return NepaliDateTime(
-      nepaliYear,
-      nepaliMonth,
-      nepaliDay,
-      dateTime.hour,
-      dateTime.minute,
-      dateTime.second,
-      dateTime.millisecond,
-      dateTime.microsecond,
-    );
-  }
+  factory NepaliDateTime.fromDateTime(DateTime dateTime) =>
+      dateTime.toNepaliDateTime();
 
   /// Formats [NepaliDateTime] as per the pattern provided.
   ///

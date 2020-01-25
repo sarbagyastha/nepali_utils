@@ -1,3 +1,6 @@
+# 2.2.0+1
+* Added `weekday` property to NepaliDateTime.
+
 # 2.2.0
 * Default language for all the utility classes can be set as `NepaliUtils(language);`.
 **Breaking Changes**
