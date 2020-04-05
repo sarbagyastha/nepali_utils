@@ -102,7 +102,7 @@ class NepaliDateTime {
   int get totalDays => _nepaliMonths[year % 2000][month - 1];
 
   /// The day of the week [sunday]..[saturday].
-  int get weekDay => toDateTime().weekday % 7 + 1;
+  int get weekday => toDateTime().weekday % 7 + 1;
 
   /// Returns true if this occurs after other
   bool isAfter(NepaliDateTime nepaliDateTime) =>
