@@ -8,7 +8,7 @@ void main(List<String> arguments) {
   heading('Nepali Date Time');
   var gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
   print(
-      'Gorkha Earthquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}\nWeekDay = ${gorkhaEarthQuake.weekDay}');
+      'Gorkha Earthquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}\nWeekDay = ${gorkhaEarthQuake.weekday}');
   print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
   print('\nMerged NepaliDateTime = ${gorkhaEarthQuake.mergeTime(10, 20, 30)}');
 

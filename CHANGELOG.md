@@ -1,8 +1,11 @@
+# 2.2.1
+* Renamed `weekDay` to `weekday`.
+
 # 2.2.0+2
 * Improved Date Conversion Speed
 
 # 2.2.0+1
-* Added `weekday` property to NepaliDateTime.
+* Added `weekDay` property to NepaliDateTime.
 
 # 2.2.0
 * Default language for all the utility classes can be set as `NepaliUtils(language);`.

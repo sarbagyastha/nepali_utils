@@ -149,17 +149,17 @@ class NepaliDateFormat {
         _replacer(match, _prependZero(date.day));
         break;
       case 'E':
-        _replacer(match, _weekDayString(date.weekDay, short: true));
+        _replacer(match, _weekDayString(date.weekday, short: true));
         break;
       case 'EE':
         _replacer(
             match,
             _isEnglish
-                ? _weekDayString(date.weekDay).substring(0, 3)
-                : _weekDayString(date.weekDay).replaceFirst('बार', ''));
+                ? _weekDayString(date.weekday).substring(0, 3)
+                : _weekDayString(date.weekday).replaceFirst('बार', ''));
         break;
       case 'EEE':
-        _replacer(match, _weekDayString(date.weekDay));
+        _replacer(match, _weekDayString(date.weekday));
         break;
       case 'a':
         _replacer(
