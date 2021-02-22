@@ -65,6 +65,9 @@ void main(List<String> arguments) {
   print('123456789.6548 -> ${commaSeparated.format<double>(123456789.6548)}');
   print('123456 -> ${inWords.format<String>('123456')}');
   print('123456789.6548 -> ${currencyInWords.format<num>(123456789.6548)}');
+  print(
+    '123.00 -> ${NepaliNumberFormat(decimalDigits: 2, includeDecimalIfZero: false).format(123.001)}',
+  );
 
   heading('Nepali Unicode');
   print(

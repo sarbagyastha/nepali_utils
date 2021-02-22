@@ -4,9 +4,9 @@
 
 /// Converts English literal (Roman Literals) into Nepali Unicode.
 class NepaliUnicode {
-  static String _text;
+  static String _text = '';
 
-  /// Converts sepecifies [text] into nepali literals.
+  /// Converts specifies [text] into nepali literals.
   ///
   /// if live is true, texts will convert in live manner.
   /// i.e. as you go on typing
@@ -195,20 +195,13 @@ class NepaliUnicode {
   }
 
   static void _replace(x, y) {
-    _text = _text.replaceAll(
-      x,
-      String.fromCharCodes(
-        Runes(y),
-      ),
-    );
+    _text = _text.replaceAll(x, String.fromCharCodes(Runes(y)));
   }
 
   static void _replaceRunes(x, y) {
     _text = _text.replaceAll(
       String.fromCharCodes(Runes(x)),
-      String.fromCharCodes(
-        Runes(y),
-      ),
+      String.fromCharCodes(Runes(y)),
     );
   }
 }

@@ -209,6 +209,10 @@ class NepaliNumberFormat {
     _fractionalPart = _fractionalPart
         .padRight(_decimalDigits, '0')
         .substring(0, _decimalDigits);
+
+    final hideDecimal =
+        !includeDecimalIfZero && RegExp(r'^0+$').hasMatch(_fractionalPart);
+
     _fractionalPart =
         _isEnglish ? _fractionalPart : NepaliUnicode.convert(_fractionalPart);
     if (_decimalDigits > 0) {
@@ -216,9 +220,15 @@ class NepaliNumberFormat {
     }
 
     if (_number.length <= 3) {
+      if (hideDecimal) {
+        return '${_isEnglish ? _number : NepaliUnicode.convert(_number)}';
+      }
       return '${_isEnglish ? _number : NepaliUnicode.convert(_number)}$_fractionalPart';
     } else if (_number.length < 5) {
       var localizedNum = _isEnglish ? _number : NepaliUnicode.convert(_number);
+      if (hideDecimal) {
+        return '${localizedNum[0]},${localizedNum.substring(1)}';
+      }
       return '${localizedNum[0]},${localizedNum.substring(1)}$_fractionalPart';
     } else {
       var paddedNumber = _number.length.isOdd ? _number : '0$_number';
@@ -240,10 +250,7 @@ class NepaliNumberFormat {
       formattedString =
           _isEnglish ? formattedString : NepaliUnicode.convert(formattedString);
 
-      if (!includeDecimalIfZero && RegExp(r'^0+$').hasMatch(_fractionalPart)) {
-        return formattedString;
-      }
-
+      if (hideDecimal) return formattedString;
       return '$formattedString$_fractionalPart';
     }
   }

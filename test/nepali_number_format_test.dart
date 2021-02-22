@@ -86,7 +86,7 @@ void main() {
         NepaliNumberFormat(
           isMonetory: true,
           symbol: 'Rs.',
-          spaceBetweenAmountandSymbol: false,
+          spaceBetweenAmountAndSymbol: false,
         ).format(123456),
         'Rs.1,23,456',
       );
