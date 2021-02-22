@@ -6,7 +6,7 @@ import '../nepali_utils.dart';
 
 /// Nepali Utilities
 class NepaliUtils {
-  static NepaliUtils _instance;
+  static NepaliUtils? _instance;
 
   /// Language for Nepali Utilities.
   ///
@@ -18,9 +18,9 @@ class NepaliUtils {
   /// Nepali Utilities
   ///
   /// Default language for nepali utilities can be set using [lang].
-  factory NepaliUtils([Language lang]) {
+  factory NepaliUtils([Language? lang]) {
     _instance ??= NepaliUtils._();
-    if (lang != null) _instance.language = lang;
-    return _instance;
+    if (lang != null) _instance!.language = lang;
+    return _instance!;
   }
 }

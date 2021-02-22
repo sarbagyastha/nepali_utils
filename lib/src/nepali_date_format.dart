@@ -9,48 +9,50 @@ import 'nepali_utils.dart';
 
 /// NepaliDateFormat is for formatting and parsing dates in Bikram Sambat.
 class NepaliDateFormat {
-  Language _language;
-  String _pattern;
-  String _checkPattern;
+  final Language _language;
+  late String _pattern;
+  String _checkPattern = '';
   bool _firstRun = true;
   int _index = 0;
 
   /// Creates a new NepaliDateFormat, with the [pattern] and [language] specified.
   NepaliDateFormat(
     String pattern, [
-    Language language,
-  ]) {
+    Language? language,
+  ]) : _language = language ?? NepaliUtils().language {
     _pattern = pattern;
-    _language = language ?? NepaliUtils().language;
   }
 
-  /// Return a string representing [date] formatted according assigned [pattern] and [language].
+  /// Return a string representing [date] formatted according to assigned [pattern] and [language].
   String format(NepaliDateTime date) {
     if (_firstRun) {
       _checkPattern = _pattern;
       _firstRun = false;
     }
     for (var i = 0; i < _matchers.length; i++) {
-      var regex = _matchers[i];
-      Match match = regex.firstMatch(_checkPattern);
-      if (_checkPattern.isEmpty) {
-        return _pattern;
-      }
+      final regex = _matchers[i];
+      final match = regex.firstMatch(_checkPattern);
+
+      if (_checkPattern.isEmpty) return _pattern;
+
       if (match != null) {
-        _checkPattern = _checkPattern.substring(match.group(0).length);
-        switch (i) {
-          case 0:
-            _trim(match.group(0));
-            format(date);
-            break;
-          case 1:
-            _format(match.group(0), date);
-            format(date);
-            break;
-          case 2:
-            _index += match.group(0).length;
-            format(date);
-            break;
+        final matchedString = match.group(0);
+        if (matchedString != null) {
+          _checkPattern = _checkPattern.substring(matchedString.length);
+          switch (i) {
+            case 0:
+              _trim(matchedString);
+              format(date);
+              break;
+            case 1:
+              _format(matchedString, date);
+              format(date);
+              break;
+            case 2:
+              _index += matchedString.length;
+              format(date);
+              break;
+          }
         }
       }
     }
@@ -165,28 +167,36 @@ class NepaliDateFormat {
         _replacer(
           match,
           _isEnglish
-              ? date.hour >= 12 ? 'pm' : 'am'
+              ? date.hour >= 12
+                  ? 'pm'
+                  : 'am'
               : date.hour < 12
                   ? 'बिहान'
                   : date.hour == 12
                       ? 'मध्यान्न'
                       : date.hour < 16
                           ? 'दिउसो'
-                          : date.hour < 20 ? 'साँझ' : 'बेलुकी',
+                          : date.hour < 20
+                              ? 'साँझ'
+                              : 'बेलुकी',
         );
         break;
       case 'aa':
         _replacer(
           match,
           _isEnglish
-              ? date.hour >= 12 ? 'PM' : 'AM'
+              ? date.hour >= 12
+                  ? 'PM'
+                  : 'AM'
               : date.hour < 12
                   ? 'बिहान'
                   : date.hour == 12
                       ? 'मध्यान्न'
                       : date.hour < 16
                           ? 'दिउसो'
-                          : date.hour < 20 ? 'साँझ' : 'बेलुकी',
+                          : date.hour < 20
+                              ? 'साँझ'
+                              : 'बेलुकी',
         );
         break;
       case 'h':
@@ -256,16 +266,16 @@ class NepaliDateFormat {
   }
 
   String _threeDigitMaker(int number) {
-    var numString = number.toString();
+    final numString = number.toString();
     if (numString.length == 1) {
       return _isEnglish
           ? '00$numString'
-          : '००${NepaliUnicode.convert('$number')}';
+          : '००${NepaliUnicode.convert(numString)}';
     }
     if (numString.length == 2) {
       return _isEnglish
           ? '0$numString'
-          : '०${NepaliUnicode.convert('$number')}';
+          : '०${NepaliUnicode.convert(numString)}';
     }
     return _isEnglish
         ? numString.substring(0, 3)
@@ -281,16 +291,21 @@ class NepaliDateFormat {
       return _isEnglish ? '12' : '१२';
     } else {
       return _isEnglish
-          ? prependZero ? _prependZero(hour) : '$hour'
+          ? prependZero
+              ? _prependZero(hour)
+              : '$hour'
           : prependZero
               ? _prependZero(hour)
               : '${NepaliUnicode.convert('$hour')}';
     }
   }
 
-  String _prependZero(int number) => number < 10
-      ? _isEnglish ? '0$number' : '०${NepaliUnicode.convert('$number')}'
-      : _isEnglish ? '$number' : NepaliUnicode.convert('$number');
+  String _prependZero(int number) {
+    if (number < 10) {
+      return _isEnglish ? '0$number' : '०${NepaliUnicode.convert('$number')}';
+    }
+    return _isEnglish ? '$number' : NepaliUnicode.convert('$number');
+  }
 
   void _replacer(String match, String replaceWith) {
     _pattern = _pattern.replaceFirst(match, replaceWith, _index);
@@ -298,66 +313,82 @@ class NepaliDateFormat {
   }
 
   String _weekDayString(int day, {bool short = false}) {
-    switch (day) {
-      case 1:
-        return _isEnglish ? short ? 'S' : 'Sunday' : short ? 'आ' : 'आइतबार';
-      case 2:
-        return _isEnglish ? short ? 'M' : 'Monday' : short ? 'सो' : 'सोमबार';
-      case 3:
-        return _isEnglish ? short ? 'T' : 'Tuesday' : short ? 'मं' : 'मंगलबार';
-      case 4:
-        return _isEnglish ? short ? 'W' : 'Wednesday' : short ? 'बु' : 'बुधबार';
-      case 5:
-        return _isEnglish ? short ? 'T' : 'Thursday' : short ? 'बि' : 'बिहिबार';
-      case 6:
-        return _isEnglish ? short ? 'F' : 'Friday' : short ? 'शु' : 'शुक्रबार';
-      case 7:
-        return _isEnglish ? short ? 'S' : 'Saturday' : short ? 'श' : 'शनिबार';
-      default:
-        return '';
-    }
+    assert(day > 0 && day < 8);
+
+    final weeksInEnglish = [
+      _Week('Sunday', 'S'),
+      _Week('Monday', 'M'),
+      _Week('Tuesday', 'T'),
+      _Week('Wednesday', 'W'),
+      _Week('Thursday', 'T'),
+      _Week('Friday', 'F'),
+      _Week('Saturday', 'S'),
+    ];
+    final weeksInNepali = [
+      _Week('आइतबार', 'आ'),
+      _Week('सोमबार', 'सो'),
+      _Week('मंगलबार', 'मं'),
+      _Week('बुधबार', 'बु'),
+      _Week('बिहिबार', 'बि'),
+      _Week('शुक्रबार', 'शु'),
+      _Week('शनिबार', 'श'),
+    ];
+
+    if (_isEnglish) return weeksInEnglish[day - 1].get(short: short);
+    return weeksInNepali[day - 1].get(short: short);
   }
 
-  String _monthString(int month, {short = false}) {
-    switch (month) {
-      case 1:
-        return _isEnglish ? short ? 'Bai' : 'Baishakh' : short ? 'बै' : 'बैशाख';
-      case 2:
-        return _isEnglish ? short ? 'Jes' : 'Jestha' : short ? 'जे' : 'जेष्ठ';
-      case 3:
-        return _isEnglish ? short ? 'Asa' : 'Ashadh' : short ? 'अ' : 'अषाढ';
-      case 4:
-        return _isEnglish
-            ? short ? 'Shr' : 'Shrawan'
-            : short ? 'श्रा' : 'श्रावण';
-      case 5:
-        return _isEnglish ? short ? 'Bha' : 'Bhadra' : short ? 'भा' : 'भाद्र';
-      case 6:
-        return _isEnglish ? short ? 'Ash' : 'Ashwin' : short ? 'आ' : 'आश्विन';
-      case 7:
-        return _isEnglish ? short ? 'Kar' : 'Kartik' : short ? 'का' : 'कार्तिक';
-      case 8:
-        return _isEnglish ? short ? 'Marg' : 'Mangsir' : short ? 'मं' : 'मंसिर';
-      case 9:
-        return _isEnglish ? short ? 'Pou' : 'Poush' : short ? 'पौ' : 'पौष';
-      case 10:
-        return _isEnglish ? short ? 'Mag' : 'Magh' : short ? 'मा' : 'माघ';
-      case 11:
-        return _isEnglish ? short ? 'Fal' : 'Falgun' : short ? 'फा' : 'फाल्गुन';
-      case 12:
-        return _isEnglish ? short ? 'Cha' : 'Chaitra' : short ? 'चै' : 'चैत्र';
-      default:
-        return '';
-    }
+  String _monthString(int month, {bool short = false}) {
+    assert(month > 0 && month < 13);
+    final monthsInEnglish = [
+      _Month('Baishakh', 'Bai'),
+      _Month('Jestha', 'Jes'),
+      _Month('Ashadh', 'Asar'),
+      _Month('Shrawan', 'Shr'),
+      _Month('Bhadra', 'Bha'),
+      _Month('Ashwin', 'Ash'),
+      _Month('Kartik', 'Kar'),
+      _Month('Mangsir', 'Marg'),
+      _Month('Poush', 'Pou'),
+      _Month('Magh', 'Mag'),
+      _Month('Falgun', 'Fal'),
+      _Month('Chaitra', 'Cha'),
+    ];
+    final monthsInNepali = [
+      _Month('बैशाख', 'बै'),
+      _Month('जेष्ठ', 'जे'),
+      _Month('अषाढ', 'अ'),
+      _Month('श्रावण', 'श्रा'),
+      _Month('भाद्र', 'भा'),
+      _Month('आश्विन', 'आ'),
+      _Month('कार्तिक', 'का'),
+      _Month('मंसिर', 'मं'),
+      _Month('पौष', 'पौ'),
+      _Month('माघ', 'मा'),
+      _Month('फाल्गुन', 'फा'),
+      _Month('चैत्र', 'चै'),
+    ];
+
+    if (_isEnglish) return monthsInEnglish[month - 1].get(short: short);
+    return monthsInNepali[month - 1].get(short: short);
   }
 
   bool get _isEnglish => _language == Language.english;
 
   int _getQuarter(int month) => (month / 3).ceil();
 
-  String _getPosition(int position) => position == 1
-      ? '1st'
-      : position == 2 ? '2nd' : position == 3 ? '3rd' : '${position}th';
+  String _getPosition(int position) {
+    switch (position) {
+      case 1:
+        return '1st';
+      case 2:
+        return '2nd';
+      case 3:
+        return '3rd';
+      default:
+        return '${position}th';
+    }
+  }
 
   /// A series of regular expressions used to parse a format string into its
   /// component fields.
@@ -376,127 +407,146 @@ class NepaliDateFormat {
   ];
 
   /// 2076-08-05 => 5
-  NepaliDateFormat.d([Language language]) : this('d', language);
+  NepaliDateFormat.d([Language? language]) : this('d', language);
 
   /// 2076-08-05 => Thu
-  NepaliDateFormat.E([Language language]) : this('EE', language);
+  NepaliDateFormat.E([Language? language]) : this('EE', language);
 
   /// 2076-08-05 => Thursday
-  NepaliDateFormat.EEEE([Language language]) : this('EEE', language);
+  NepaliDateFormat.EEEE([Language? language]) : this('EEE', language);
 
   /// 2076-08-05 => Marga
-  NepaliDateFormat.LLL([Language language]) : this('MMM', language);
+  NepaliDateFormat.LLL([Language? language]) : this('MMM', language);
 
   /// 2076-08-05 => Mangsir
-  NepaliDateFormat.LLLL([Language language]) : this('MMMM', language);
+  NepaliDateFormat.LLLL([Language? language]) : this('MMMM', language);
 
   /// 2076-08-05 => 8
-  NepaliDateFormat.M([Language language]) : this('M', language);
+  NepaliDateFormat.M([Language? language]) : this('M', language);
 
   /// 2076-08-05 => 8/15
-  NepaliDateFormat.Md([Language language]) : this('M/d', language);
+  NepaliDateFormat.Md([Language? language]) : this('M/d', language);
 
   /// 2076-08-05 => Thu, 8/15
-  NepaliDateFormat.MEd([Language language]) : this('EE, M/d', language);
+  NepaliDateFormat.MEd([Language? language]) : this('EE, M/d', language);
 
   /// 2076-08-05 => Marga
-  NepaliDateFormat.MMM([Language language]) : this('MMM', language);
+  NepaliDateFormat.MMM([Language? language]) : this('MMM', language);
 
   /// 2076-08-05 => Marga 5
-  NepaliDateFormat.MMMd([Language language]) : this('MMM d', language);
+  NepaliDateFormat.MMMd([Language? language]) : this('MMM d', language);
 
   /// 2076-08-05 => Thursday, Marga 5
-  NepaliDateFormat.MMMEd([Language language]) : this('EEE, MMM d', language);
+  NepaliDateFormat.MMMEd([Language? language]) : this('EEE, MMM d', language);
 
   /// 2076-08-05 => Mangsir
-  NepaliDateFormat.MMMM([Language language]) : this('MMMM', language);
+  NepaliDateFormat.MMMM([Language? language]) : this('MMMM', language);
 
   /// 2076-08-05 => Mangsir 5
-  NepaliDateFormat.MMMMd([Language language]) : this('MMMM d', language);
+  NepaliDateFormat.MMMMd([Language? language]) : this('MMMM d', language);
 
   /// 2076-08-05 => Thursday, Mangsir 5
-  NepaliDateFormat.MMMMEEEEd([Language language])
+  NepaliDateFormat.MMMMEEEEd([Language? language])
       : this('EEE, MMMM d', language);
 
   /// 2076-08-05 => Q3
-  NepaliDateFormat.QQQ([Language language]) : this('QQQ', language);
+  NepaliDateFormat.QQQ([Language? language]) : this('QQQ', language);
 
   /// 2076-08-05 => 3rd quarter
-  NepaliDateFormat.QQQQ([Language language]) : this('QQQQ', language);
+  NepaliDateFormat.QQQQ([Language? language]) : this('QQQQ', language);
 
   /// 2076-08-05 => 2076
-  NepaliDateFormat.y([Language language]) : this('y', language);
+  NepaliDateFormat.y([Language? language]) : this('y', language);
 
   /// 2076-08-05 => 2076/08
-  NepaliDateFormat.yM([Language language]) : this('y/MM', language);
+  NepaliDateFormat.yM([Language? language]) : this('y/MM', language);
 
   /// 2076-08-05 => 2076/08/05
-  NepaliDateFormat.yMd([Language language]) : this('y/MM/dd', language);
+  NepaliDateFormat.yMd([Language? language]) : this('y/MM/dd', language);
 
   /// 2076-08-05 => Thu, 2076/08/05
-  NepaliDateFormat.yMEd([Language language]) : this('EE, y/MM/dd', language);
+  NepaliDateFormat.yMEd([Language? language]) : this('EE, y/MM/dd', language);
 
   /// 2076-08-05 => Marga 2076
-  NepaliDateFormat.yMMM([Language language]) : this('MMM y', language);
+  NepaliDateFormat.yMMM([Language? language]) : this('MMM y', language);
 
   /// 2076-08-05 => Marga 5,2076
-  NepaliDateFormat.yMMMd([Language language]) : this('MMM d, y', language);
+  NepaliDateFormat.yMMMd([Language? language]) : this('MMM d, y', language);
 
   /// 2076-08-05 => Thu, Marga 5,2076
-  NepaliDateFormat.yMMMEd([Language language]) : this('EE, MMM d, y', language);
+  NepaliDateFormat.yMMMEd([Language? language])
+      : this('EE, MMM d, y', language);
 
   /// 2076-08-05 => Mangsir 2076
-  NepaliDateFormat.yMMMM([Language language]) : this('MMMM y', language);
+  NepaliDateFormat.yMMMM([Language? language]) : this('MMMM y', language);
 
   /// 2076-08-05 => Mangsir 5,2076
-  NepaliDateFormat.yMMMMd([Language language]) : this('MMMM d, y', language);
+  NepaliDateFormat.yMMMMd([Language? language]) : this('MMMM d, y', language);
 
   /// 2076-08-05 => Thursday, Mangsir 5, 2076
-  NepaliDateFormat.yMMMMEEEEd([Language language])
+  NepaliDateFormat.yMMMMEEEEd([Language? language])
       : this('EEE, MMMM d, y', language);
 
   /// 2076-08-05 => Q3 2076
-  NepaliDateFormat.yQQQ([Language language]) : this('QQQ y', language);
+  NepaliDateFormat.yQQQ([Language? language]) : this('QQQ y', language);
 
   /// 2076-08-05 => 3rd quarter 2076
-  NepaliDateFormat.yQQQQ([Language language]) : this('QQQQ y', language);
+  NepaliDateFormat.yQQQQ([Language? language]) : this('QQQQ y', language);
 
   /// 2076-08-05T21:04:25 => 21
-  NepaliDateFormat.H([Language language]) : this('H', language);
+  NepaliDateFormat.H([Language? language]) : this('H', language);
 
   /// 2076-08-05T21:04:25 => 21:04
-  NepaliDateFormat.Hm([Language language]) : this('HH:MM', language);
+  NepaliDateFormat.Hm([Language? language]) : this('HH:MM', language);
 
   /// 2076-08-05T21:04:25 => 21:04:25
-  NepaliDateFormat.Hms([Language language]) : this('HH:mm:ss', language);
+  NepaliDateFormat.Hms([Language? language]) : this('HH:mm:ss', language);
 
   /// 2076-08-05T21:04:25 => p PM
-  NepaliDateFormat.j([Language language])
+  NepaliDateFormat.j([Language? language])
       : this(
           language == Language.nepali ? 'aa h' : 'h aa',
           language,
         );
 
   /// 2076-08-05T21:04:25 => 9:04 PM
-  NepaliDateFormat.jm([Language language])
+  NepaliDateFormat.jm([Language? language])
       : this(
           language == Language.nepali ? 'aa h:mm' : 'h:mm aa',
           language,
         );
 
   /// 2076-08-05T21:04:25 => 9:04:25 PM
-  NepaliDateFormat.jms([Language language])
+  NepaliDateFormat.jms([Language? language])
       : this(
           language == Language.nepali ? 'aa h:mm:ss' : 'h:mm:ss aa',
           language,
         );
 
   /// 2076-08-05T21:04:25 => 9
-  NepaliDateFormat.m([Language language]) : this('h', language);
+  NepaliDateFormat.m([Language? language]) : this('h', language);
 
   /// 2076-08-05T21:04:25 => 9:04
-  NepaliDateFormat.ms([Language language]) : this('hh:mm', language);
+  NepaliDateFormat.ms([Language? language]) : this('hh:mm', language);
 
   /// 2076-08-05T21:04:25 => 25
-  NepaliDateFormat.s([Language language]) : this('s', language);
+  NepaliDateFormat.s([Language? language]) : this('s', language);
+}
+
+class _Month {
+  final String name;
+  final String shortName;
+
+  _Month(this.name, this.shortName);
+
+  String get({bool short = false}) => short ? shortName : name;
+}
+
+class _Week {
+  final String name;
+  final String shortName;
+
+  _Week(this.name, this.shortName);
+
+  String get({bool short = false}) => short ? shortName : name;
 }
