@@ -9,7 +9,7 @@ import 'nepali_date_format.dart';
 extension ENepaliDateTime on DateTime {
   /// Converts the [DateTime] to [NepaliDateTime].
   NepaliDateTime toNepaliDateTime() {
-    //Setting nepali reference to 2000/1/1 with englishnepaliDateTime 1943/4/14
+    //Setting nepali reference to 2000/1/1 with english NepaliDateTime 1943/4/14
     var nepaliYear = 2000;
     var nepaliMonth = 1;
     var nepaliDay = 1;
@@ -20,7 +20,7 @@ extension ENepaliDateTime on DateTime {
 
     // 1970-1-1 is epoch and it's duration is only 18 hours 15 minutes in dart
     // You can test using `print(DateTime(1970,1,2).difference(DateTime(1970,1,1)))`;
-    // So, in order to compensate it one extra day is added from thisnepaliDateTime.
+    // So, in order to compensate it one extra day is added from this NepaliDateTime.
     if (_date.isAfter(DateTime(1970, 1, 1))) difference++;
 
     //Getting nepali year until the difference remains less than 365
@@ -39,7 +39,7 @@ extension ENepaliDateTime on DateTime {
       i++;
     }
 
-    //Remaning days is the actual day;
+    //Remaining days is the actual day;
     nepaliDay += difference;
 
     return NepaliDateTime(

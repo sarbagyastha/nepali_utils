@@ -13,14 +13,14 @@ class NepaliMoment {
   ///
   /// If [referenceDate] is null, the difference between [date] and the current date is
   /// converted into moment.
-  static String fromBS(NepaliDateTime date, {NepaliDateTime referenceDate}) =>
+  static String fromBS(NepaliDateTime date, {NepaliDateTime? referenceDate}) =>
       _calc(date, referenceDate ?? NepaliDateTime.now());
 
   /// Converts the difference between [date] and [referenceDate] in [DateTime] into moment string.
   ///
   /// If [referenceDate] is null, the difference between [date] and the current date is
   /// converted into moment.
-  static String fromAD(DateTime date, {DateTime referenceDate}) =>
+  static String fromAD(DateTime date, {DateTime? referenceDate}) =>
       _calc(date, referenceDate ?? DateTime.now());
 
   static String _calc(date, referenceDate) {
