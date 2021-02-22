@@ -56,29 +56,29 @@ extension ENepaliDateTime on DateTime {
 }
 
 /// An instant in time, such as Mangsir 05, 2076, 11:05am
-class NepaliDateTime {
-  /// The year.
+class NepaliDateTime implements DateTime {
+  @override
   final int year;
 
-  /// The month 1..12.
+  @override
   final int month;
 
-  /// The day of the month.
+  @override
   final int day;
 
-  /// The hour of the day, expressed as in a 24-hour clock 0..23.
+  @override
   final int hour;
 
-  /// The minute 0...59.
+  @override
   final int minute;
 
-  /// The second 0...59.
+  @override
   final int second;
 
-  /// The millisecond 0...999.
+  @override
   final int millisecond;
 
-  /// The microsecond 0...999.
+  @override
   final int microsecond;
 
   /// Constructs a NepaliDateTime instance specified.
@@ -101,15 +101,18 @@ class NepaliDateTime {
   /// Returns total days in a month.
   int get totalDays => _nepaliMonths[year % 2000][month - 1];
 
-  /// The day of the week [sunday]..[saturday].
+  /// The day of the week [Sunday]..[Saturday].
+  @override
   int get weekday => toDateTime().weekday % 7 + 1;
 
   /// Returns true if this occurs after other
-  bool isAfter(NepaliDateTime nepaliDateTime) =>
+  @override
+  bool isAfter(covariant NepaliDateTime nepaliDateTime) =>
       toDateTime().isAfter(nepaliDateTime.toDateTime());
 
   /// Returns true if this occurs before other.
-  bool isBefore(NepaliDateTime nepaliDateTime) =>
+  @override
+  bool isBefore(covariant NepaliDateTime nepaliDateTime) =>
       toDateTime().isBefore(nepaliDateTime.toDateTime());
 
   /// Merges specified time to current date.
@@ -122,23 +125,22 @@ class NepaliDateTime {
   ///Constructs a new [DateTime] instance based on [formattedString].
   ///
   ///Throws a [FormatException] if the input cannot be parsed.
-  factory NepaliDateTime.parse(String formattedString) {
+  static NepaliDateTime parse(String formattedString) {
     var re = _parseFormat;
-    Match match = re.firstMatch(formattedString);
+    Match? match = re.firstMatch(formattedString);
     if (match != null) {
-      int parseIntOrZero(String matched) {
+      int parseIntOrZero(String? matched) {
         if (matched == null) return 0;
         return int.parse(matched);
       }
 
-      // Parses fractional second digits of '.(\d{1,6})' into the combined
-      // microseconds.
-      int parseMilliAndMicroseconds(String matched) {
+      // Parses fractional second digits of '.(\d+)' into the combined
+      // microseconds. We only use the first 6 digits because of DateTime
+      // precision of 999 milliseconds and 999 microseconds.
+      int parseMilliAndMicroseconds(String? matched) {
         if (matched == null) return 0;
         var length = matched.length;
         assert(length >= 1);
-        assert(length <= 6);
-
         var result = 0;
         for (var i = 0; i < 6; i++) {
           result *= 10;
@@ -149,9 +151,9 @@ class NepaliDateTime {
         return result;
       }
 
-      var years = int.parse(match[1]);
-      var month = int.parse(match[2]);
-      var day = int.parse(match[3]);
+      var years = int.parse(match[1]!);
+      var month = int.parse(match[2]!);
+      var day = int.parse(match[3]!);
       var hour = parseIntOrZero(match[4]);
       var minute = parseIntOrZero(match[5]);
       var second = parseIntOrZero(match[6]);
@@ -172,35 +174,35 @@ class NepaliDateTime {
         microsecond,
       );
     } else {
-      throw FormatException('InvalidnepaliDateTime format', formattedString);
+      throw FormatException('Invalid NepaliDateTime format', formattedString);
     }
   }
 
   ///Constructs a new NepaliDateTime instance based on formattedString.
-  factory NepaliDateTime.tryParse(String formattedString) {
+  static NepaliDateTime? tryParse(String formattedString) {
     try {
-      return NepaliDateTime.parse(formattedString);
+      return parse(formattedString);
     } on FormatException {
       return null;
     }
   }
 
-  /// Returns a [Duration] with the difference between [this] and [other].
-  Duration difference(NepaliDateTime other) =>
+  @override
+  Duration difference(covariant NepaliDateTime other) =>
       toDateTime().difference(other.toDateTime());
 
-  /// Returns a new [NepaliDateTime] instance with [Duration] added to [this].
+  @override
   NepaliDateTime add(Duration duration) =>
       toDateTime().add(duration).toNepaliDateTime();
 
-  /// Returns a new [NepaliDateTime] instance with [Duration] substracted to [this].
+  @override
   NepaliDateTime subtract(Duration duration) =>
       toDateTime().subtract(duration).toNepaliDateTime();
 
-  /// The number of milliseconds since the "Unix epoch" 1970-01-01T00:00:00Z (UTC).
+  @override
   int get millisecondsSinceEpoch => toDateTime().millisecondsSinceEpoch;
 
-  /// The number of microseconds since the "Unix epoch" 1970-01-01T00:00:00Z (UTC).
+  @override
   int get microsecondsSinceEpoch => toDateTime().microsecondsSinceEpoch;
 
   static String _fourDigits(int n) {
@@ -252,26 +254,7 @@ class NepaliDateTime {
     return '$y-$m-$d $h:$min:$sec.$ms$us';
   }
 
-  ///
-  ///Returns an ISO-8601 full-precision extended format representation.
-  ///
-  ///The format is `yyyy-MM-ddTHH:mm:ss.mmmuuu`,
-  ///where:
-  ///
-  /// `yyyy` is a, possibly negative, four digit representation of the year,
-  /// if the year is in the range -9999 to 9999,
-  /// otherwise it is a signed six digit representation of the year.
-  /// `MM` is the month in the range 01 to 12,
-  /// `dd` is the day of the month in the range 01 to 31,
-  /// `HH` are hours in the range 00 to 23,
-  /// `mm` are minutes in the range 00 to 59,
-  /// `ss` are seconds in the range 00 to 59 (no leap seconds),
-  /// `mmm` are milliseconds in the range 000 to 999, and
-  /// `uuu` are microseconds in the range 001 to 999. If [microsecond] equals
-  /// 0, then this part is omitted.
-  ///
-  /// The resulting string can be parsed back using [parse].
-  ///
+  @override
   String toIso8601String() {
     var y =
         (year >= -9999 && year <= 9999) ? _fourDigits(year) : _sixDigits(year);
@@ -300,7 +283,7 @@ class NepaliDateTime {
   /// Formats [NepaliDateTime] as per the pattern provided.
   ///
   /// For wider set of formatting, use [NepaliDateFormat].
-  String format(String pattern, [Language language]) =>
+  String format(String pattern, [Language? language]) =>
       NepaliDateFormat(pattern, language).format(this);
 
   /// Converts the [NepaliDateTime] to corresponding [DateTime].
@@ -382,6 +365,37 @@ class NepaliDateTime {
 
   bool _isLeapYear(int year) =>
       (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
+
+  @override
+  int compareTo(covariant NepaliDateTime other) {
+    if (isBefore(other)) {
+      return -1;
+    } else if (isAfter(other)) {
+      return 1;
+    }
+    return 0;
+  }
+
+  @override
+  bool isAtSameMomentAs(covariant NepaliDateTime other) {
+    return millisecondsSinceEpoch == other.millisecondsSinceEpoch;
+  }
+
+  @override
+  bool get isUtc => false;
+
+  @override
+  String get timeZoneName => 'Nepal Time';
+
+  @override
+  Duration get timeZoneOffset => Duration(hours: 5, minutes: 45);
+
+  @override
+  NepaliDateTime toLocal() => this;
+
+  @Deprecated('Non operational')
+  @override
+  DateTime toUtc() => throw UnimplementedError();
 }
 
 const List<int> _yearDays = [
