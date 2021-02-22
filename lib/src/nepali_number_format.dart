@@ -13,7 +13,7 @@ class NepaliNumberFormat {
   /// Default is false.
   final bool inWords;
 
-  Language _lang;
+  final Language _lang;
 
   /// If true, formats the number as if it is monetary value.
   /// Also, [symbol] can be added while true.
@@ -24,11 +24,11 @@ class NepaliNumberFormat {
   /// Specifies the number of decimal places to include in formatted number.
   ///
   /// Default is 0 for integer input, 2 for other data types.
-  final int decimalDigits;
+  final int? decimalDigits;
 
   /// Specifies the symbol to use in monetary value.
   /// [isMonetory] is required to be set as true.
-  final String symbol;
+  final String? symbol;
 
   /// If true, place the symbol on left side of the formatted number.
   ///
@@ -38,7 +38,17 @@ class NepaliNumberFormat {
   /// If true, places a space between [symbol] and the number.
   ///
   /// Default is true.
-  final bool spaceBetweenAmountandSymbol;
+  final bool spaceBetweenAmountAndSymbol;
+
+  /// If true, decimal value will be included in the formatted string even if
+  /// numbers after decimals are only 0s.
+  ///
+  /// Otherwise, decimal value will be excluded
+  /// i.e. 2.00 -> 2
+  ///      2.01 -> 2.01
+  ///
+  /// Default is true.
+  final bool includeDecimalIfZero;
 
   ///Create a nepali number format.
   NepaliNumberFormat({
@@ -47,14 +57,13 @@ class NepaliNumberFormat {
     this.decimalDigits,
     this.symbol,
     this.symbolOnLeft = true,
-    this.spaceBetweenAmountandSymbol = true,
-    Language language,
-  }) {
-    _lang ??= language ?? NepaliUtils().language;
-  }
+    this.spaceBetweenAmountAndSymbol = true,
+    this.includeDecimalIfZero = true,
+    Language? language,
+  }) : _lang = language ?? NepaliUtils().language;
 
   /// Format number according to specified parameters and return the formatted string.
-  String format<T>(T number) {
+  String format<T extends Object>(T? number) {
     if (number == null) return '';
     if (inWords) {
       return isMonetory
@@ -67,20 +76,20 @@ class NepaliNumberFormat {
     }
   }
 
-  String _placeSymbol(String number) {
+  String _placeSymbol(String? number) {
     if (number == null) {
       return '';
     }
     if (symbol == null) {
       return number;
     } else if (symbolOnLeft) {
-      return symbol + (spaceBetweenAmountandSymbol ? ' ' : '') + number;
+      return symbol! + (spaceBetweenAmountAndSymbol ? ' ' : '') + number;
     } else {
-      return number + (spaceBetweenAmountandSymbol ? ' ' : '') + symbol;
+      return number + (spaceBetweenAmountAndSymbol ? ' ' : '') + symbol!;
     }
   }
 
-  String _formatInWords<T>(T number) {
+  String _formatInWords<T extends Object>(T number) {
     var numberInWord = '';
     var decimal = '';
     var commaFormattedNumber = _formatWithComma<T>(number);
@@ -189,12 +198,12 @@ class NepaliNumberFormat {
       throw ArgumentError('number should be either "String" or "num"');
     }
 
-    var fractionMatches = RegExp(r'^(\d*)\.?(\d*)$').allMatches(_number);
+    final fractionMatches = RegExp(r'^(\d*)\.?(\d*)$').allMatches(_number);
     if (fractionMatches.isNotEmpty) {
-      _number = fractionMatches.first.group(1);
-      _fractionalPart = fractionMatches.first.group(2);
+      _number = fractionMatches.first.group(1) ?? '';
+      _fractionalPart = fractionMatches.first.group(2) ?? '';
     } else {
-      throw Exception('Inexpected input: $number');
+      throw Exception('Unexpected input: $number');
     }
 
     _fractionalPart = _fractionalPart
@@ -230,6 +239,10 @@ class NepaliNumberFormat {
           : formattedString;
       formattedString =
           _isEnglish ? formattedString : NepaliUnicode.convert(formattedString);
+
+      if (!includeDecimalIfZero && RegExp(r'^0+$').hasMatch(_fractionalPart)) {
+        return formattedString;
+      }
 
       return '$formattedString$_fractionalPart';
     }
