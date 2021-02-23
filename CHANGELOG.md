@@ -1,3 +1,6 @@
+# 3.0.1
+* Fixed incorrect date conversion for the year 1970.
+
 # 3.0.0
 **Breaking Changes**
 * Migrated to Null Safety

@@ -91,7 +91,7 @@ class NepaliDateTime implements DateTime {
     this.second = 0,
     this.millisecond = 0,
     this.microsecond = 0,
-  ]) : assert(year >= 1970 && year <= 2100, 'Supported year is 1970-2100');
+  ]) : assert(year >= 1969 && year <= 2100, 'Supported year is 1970-2100');
 
   List<int> get _englishMonths =>
       [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -293,14 +293,14 @@ class NepaliDateTime implements DateTime {
   ///
   /// Can be used to convert BS to AD.
   DateTime toDateTime() {
-    // Setting english reference to 1914/1/1 with nepali nepaliDateTime 1970/9/18
-    var englishYear = 1914;
+    // Setting english reference to 1913/1/1, which converts to 1969/9/18
+    var englishYear = 1913;
     var englishMonth = 1;
     var englishDay = 1;
 
     var difference = _nepaliDateDifference(
       NepaliDateTime(year, month, day),
-      NepaliDateTime(1970, 9, 18),
+      NepaliDateTime(1969, 9, 18),
     );
 
     // Getting english year until the difference remains less than 365
@@ -315,7 +315,7 @@ class NepaliDateTime implements DateTime {
     var i = 0;
     while (difference >= monthDays[i]) {
       englishMonth++;
-      difference = difference - monthDays[i];
+      difference -= monthDays[i];
       i++;
     }
 
@@ -344,7 +344,7 @@ class NepaliDateTime implements DateTime {
 
   int _countTotalNepaliDays(int year, int month, int day) {
     var total = 0;
-    if (year < 1970) return 0;
+    if (year < 1969) return 0;
 
     final yearData = _nepaliYears[year]!;
 
@@ -354,7 +354,7 @@ class NepaliDateTime implements DateTime {
       total += yearData[i];
     }
 
-    for (var i = 1970; i < year; i++) {
+    for (var i = 1969; i < year; i++) {
       total += _nepaliYears[i]!.first;
     }
 
@@ -397,6 +397,7 @@ class NepaliDateTime implements DateTime {
 }
 
 const Map<int, List<int>> _nepaliYears = {
+  1969: [366, 31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
   1970: [365, 31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
   1971: [365, 31, 31, 32, 31, 32, 30, 30, 29, 30, 29, 30, 30],
   1972: [366, 31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31],
