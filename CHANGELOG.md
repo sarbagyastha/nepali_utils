@@ -1,3 +1,8 @@
+# 3.0.0
+**Breaking Changes**
+* Migrated to Null Safety
+* Added support for `NepalitDateTime` from 1970 BS to 2100 BS.
+
 # 2.2.1
 * Renamed `weekDay` to `weekday`.
 
