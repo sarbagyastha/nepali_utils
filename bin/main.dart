@@ -13,7 +13,7 @@ void main(List<String> arguments) {
   print('\nMerged NepaliDateTime = ${gorkhaEarthQuake.mergeTime(10, 20, 30)}');
 
   heading('Date Conversion');
-  var nt = DateTime(2019, 8, 03, 14, 30, 15).toNepaliDateTime();
+  var nt = DateTime(1916, 8, 5, 14, 30, 15).toNepaliDateTime();
   print('In BS = $nt');
   var dt = nt.toDateTime();
   print('In AD = $dt');
