@@ -348,7 +348,7 @@ class NepaliDateFormat {
       _Month('Bhadra', 'Bha'),
       _Month('Ashwin', 'Ash'),
       _Month('Kartik', 'Kar'),
-      _Month('Mangsir', 'Marg'),
+      _Month('Mangsir', 'Mang'),
       _Month('Poush', 'Pou'),
       _Month('Magh', 'Mag'),
       _Month('Falgun', 'Fal'),
