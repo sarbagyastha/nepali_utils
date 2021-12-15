@@ -30,7 +30,7 @@ class NepaliNumberFormat {
   /// [isMonetory] is required to be set as true.
   final String? symbol;
 
-  /// If false, comma will be removed in the formatted string.
+  /// If true, comma will be removed in the formatted string.
   ///
   /// Default is false.
   final bool hideComma;
