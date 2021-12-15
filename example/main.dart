@@ -39,6 +39,15 @@ void main(List<String> arguments) {
     decimalDigits: 2,
   );
 
+  var currencyFormatHideComma = NepaliNumberFormat(
+    symbol: 'Rs.',
+    hideComma: true,
+  );
+  var hideComma = NepaliNumberFormat(
+    decimalDigits: 2,
+    hideComma: true,
+  );
+
   // Sets default language for nepali utilities to be Nepali.
   NepaliUtils(Language.nepali);
 
@@ -55,6 +64,13 @@ void main(List<String> arguments) {
   print('123456789.6548 -> ${commaSeparated.format(123456789.6548)}');
   print('123456 -> ${inWords.format(123456)}');
   print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
+
+  heading('Hide Comma');
+  print('123456 -> ${currencyFormatHideComma.format(123456)}');
+  print('1234 -> ${currencyFormatHideComma.format(1234)}');
+  print('1234.5 -> ${currencyFormatHideComma.format(1234.5)}');
+  print('123456 -> ${currencyFormatHideComma.format(123456)}');
+  print('123456789.6548 -> ${hideComma.format(123456789.6548)}');
 
   heading('Nepali Unicode');
   print(NepaliUnicode.convert(

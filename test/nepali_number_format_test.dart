@@ -10,18 +10,18 @@ void main() {
 
     test(
       'throws error on bool',
-      () => expect(() => _format(true), throwsArgumentError),
+          () => expect(() => _format(true), throwsArgumentError),
     );
   });
 
   group('language tests:', () {
     test(
       'default is english',
-      () => expect(NepaliNumberFormat().format(1234), '1,234'),
+          () => expect(NepaliNumberFormat().format(1234), '1,234'),
     );
     test(
       'formats in nepali',
-      () => expect(
+          () => expect(
         NepaliNumberFormat(language: Language.nepali).format(1234),
         '१,२३४',
       ),
@@ -31,17 +31,17 @@ void main() {
   group('decimal digit tests:', () {
     test(
       'default is 0 for integer input',
-      () => expect(NepaliNumberFormat().format(1234), '1,234'),
+          () => expect(NepaliNumberFormat().format(1234), '1,234'),
     );
 
     test(
       'default is 2 for input type other than integer',
-      () => expect(NepaliNumberFormat().format(1234.0), '1,234.00'),
+          () => expect(NepaliNumberFormat().format(1234.0), '1,234.00'),
     );
 
     test(
       'formats decimal digits as per the decimalDigits value',
-      () => expect(
+          () => expect(
         NepaliNumberFormat(decimalDigits: 4).format(1234),
         '1,234.0000',
       ),
@@ -103,7 +103,7 @@ void main() {
   group('Formats in word tests:', () {
     test(
       'english language',
-      () => expect(
+          () => expect(
         NepaliNumberFormat(
           language: Language.english,
           inWords: true,
@@ -114,13 +114,28 @@ void main() {
 
     test(
       'nepali language',
-      () => expect(
+          () => expect(
         NepaliNumberFormat(
           isMonetory: true,
           language: Language.nepali,
           inWords: true,
         ).format(123456789.6548),
         '१२ करोड ३४ लाख ५६ हजार ७ सय ८९ रुपैया ६५ पैसा',
+      ),
+    );
+  });
+
+  group('hide comma tests:', () {
+    test(
+      'default is english',
+          () => expect(NepaliNumberFormat(hideComma: true).format(1234), '1234'),
+    );
+    test(
+      'formats in nepali',
+          () => expect(
+        NepaliNumberFormat(language: Language.nepali, hideComma: true)
+            .format(1234),
+        '१२३४',
       ),
     );
   });
