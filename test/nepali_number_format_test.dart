@@ -128,14 +128,29 @@ void main() {
   group('hide comma tests:', () {
     test(
       'default is english',
-      () => expect(NepaliNumberFormat(hideComma: true).format(1234), '1234'),
+      () => expect(NepaliNumberFormat(delimiter: '').format(1234), '1234'),
     );
     test(
       'formats in nepali',
       () => expect(
-        NepaliNumberFormat(language: Language.nepali, hideComma: true)
+        NepaliNumberFormat(language: Language.nepali, delimiter: '')
             .format(1234),
         '१२३४',
+      ),
+    );
+  });
+
+  group('hide comma tests:', () {
+    test(
+      'default is english',
+      () => expect(NepaliNumberFormat(delimiter: '*').format(1234), '1*234'),
+    );
+    test(
+      'formats in nepali',
+      () => expect(
+        NepaliNumberFormat(language: Language.nepali, delimiter: '*')
+            .format(1234),
+        '१*२३४',
       ),
     );
   });
