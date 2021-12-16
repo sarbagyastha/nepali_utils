@@ -30,10 +30,14 @@ class NepaliNumberFormat {
   /// [isMonetory] is required to be set as true.
   final String? symbol;
 
-  /// If true, comma will be removed in the formatted string.
+  /// The character used to separate place value in number.
   ///
-  /// Default is false.
-  final bool hideComma;
+  /// i.e. 2000(delimiter = ',') -> 2,000
+  ///      2000(delimiter = '') -> 2000
+  ///      2000(delimiter = '.') -> 2.000
+  ///
+  /// Default value ','.
+  final String delimiter;
 
   /// If true, place the symbol on left side of the formatted number.
   ///
@@ -62,7 +66,7 @@ class NepaliNumberFormat {
     this.decimalDigits,
     this.symbol,
     this.symbolOnLeft = true,
-    this.hideComma = false,
+    this.delimiter = ',',
     this.spaceBetweenAmountAndSymbol = true,
     this.includeDecimalIfZero = true,
     Language? language,
@@ -77,8 +81,8 @@ class NepaliNumberFormat {
           : _formatInWords<T>(number);
     } else {
       return isMonetory
-          ? _placeSymbol(_formatWithComma<T>(number, hideComma))
-          : _formatWithComma<T>(number, hideComma);
+          ? _placeSymbol(_formatWithComma<T>(number))
+          : _formatWithComma<T>(number);
     }
   }
 
@@ -98,7 +102,7 @@ class NepaliNumberFormat {
   String _formatInWords<T extends Object>(T number) {
     var numberInWord = '';
     var decimal = '';
-    var commaFormattedNumber = _formatWithComma<T>(number, hideComma);
+    var commaFormattedNumber = _formatWithComma<T>(number);
     var digitGroups = commaFormattedNumber.split(',');
 
     if (commaFormattedNumber.contains('.')) {
@@ -188,7 +192,7 @@ class NepaliNumberFormat {
     }
   }
 
-  String _formatWithComma<T extends Object>(T number, bool hideComma) {
+  String _formatWithComma<T extends Object>(T number) {
     var _decimalDigits = decimalDigits;
     var _number = '', _fractionalPart = '';
     if (number is String) {
@@ -235,26 +239,19 @@ class NepaliNumberFormat {
       if (hideDecimal) {
         return '${localizedNum[0]},${localizedNum.substring(1)}';
       }
-      if (hideComma) {
-        return '$localizedNum$_fractionalPart';
-      }
-      return '${localizedNum[0]},${localizedNum.substring(1)}$_fractionalPart';
+      return '${localizedNum[0]}$delimiter${localizedNum.substring(1)}$_fractionalPart';
     } else {
       var paddedNumber = _number.length.isOdd ? _number : '0$_number';
       var formattedString = '';
       var digitMatcher = RegExp(r'\d{1,2}');
       var matches = digitMatcher.allMatches(paddedNumber);
-      if (hideComma) {
-        formattedString = _number;
-      } else {
-        for (var i = 0; i < matches.length; i++) {
-          if (i < matches.length - 2) {
-            formattedString += '${matches.elementAt(i).group(0)},';
-          } else {
-            formattedString +=
-                _number.substring(_number.length - 3, _number.length);
-            break;
-          }
+      for (var i = 0; i < matches.length; i++) {
+        if (i < matches.length - 2) {
+          formattedString += '${matches.elementAt(i).group(0)}$delimiter';
+        } else {
+          formattedString +=
+              _number.substring(_number.length - 3, _number.length);
+          break;
         }
       }
       formattedString = formattedString[0] == '0'

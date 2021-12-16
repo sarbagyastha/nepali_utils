@@ -39,13 +39,19 @@ void main(List<String> arguments) {
     decimalDigits: 2,
   );
 
-  var currencyFormatHideComma = NepaliNumberFormat(
-    symbol: 'Rs.',
-    hideComma: true,
-  );
-  var hideComma = NepaliNumberFormat(
+  var currencyFormatWithDelimiterAndDecimal = NepaliNumberFormat(
     decimalDigits: 2,
-    hideComma: true,
+  );
+  var currencyFormatWithDelimiter = NepaliNumberFormat(
+    symbol: 'Rs.',
+  );
+  var currencyFormatWithNoDelimiter = NepaliNumberFormat(
+    symbol: 'Rs.',
+    delimiter: '',
+  );
+  var delimiterWithDecimal = NepaliNumberFormat(
+    decimalDigits: 2,
+    delimiter: '',
   );
 
   // Sets default language for nepali utilities to be Nepali.
@@ -65,12 +71,20 @@ void main(List<String> arguments) {
   print('123456 -> ${inWords.format(123456)}');
   print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
 
-  heading('Hide Comma');
-  print('123456 -> ${currencyFormatHideComma.format(123456)}');
-  print('1234 -> ${currencyFormatHideComma.format(1234)}');
-  print('1234.5 -> ${currencyFormatHideComma.format(1234.5)}');
-  print('123456 -> ${currencyFormatHideComma.format(123456)}');
-  print('123456789.6548 -> ${hideComma.format(123456789.6548)}');
+  heading('With Empty Delimiter');
+  print('123456 -> ${currencyFormatWithNoDelimiter.format(123456)}');
+  print('1234 -> ${currencyFormatWithNoDelimiter.format(1234)}');
+  print('12345 -> ${currencyFormatWithNoDelimiter.format(12345)}');
+  print('123456 -> ${currencyFormatWithNoDelimiter.format(123456)}');
+  print('123456789.6548 -> ${delimiterWithDecimal.format(123456789.6548)}');
+
+  heading('With Delimiter');
+  print('123456 -> ${currencyFormatWithDelimiter.format(123456)}');
+  print('1234 -> ${currencyFormatWithDelimiter.format(1234)}');
+  print('12345 -> ${currencyFormatWithDelimiter.format(12345)}');
+  print('123456 -> ${currencyFormatWithDelimiter.format(123456)}');
+  print(
+      '1234567.891 -> ${currencyFormatWithDelimiterAndDecimal.format(1234567.891)}');
 
   heading('Nepali Unicode');
   print(NepaliUnicode.convert(
