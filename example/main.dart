@@ -72,14 +72,12 @@ void main(List<String> arguments) {
   print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
 
   heading('With Empty Delimiter');
-  print('123456 -> ${currencyFormatWithNoDelimiter.format(123456)}');
   print('1234 -> ${currencyFormatWithNoDelimiter.format(1234)}');
   print('12345 -> ${currencyFormatWithNoDelimiter.format(12345)}');
   print('123456 -> ${currencyFormatWithNoDelimiter.format(123456)}');
   print('123456789.6548 -> ${delimiterWithDecimal.format(123456789.6548)}');
 
   heading('With Delimiter');
-  print('123456 -> ${currencyFormatWithDelimiter.format(123456)}');
   print('1234 -> ${currencyFormatWithDelimiter.format(1234)}');
   print('12345 -> ${currencyFormatWithDelimiter.format(12345)}');
   print('123456 -> ${currencyFormatWithDelimiter.format(123456)}');
