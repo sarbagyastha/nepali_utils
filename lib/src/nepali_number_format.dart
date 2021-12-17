@@ -36,7 +36,7 @@ class NepaliNumberFormat {
   ///      2000(delimiter = '') -> 2000
   ///      2000(delimiter = '.') -> 2.000
   ///
-  /// Default value ','.
+  /// Default value is ','.
   final String delimiter;
 
   /// If true, place the symbol on left side of the formatted number.
@@ -237,7 +237,7 @@ class NepaliNumberFormat {
     } else if (_number.length < 5) {
       var localizedNum = _isEnglish ? _number : NepaliUnicode.convert(_number);
       if (hideDecimal) {
-        return '${localizedNum[0]},${localizedNum.substring(1)}';
+        return '${localizedNum[0]}$delimiter${localizedNum.substring(1)}';
       }
       return '${localizedNum[0]}$delimiter${localizedNum.substring(1)}$_fractionalPart';
     } else {

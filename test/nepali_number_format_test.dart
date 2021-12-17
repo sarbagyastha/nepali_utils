@@ -125,32 +125,43 @@ void main() {
     );
   });
 
-  group('hide comma tests:', () {
+  group('delimiter default tests:', () {
     test(
-      'default is english',
+      'in english',
+      () => expect(NepaliNumberFormat().format(1234), '1,234'),
+    );
+    test(
+      'in nepali',
+      () => expect(
+        NepaliNumberFormat(language: Language.nepali).format(1234),
+        '१,२३४',
+      ),
+    );
+  });
+
+  group('delimiter tests:', () {
+    test(
+      'using empty delimiter in English',
       () => expect(NepaliNumberFormat(delimiter: '').format(1234), '1234'),
     );
     test(
-      'formats in nepali',
+      'using empty delimiter in English',
       () => expect(
         NepaliNumberFormat(language: Language.nepali, delimiter: '')
             .format(1234),
         '१२३४',
       ),
     );
-  });
-
-  group('hide comma tests:', () {
     test(
-      'default is english',
-      () => expect(NepaliNumberFormat(delimiter: '*').format(1234), '1*234'),
+      'using . delimiter in English',
+      () => expect(NepaliNumberFormat(delimiter: '.').format(1234), '1.234'),
     );
     test(
-      'formats in nepali',
+      'using . delimiter in Nepali',
       () => expect(
-        NepaliNumberFormat(language: Language.nepali, delimiter: '*')
+        NepaliNumberFormat(language: Language.nepali, delimiter: '.')
             .format(1234),
-        '१*२३४',
+        '१.२३४',
       ),
     );
   });
