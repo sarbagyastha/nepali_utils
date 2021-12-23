@@ -124,6 +124,47 @@ void main() {
       ),
     );
   });
+
+  group('delimiter default tests:', () {
+    test(
+      'in english',
+      () => expect(NepaliNumberFormat().format(1234), '1,234'),
+    );
+    test(
+      'in nepali',
+      () => expect(
+        NepaliNumberFormat(language: Language.nepali).format(1234),
+        '१,२३४',
+      ),
+    );
+  });
+
+  group('delimiter tests:', () {
+    test(
+      'using empty delimiter in English',
+      () => expect(NepaliNumberFormat(delimiter: '').format(1234), '1234'),
+    );
+    test(
+      'using empty delimiter in English',
+      () => expect(
+        NepaliNumberFormat(language: Language.nepali, delimiter: '')
+            .format(1234),
+        '१२३४',
+      ),
+    );
+    test(
+      'using . delimiter in English',
+      () => expect(NepaliNumberFormat(delimiter: '.').format(1234), '1.234'),
+    );
+    test(
+      'using . delimiter in Nepali',
+      () => expect(
+        NepaliNumberFormat(language: Language.nepali, delimiter: '.')
+            .format(1234),
+        '१.२३४',
+      ),
+    );
+  });
 }
 
 String _format(number) => NepaliNumberFormat().format(number);

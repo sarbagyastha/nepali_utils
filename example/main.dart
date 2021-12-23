@@ -32,11 +32,20 @@ void main(List<String> arguments) {
   print(date5.format(gorkhaEarthQuake));
 
   heading('Nepali Number Format');
-  var currencyFormat = NepaliNumberFormat(
+  final numberFormat = NepaliNumberFormat(
     symbol: 'Rs.',
   );
-  var commaSeparated = NepaliNumberFormat(
+  final commaSeparated = NepaliNumberFormat(
     decimalDigits: 2,
+  );
+
+  final numberFormatWithDefaultDelimiter = NepaliNumberFormat(
+    symbol: 'Rs.',
+    delimiter: ',',
+  );
+  final numberFormatWithEmptyDelimiter = NepaliNumberFormat(
+    symbol: 'Rs.',
+    delimiter: '',
   );
 
   // Sets default language for nepali utilities to be Nepali.
@@ -51,10 +60,14 @@ void main(List<String> arguments) {
     language: Language.nepali,
     isMonetory: true,
   );
-  print('123456 -> ${currencyFormat.format(123456)}');
+  print('123456 -> ${numberFormat.format(123456)}');
   print('123456789.6548 -> ${commaSeparated.format(123456789.6548)}');
   print('123456 -> ${inWords.format(123456)}');
   print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
+
+  heading('Number Format With Delimiter');
+  print('12345 -> ${numberFormatWithDefaultDelimiter.format(12345)}');
+  print('12345 -> ${numberFormatWithEmptyDelimiter.format(12345)}');
 
   heading('Nepali Unicode');
   print(NepaliUnicode.convert(

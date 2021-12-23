@@ -30,6 +30,15 @@ class NepaliNumberFormat {
   /// [isMonetory] is required to be set as true.
   final String? symbol;
 
+  /// The character used to separate place value in number.
+  ///
+  /// i.e. 2000(delimiter = ',') -> 2,000
+  ///      2000(delimiter = '') -> 2000
+  ///      2000(delimiter = '.') -> 2.000
+  ///
+  /// Default value is ','.
+  final String delimiter;
+
   /// If true, place the symbol on left side of the formatted number.
   ///
   /// Default is true.
@@ -57,6 +66,7 @@ class NepaliNumberFormat {
     this.decimalDigits,
     this.symbol,
     this.symbolOnLeft = true,
+    this.delimiter = ',',
     this.spaceBetweenAmountAndSymbol = true,
     this.includeDecimalIfZero = true,
     Language? language,
@@ -227,9 +237,9 @@ class NepaliNumberFormat {
     } else if (_number.length < 5) {
       var localizedNum = _isEnglish ? _number : NepaliUnicode.convert(_number);
       if (hideDecimal) {
-        return '${localizedNum[0]},${localizedNum.substring(1)}';
+        return '${localizedNum[0]}$delimiter${localizedNum.substring(1)}';
       }
-      return '${localizedNum[0]},${localizedNum.substring(1)}$_fractionalPart';
+      return '${localizedNum[0]}$delimiter${localizedNum.substring(1)}$_fractionalPart';
     } else {
       var paddedNumber = _number.length.isOdd ? _number : '0$_number';
       var formattedString = '';
@@ -237,7 +247,7 @@ class NepaliNumberFormat {
       var matches = digitMatcher.allMatches(paddedNumber);
       for (var i = 0; i < matches.length; i++) {
         if (i < matches.length - 2) {
-          formattedString += '${matches.elementAt(i).group(0)},';
+          formattedString += '${matches.elementAt(i).group(0)}$delimiter';
         } else {
           formattedString +=
               _number.substring(_number.length - 3, _number.length);
