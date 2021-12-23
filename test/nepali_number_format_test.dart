@@ -1,5 +1,4 @@
 import 'package:nepali_utils/nepali_utils.dart';
-import 'package:nepali_utils/src/nepali_number_format.dart';
 import 'package:test/test.dart';
 
 void main() {

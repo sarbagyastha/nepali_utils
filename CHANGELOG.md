@@ -1,3 +1,6 @@
+# 3.0.2
+* Added `delimiter` property to **NumberFormat**. [PR #6](https://github.com/sarbagyastha/nepali_utils/pull/6) Thanks to [@Ravikant](https://github.com/ravikant-paudel)
+
 # 3.0.1
 * Fixed incorrect date conversion for the year 1970.
 
