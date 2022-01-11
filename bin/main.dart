@@ -78,10 +78,31 @@ void main(List<String> arguments) {
     NepaliUnicode.convert('saarwabhauma bhai failiekaa, mecii-mahaakaalii\n'),
   );
 
-  heading('Nepali Moment');
+  heading('Nepali Moment - In Nepali');
   print(
     NepaliMoment.fromBS(
       NepaliDateTime.parse('2076-03-22T08:41:14'),
+    ),
+  );
+
+  print(
+    NepaliMoment.fromBS(
+      NepaliDateTime.parse('2076-02-32T18:25:14'),
+      referenceDate: NepaliDateTime.parse('2076-02-32T18:34:14'),
+    ),
+  );
+  print(
+    NepaliMoment.fromAD(
+      DateTime.parse('2019-06-02T18:22:14'),
+      referenceDate: DateTime.parse('2019-06-15T18:34:14'),
+    ),
+  );
+
+  heading('Nepali Moment - In English');
+  NepaliUtils().language = Language.english;
+  print(
+    NepaliMoment.fromBS(
+      NepaliDateTime.parse('2078-09-27T08:41:14'),
     ),
   );
 

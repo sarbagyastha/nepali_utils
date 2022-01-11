@@ -2,8 +2,10 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
+import 'language.dart';
 import 'nepali_date_time.dart';
 import 'nepali_unicode.dart';
+import 'nepali_utils.dart';
 
 /// NepaliMoment describes the moment in Nepali locale.
 ///
@@ -13,17 +15,27 @@ class NepaliMoment {
   ///
   /// If [referenceDate] is null, the difference between [date] and the current date is
   /// converted into moment.
-  static String fromBS(NepaliDateTime date, {NepaliDateTime? referenceDate}) =>
-      _calc(date, referenceDate ?? NepaliDateTime.now());
+  static String fromBS(
+    NepaliDateTime date, {
+    NepaliDateTime? referenceDate,
+    bool showToday = false,
+  }) {
+    return _calc(date, referenceDate ?? NepaliDateTime.now(), showToday);
+  }
 
   /// Converts the difference between [date] and [referenceDate] in [DateTime] into moment string.
   ///
   /// If [referenceDate] is null, the difference between [date] and the current date is
   /// converted into moment.
-  static String fromAD(DateTime date, {DateTime? referenceDate}) =>
-      _calc(date, referenceDate ?? DateTime.now());
+  static String fromAD(
+    DateTime date, {
+    DateTime? referenceDate,
+    bool showToday = false,
+  }) {
+    return _calc(date, referenceDate ?? DateTime.now(), showToday);
+  }
 
-  static String _calc(date, referenceDate) {
+  static String _calc(DateTime date, DateTime referenceDate, bool showToday) {
     final elapsedDuration = referenceDate.difference(date);
     final elapsed = elapsedDuration.inMilliseconds;
     final isFuture = elapsed.isNegative;
@@ -33,31 +45,44 @@ class NepaliMoment {
     final days = hours / 24;
     final months = days / 30;
     final years = days / 365;
-    String _momentString;
 
+    final isEnglish = NepaliUtils().language == Language.english;
+
+    String _momentString;
     if (seconds < 45) {
-      _momentString = 'केही क्षण';
+      _momentString = isEnglish ? 'few moment' : 'केही क्षण';
     } else if (seconds < 90) {
-      _momentString = 'एक मिनेट';
+      _momentString = isEnglish ? 'one minute' : 'एक मिनेट';
     } else if (minutes < 45) {
-      _momentString = '${NepaliUnicode.convert('${minutes.round()}')} मिनेट';
+      final min = minutes.round();
+      _momentString = isEnglish ? '$min minute' : _nepaliMoment(min, 'मिनेट');
     } else if (minutes < 90) {
-      _momentString = 'लगभग एक घण्टा';
+      _momentString = isEnglish ? 'about an hour' : 'लगभग एक घण्टा';
     } else if (hours < 24) {
-      _momentString = '${NepaliUnicode.convert('${hours.round()}')} घण्टा';
+      final hr = hours.round();
+      _momentString = isEnglish ? '$hr hours' : _nepaliMoment(hr, 'घण्टा');
     } else if (hours < 48) {
-      _momentString = 'एक दिन';
+      _momentString = isEnglish ? 'one day' : 'एक दिन';
     } else if (days < 30) {
-      _momentString = '${NepaliUnicode.convert('${days.round()}')} दिन';
+      final day = days.round();
+      _momentString = isEnglish ? '$day days' : _nepaliMoment(day, 'दिन');
     } else if (days < 60) {
-      _momentString = 'लगभग एक महिना';
+      _momentString = isEnglish ? 'about a month' : 'लगभग एक महिना';
     } else if (days < 365) {
-      _momentString = '${NepaliUnicode.convert('${months.round()}')} दिन';
+      final month = months.round();
+      _momentString =
+          isEnglish ? '$month month' : _nepaliMoment(month, 'महिना');
     } else if (years < 2) {
-      _momentString = 'लगभग एक वर्ष';
+      _momentString = isEnglish ? 'about one year' : 'लगभग एक वर्ष';
     } else {
-      _momentString = '${NepaliUnicode.convert('${years.round()}')} वर्ष';
+      final year = years.round();
+      _momentString = isEnglish ? '$year year' : _nepaliMoment(year, 'वर्ष');
     }
-    return _momentString += isFuture ? ' पछि' : ' पहिले';
+    if (isFuture) return _momentString += isEnglish ? ' from now' : ' पछि';
+    return _momentString += isEnglish ? ' ago' : ' पहिले';
   }
+}
+
+String _nepaliMoment(int number, String label) {
+  return '${NepaliUnicode.convert(number.toString())} $label';
 }
