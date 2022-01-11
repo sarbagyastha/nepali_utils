@@ -1,3 +1,6 @@
+# 3.0.3
+* Added english support for moment conversion.
+
 # 3.0.2
 * Added `delimiter` property to **NumberFormat**. [PR #6](https://github.com/sarbagyastha/nepali_utils/pull/6) Thanks to [@Ravikant](https://github.com/ravikant-paudel)
 
