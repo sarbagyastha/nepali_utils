@@ -24,6 +24,16 @@ class UnicodeToEnglish {
             .add(_unicodeMap[splittedString[i]] ?? splittedString[i]);
       }
     }
+    for (var i = 0; i < convertedString.length; i++) {
+      if (_symbolMap[convertedString[i]] != null) {
+        convertedString[i - 1] = convertedString[i - 1].toString();
+        if (convertedString[i - 1].endsWith('a')) {
+          convertedString[i - 1] = convertedString[i - 1]
+              .substring(0, convertedString[i - 1].length - 1);
+        }
+        convertedString[i] = _symbolMap[convertedString[i]] ?? '';
+      }
+    }
     _text = convertedString.join('');
     return _text;
   }
@@ -94,4 +104,18 @@ Map<String, String> get _unicodeMap => {
       '\u096f': '9',
       //symbols
       '%2c': ',',
+    };
+Map<String, String> get _symbolMap => {
+      '\u093E': 'aa',
+      '\u093F': 'i',
+      '\u0940': 'ii',
+      '\u0941': 'u',
+      '\u0942': 'U',
+      '\u0947': 'e',
+      '\u0948': 'ai',
+      '\u094B': 'o',
+      '\u094C': 'au',
+
+      '\u0901': "''", //chandrabindu
+      '\u0902': "'", //shreebindu
     };
