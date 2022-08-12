@@ -224,6 +224,21 @@ print(NepaliMoment.fromAD(DateTime.parse('2019-06-02T18:22:14'),
 // १३ दिन पहिले
 ```
 
+### English literals to Unicode
+Converts English literal (Roman Literals) into Nepali Unicode.
+```dart
+print(NepaliUnicode.convert(
+      "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"));
+// सयौं थुँगा फूलका हामी, एउटै माला नेपाली
+```
+
+### Unicode to English iterals
+Converts Nepali Unicode into English literals.
+```dart
+print(NepaliUnicode.convert("सयौं थुँगा फूलका हामी, एउटै माला नेपाली"));
+// sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii 
+```
+
 
 ## Example
 Find more detailed example [here](https://github.com/sarbagyastha/nepali_utils/tree/master/example/main.dart).
