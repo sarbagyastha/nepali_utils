@@ -1,4 +1,5 @@
 import 'package:nepali_utils/nepali_utils.dart';
+import 'package:nepali_utils/src/unicode_to_english.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -161,6 +162,25 @@ void main() {
         NepaliNumberFormat(language: Language.nepali, delimiter: '.')
             .format(1234),
         '१.२३४',
+      ),
+    );
+  });
+  group('text converter ', () {
+    final englishText =
+        "ka baaTa kachuwaa kha kharaayo\nkharaayoko sing' chaina kataa haraayo";
+    final nepaliText = 'क बाट कछुवा ख खरायो\nखरायोको सिङं छैन कता हरायो';
+    test(
+      'conversion of english to nepali unicode',
+      () => expect(
+        NepaliUnicode.convert('$englishText'),
+        '$nepaliText',
+      ),
+    );
+    test(
+      'conversion of nepali to english unicode',
+      () => expect(
+        UnicodeToEnglish.convert('$nepaliText'),
+        '$englishText',
       ),
     );
   });
