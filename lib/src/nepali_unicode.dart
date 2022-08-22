@@ -13,7 +13,11 @@ class NepaliUnicode {
   /// i.e. as you go on typing
   /// Default for live is false.
   /// if ignoreList is provided, text in list will not be translated
-  static String convert(String text, {bool live = false, List<String> ignoreList = const []}) {
+  static String convert(
+    String text, {
+    bool live = false,
+    List<String> ignoreList = const [],
+  }) {
     _ignoreList = ignoreList;
     if (live) {
       return _convert(text);
