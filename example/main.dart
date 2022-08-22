@@ -70,10 +70,14 @@ void main(List<String> arguments) {
   print('12345 -> ${numberFormatWithEmptyDelimiter.format(12345)}');
 
   heading('Nepali Unicode');
-  print(NepaliUnicode.convert(
-      "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"));
-  print(NepaliUnicode.convert(
-      'saarwabhauma bhai failiekaa, mecii-mahaakaalii\n'));
+  print(NepaliUnicode.convert("sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"));
+  print(NepaliUnicode.convert('saarwabhauma bhai failiekaa, mecii-mahaakaalii\n'));
+
+  heading('Nepali Unicode with number');
+  print(NepaliUnicode.convert('10000.10'));
+
+  heading('Nepali Unicode with number and ignore list');
+  print(NepaliUnicode.convert('10,000.10', ignoreList: ['.']));
 }
 
 void heading(String text) {
