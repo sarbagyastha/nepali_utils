@@ -20,7 +20,9 @@ class UnicodeToEnglish {
         fullStr = fullStr.substring(0, fullStr.length - 1);
         convertedString.add(fullStr);
       } else if (characters[i] != '\u094D') {
-        convertedString.add(_unicodeMap[characters[i]] ?? characters[i]);
+        convertedString.add(
+          _unicodeMap[characters[i]] ?? characters[i],
+        );
       }
     }
     for (var i = 0; i < convertedString.length; i++) {
