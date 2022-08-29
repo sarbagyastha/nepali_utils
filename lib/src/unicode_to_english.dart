@@ -12,8 +12,8 @@ class UnicodeToEnglish {
   /// i.e. as you go on typing
   /// Default for live is false.
   static String convert(String text, {bool live = false}) {
-    var splittedString = text.split('');
-    var convertedString = <String>[];
+    final splittedString = text.split('');
+    final convertedString = <String>[];
     for (var i = 0; i < splittedString.length; i++) {
       if (i < splittedString.length - 1 && splittedString[i + 1] == '\u094D') {
         var fullStr = _unicodeMap[splittedString[i]].toString();
