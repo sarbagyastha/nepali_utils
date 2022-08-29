@@ -27,10 +27,10 @@ class UnicodeToEnglish {
     }
     for (var i = 0; i < convertedString.length; i++) {
       if (_symbolMap[convertedString[i]] != null) {
-        convertedString[i - 1] = convertedString[i - 1].toString();
-        if (convertedString[i - 1].endsWith('a')) {
-          convertedString[i - 1] = convertedString[i - 1]
-              .substring(0, convertedString[i - 1].length - 1);
+        var preecedingCharacter = convertedString[i - 1].toString();
+        if (preecedingCharacter.endsWith('a')) {
+          preecedingCharacter =
+              preecedingCharacter.substring(0, preecedingCharacter.length - 1);
         }
         convertedString[i] = _symbolMap[convertedString[i]] ?? '';
       }
