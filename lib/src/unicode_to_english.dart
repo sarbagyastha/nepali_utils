@@ -26,6 +26,7 @@ class UnicodeToEnglish {
       }
     }
     for (var i = 0; i < convertedString.length; i++) {
+      // if the converted string contains symbols
       if (_symbolMap[convertedString[i]] != null) {
         var preecedingCharacter = convertedString[i - 1].toString();
         if (preecedingCharacter.endsWith('a')) {
