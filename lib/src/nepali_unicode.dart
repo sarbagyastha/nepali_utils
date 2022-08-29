@@ -5,25 +5,37 @@
 /// Converts English literal (Roman Literals) into Nepali Unicode.
 class NepaliUnicode {
   static String _text = '';
+  static List<String> _ignoreList = [];
 
   /// Converts specifies [text] into nepali literals.
   ///
   /// if live is true, texts will convert in live manner.
   /// i.e. as you go on typing
   /// Default for live is false.
-  static String convert(String text, {bool live = false}) {
+  /// if ignoreList is provided, text in list will not be translated
+  static String convert(
+    String text, {
+    bool live = false,
+    List<String> ignoreList = const [],
+  }) {
+    _ignoreList = ignoreList;
     if (live) {
-      return _unicode(text);
+      return _convert(text);
     }
     _text = '';
     for (var index = 0; index < text.length; index++) {
+      final char = text[index];
       if (index == 0) {
-        _text = _unicode(text[0]);
+        _text = _convert(char);
       } else {
-        _text = _unicode(_text + text[index]);
+        _text = _unicode(_text + char);
       }
     }
     return _text;
+  }
+
+  static String _convert(String data) {
+    return _ignoreList.contains(data) ? data : _unicode(data);
   }
 
   static String _unicode(String data) {
@@ -195,10 +207,12 @@ class NepaliUnicode {
   }
 
   static void _replace(x, y) {
+    if (_ignoreList.contains(x)) return;
     _text = _text.replaceAll(x, String.fromCharCodes(Runes(y)));
   }
 
   static void _replaceRunes(x, y) {
+    if (_ignoreList.contains(x)) return;
     _text = _text.replaceAll(
       String.fromCharCodes(Runes(x)),
       String.fromCharCodes(Runes(y)),
