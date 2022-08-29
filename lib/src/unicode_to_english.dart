@@ -27,11 +27,14 @@ class UnicodeToEnglish {
       // if the converted string contains symbols
       if (_symbolMap[convertedString[i]] != null) {
         var preecedingCharacter = convertedString[i - 1].toString();
+        print('$preecedingCharacter ${preecedingCharacter.endsWith('a')}');
         //  eg. tha + ु (u) = thu
         if (preecedingCharacter.endsWith('a')) {
           preecedingCharacter =
               preecedingCharacter.substring(0, preecedingCharacter.length - 1);
+          convertedString[i - 1] = preecedingCharacter;
         }
+
         convertedString[i] = _symbolMap[convertedString[i]] ?? '';
       }
     }
