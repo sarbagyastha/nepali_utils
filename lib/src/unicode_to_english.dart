@@ -12,16 +12,15 @@ class UnicodeToEnglish {
   /// i.e. as you go on typing
   /// Default for live is false.
   static String convert(String text, {bool live = false}) {
-    final splittedString = text.split('');
+    final characters = text.split('');
     final convertedString = <String>[];
-    for (var i = 0; i < splittedString.length; i++) {
-      if (i < splittedString.length - 1 && splittedString[i + 1] == '\u094D') {
-        var fullStr = _unicodeMap[splittedString[i]].toString();
+    for (var i = 0; i < characters.length; i++) {
+      if (i < characters.length - 1 && characters[i + 1] == '\u094D') {
+        var fullStr = _unicodeMap[characters[i]].toString();
         fullStr = fullStr.substring(0, fullStr.length - 1);
         convertedString.add(fullStr);
-      } else if (splittedString[i] != '\u094D') {
-        convertedString
-            .add(_unicodeMap[splittedString[i]] ?? splittedString[i]);
+      } else if (characters[i] != '\u094D') {
+        convertedString.add(_unicodeMap[characters[i]] ?? characters[i]);
       }
     }
     for (var i = 0; i < convertedString.length; i++) {
