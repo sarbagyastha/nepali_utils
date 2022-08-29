@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:nepali_utils/nepali_utils.dart';
+import 'package:nepali_utils/src/unicode_to_english.dart';
 
 void main(List<String> arguments) {
   heading('Nepali Date Time');
@@ -74,6 +75,9 @@ void main(List<String> arguments) {
       "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"));
   print(NepaliUnicode.convert(
       'saarwabhauma bhai failiekaa, mecii-mahaakaalii\n'));
+  heading('Unicode to English');
+  print(UnicodeToEnglish.convert('सयौं थुँगा फूलका हामी, एउटै माला नेपाली'));
+  print(UnicodeToEnglish.convert('सार्वभौम भै फैलिएका, मेची-महाकाली\n'));
 }
 
 void heading(String text) {
