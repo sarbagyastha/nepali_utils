@@ -4,8 +4,6 @@
 
 /// Converts Nepali Unicode (Devnagari Literals) into English(Roman) literals.
 class UnicodeToEnglish {
-  static final String _text = '';
-
   /// Converts specifies [text] into english literals.
   ///
   /// if live is true, texts will convert in live manner.
@@ -29,6 +27,7 @@ class UnicodeToEnglish {
       // if the converted string contains symbols
       if (_symbolMap[convertedString[i]] != null) {
         var preecedingCharacter = convertedString[i - 1].toString();
+        //  eg. tha + ु (u) = thu
         if (preecedingCharacter.endsWith('a')) {
           preecedingCharacter =
               preecedingCharacter.substring(0, preecedingCharacter.length - 1);
