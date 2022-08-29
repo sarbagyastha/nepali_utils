@@ -227,9 +227,11 @@ print(NepaliMoment.fromAD(DateTime.parse('2019-06-02T18:22:14'),
 ### English literals to Unicode
 Converts English literal (Roman Literals) into Nepali Unicode.
 ```dart 
-print(NepaliUnicode.convert(
-        "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii",
-      ));
+      print(
+        NepaliUnicode.convert(
+          "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii",
+        ),
+      );
 // सयौं थुँगा फूलका हामी, एउटै माला नेपाली
 ```
 
