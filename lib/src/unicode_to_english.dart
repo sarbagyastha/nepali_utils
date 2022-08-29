@@ -4,7 +4,7 @@
 
 /// Converts Nepali Unicode (Devnagari Literals) into English(Roman) literals.
 class UnicodeToEnglish {
-  static String _text = '';
+  static final String _text = '';
 
   /// Converts specifies [text] into english literals.
   ///
@@ -36,8 +36,7 @@ class UnicodeToEnglish {
         convertedString[i] = _symbolMap[convertedString[i]] ?? '';
       }
     }
-    _text = convertedString.join('');
-    return _text;
+    return convertedString.join('');
   }
 }
 
