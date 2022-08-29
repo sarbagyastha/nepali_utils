@@ -16,9 +16,9 @@ class UnicodeToEnglish {
     final convertedString = <String>[];
     for (var i = 0; i < characters.length; i++) {
       if (i < characters.length - 1 && characters[i + 1] == '\u094D') {
-        var fullStr = _unicodeMap[characters[i]].toString();
-        fullStr = fullStr.substring(0, fullStr.length - 1);
-        convertedString.add(fullStr);
+        var character = _unicodeMap[characters[i]].toString();
+        character = character.substring(0, character.length - 1);
+        convertedString.add(character);
       } else if (characters[i] != '\u094D') {
         convertedString.add(
           _unicodeMap[characters[i]] ?? characters[i],
