@@ -2,12 +2,25 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
-import 'language.dart';
-import 'nepali_unicode.dart';
-import 'nepali_utils.dart';
+import 'package:nepali_utils/src/language.dart';
+import 'package:nepali_utils/src/nepali_unicode.dart';
+import 'package:nepali_utils/src/nepali_utils.dart';
 
 /// Provides the ability to format a number in a Nepali way.
 class NepaliNumberFormat {
+  ///Create a nepali number format.
+  NepaliNumberFormat({
+    this.inWords = false,
+    this.isMonetory = false,
+    this.decimalDigits,
+    this.symbol,
+    this.symbolOnLeft = true,
+    this.delimiter = ',',
+    this.spaceBetweenAmountAndSymbol = true,
+    this.includeDecimalIfZero = true,
+    Language? language,
+  }) : _lang = language ?? NepaliUtils().language;
+
   /// If true, formats the number in words.
   ///
   /// Default is false.
@@ -59,20 +72,8 @@ class NepaliNumberFormat {
   /// Default is true.
   final bool includeDecimalIfZero;
 
-  ///Create a nepali number format.
-  NepaliNumberFormat({
-    this.inWords = false,
-    this.isMonetory = false,
-    this.decimalDigits,
-    this.symbol,
-    this.symbolOnLeft = true,
-    this.delimiter = ',',
-    this.spaceBetweenAmountAndSymbol = true,
-    this.includeDecimalIfZero = true,
-    Language? language,
-  }) : _lang = language ?? NepaliUtils().language;
-
-  /// Format number according to specified parameters and return the formatted string.
+  /// Format number according to specified parameters
+  /// and return the formatted string.
   String format<T extends Object>(T? number) {
     if (number == null) return '';
     if (inWords) {
@@ -100,18 +101,22 @@ class NepaliNumberFormat {
   }
 
   String _formatInWords<T extends Object>(T number) {
-    var numberInWord = '';
+    final numberInWordBuffer = StringBuffer();
     var decimal = '';
-    var commaFormattedNumber = _formatWithComma<T>(number);
-    var digitGroups = commaFormattedNumber.split(',');
+    final commaFormattedNumber = _formatWithComma<T>(number);
+    final digitGroups = commaFormattedNumber.split(',');
 
     if (commaFormattedNumber.contains('.')) {
       decimal = digitGroups.last.split('.').last;
     }
 
     for (var i = 0; i < digitGroups.length - 1; i++) {
-      numberInWord +=
-          _digitGroupToWord(digitGroups.length - i - 2, digitGroups[i]);
+      numberInWordBuffer.write(
+        _digitGroupToWord(
+          digitGroups.length - i - 2,
+          digitGroups[i],
+        ),
+      );
     }
 
     var digit = digitGroups.last;
@@ -120,17 +125,23 @@ class NepaliNumberFormat {
     }
 
     if (digit.length == 3) {
-      numberInWord +=
-          '${_languageNumber(digit[0])} ${_language('hundred')} ${_languageNumber(digit.substring(1))}';
+      numberInWordBuffer.write(
+        '${_languageNumber(digit[0])} ${_language('hundred')} '
+        '${_languageNumber(digit.substring(1))}',
+      );
     } else {
-      numberInWord += '${_languageNumber(digit)}';
+      numberInWordBuffer.write(_languageNumber(digit));
     }
+
+    final numberInWord = numberInWordBuffer.toString();
 
     if (isMonetory) {
       return numberInWord.trimRight() +
           (decimal.isEmpty
               ? ' ${_language('rupees')}'
-              : ' ${_language('rupees')} ${_isEnglish ? decimal : NepaliUnicode.convert(decimal)} ${_language('paisa')}');
+              : ' ${_language('rupees')} '
+                  '${_isEnglish ? decimal : NepaliUnicode.convert(decimal)} '
+                  '${_language('paisa')}');
     }
     return numberInWord.trimRight();
   }
@@ -159,7 +170,7 @@ class NepaliNumberFormat {
   }
 
   String _languageNumber(String number) =>
-      _isEnglish ? number : NepaliUnicode.convert('$number');
+      _isEnglish ? number : NepaliUnicode.convert(number);
 
   bool get _isEnglish => _lang == Language.english;
 
@@ -193,64 +204,67 @@ class NepaliNumberFormat {
   }
 
   String _formatWithComma<T extends Object>(T number) {
-    var _decimalDigits = decimalDigits;
-    var _number = '', _fractionalPart = '';
+    var decimalDigits = this.decimalDigits;
+    var number0 = '';
+    var fractionalPart = '';
     if (number is String) {
-      _decimalDigits ??= 2;
-      _number = number;
+      decimalDigits ??= 2;
+      number0 = number;
     } else if (number is int) {
-      _decimalDigits ??= 0;
-      _number = '$number';
+      decimalDigits ??= 0;
+      number0 = '$number';
     } else if (number is double) {
-      _decimalDigits ??= 2;
-      _number = '$number';
+      decimalDigits ??= 2;
+      number0 = '$number';
     } else {
       throw ArgumentError('number should be either "String" or "num"');
     }
 
-    final fractionMatches = RegExp(r'^(\d*)\.?(\d*)$').allMatches(_number);
+    final fractionMatches = RegExp(r'^(\d*)\.?(\d*)$').allMatches(number0);
     if (fractionMatches.isNotEmpty) {
-      _number = fractionMatches.first.group(1) ?? '';
-      _fractionalPart = fractionMatches.first.group(2) ?? '';
+      number0 = fractionMatches.first.group(1) ?? '';
+      fractionalPart = fractionMatches.first.group(2) ?? '';
     } else {
       throw Exception('Unexpected input: $number');
     }
 
-    _fractionalPart = _fractionalPart
-        .padRight(_decimalDigits, '0')
-        .substring(0, _decimalDigits);
+    fractionalPart =
+        fractionalPart.padRight(decimalDigits, '0').substring(0, decimalDigits);
 
     final hideDecimal =
-        !includeDecimalIfZero && RegExp(r'^0+$').hasMatch(_fractionalPart);
+        !includeDecimalIfZero && RegExp(r'^0+$').hasMatch(fractionalPart);
 
-    _fractionalPart =
-        _isEnglish ? _fractionalPart : NepaliUnicode.convert(_fractionalPart);
-    if (_decimalDigits > 0) {
-      _fractionalPart = '.$_fractionalPart';
+    fractionalPart =
+        _isEnglish ? fractionalPart : NepaliUnicode.convert(fractionalPart);
+    if (decimalDigits > 0) {
+      fractionalPart = '.$fractionalPart';
     }
 
-    if (_number.length <= 3) {
+    if (number0.length <= 3) {
       if (hideDecimal) {
-        return '${_isEnglish ? _number : NepaliUnicode.convert(_number)}';
+        return _isEnglish ? number0 : NepaliUnicode.convert(number0);
       }
-      return '${_isEnglish ? _number : NepaliUnicode.convert(_number)}$_fractionalPart';
-    } else if (_number.length < 5) {
-      var localizedNum = _isEnglish ? _number : NepaliUnicode.convert(_number);
+      return '${_isEnglish ? number0 : NepaliUnicode.convert(number0)}'
+          '$fractionalPart';
+    } else if (number0.length < 5) {
+      final localizedNum =
+          _isEnglish ? number0 : NepaliUnicode.convert(number0);
       if (hideDecimal) {
         return '${localizedNum[0]}$delimiter${localizedNum.substring(1)}';
       }
-      return '${localizedNum[0]}$delimiter${localizedNum.substring(1)}$_fractionalPart';
+      return '${localizedNum[0]}$delimiter${localizedNum.substring(1)}'
+          '$fractionalPart';
     } else {
-      var paddedNumber = _number.length.isOdd ? _number : '0$_number';
+      final paddedNumber = number0.length.isOdd ? number0 : '0$number0';
       var formattedString = '';
-      var digitMatcher = RegExp(r'\d{1,2}');
-      var matches = digitMatcher.allMatches(paddedNumber);
+      final digitMatcher = RegExp(r'\d{1,2}');
+      final matches = digitMatcher.allMatches(paddedNumber);
       for (var i = 0; i < matches.length; i++) {
         if (i < matches.length - 2) {
           formattedString += '${matches.elementAt(i).group(0)}$delimiter';
         } else {
           formattedString +=
-              _number.substring(_number.length - 3, _number.length);
+              number0.substring(number0.length - 3, number0.length);
           break;
         }
       }
@@ -261,7 +275,7 @@ class NepaliNumberFormat {
           _isEnglish ? formattedString : NepaliUnicode.convert(formattedString);
 
       if (hideDecimal) return formattedString;
-      return '$formattedString$_fractionalPart';
+      return '$formattedString$fractionalPart';
     }
   }
 }
