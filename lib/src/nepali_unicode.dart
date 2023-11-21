@@ -162,7 +162,7 @@ class NepaliUnicode {
     _replaceRunes('\u200b\u0915\u094d\u0937', '\u0915\u094d\u0937');
     _replaceRunes('\u200b\u0924\u094d\u0930', '\u0924\u094d\u0930');
     _replaceRunes('\u200b\u091c\u094d\u091e', '\u091c\u094d\u091e');
-    _replace('\'', '\u0902');
+    _replace("'", '\u0902');
     _replaceRunes('\u094d\u0902', '\u0902');
     _replaceRunes('\u0902\u0902', '\u0901');
     _replaceRunes('\u0913\u092e\u094d', '\u0950');
@@ -175,7 +175,7 @@ class NepaliUnicode {
     _replace('.', '\u0964');
     _replace('|', '\u0964');
     _replace('/', '\u0964');
-    _replace('\\', '\u0964');
+    _replace(r'\', '\u0964');
     _replaceRunes('\u0964\u0964', '\u0965');
     _replace('0', '\u0966');
     _replace('1', '\u0967');
@@ -194,11 +194,11 @@ class NepaliUnicode {
     return _text;
   }
 
-  static void _replace(x, y) {
+  static void _replace(String x, String y) {
     _text = _text.replaceAll(x, String.fromCharCodes(Runes(y)));
   }
 
-  static void _replaceRunes(x, y) {
+  static void _replaceRunes(String x, String y) {
     _text = _text.replaceAll(
       String.fromCharCodes(Runes(x)),
       String.fromCharCodes(Runes(y)),

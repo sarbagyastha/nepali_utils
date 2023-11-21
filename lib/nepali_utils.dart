@@ -1,3 +1,4 @@
+/// Nepali Utils
 library nepali_utils;
 
 export 'src/language.dart';

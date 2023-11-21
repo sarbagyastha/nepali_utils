@@ -2,18 +2,10 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
-import '../nepali_utils.dart';
+import 'package:nepali_utils/nepali_utils.dart';
 
 /// Nepali Utilities
 class NepaliUtils {
-  static NepaliUtils? _instance;
-
-  /// Language for Nepali Utilities.
-  ///
-  /// Default is [Language.english], if not set.
-  Language language = Language.english;
-
-  NepaliUtils._();
 
   /// Nepali Utilities
   ///
@@ -23,4 +15,12 @@ class NepaliUtils {
     if (lang != null) _instance!.language = lang;
     return _instance!;
   }
+
+  NepaliUtils._();
+  static NepaliUtils? _instance;
+
+  /// Language for Nepali Utilities.
+  ///
+  /// Default is [Language.english], if not set.
+  Language language = Language.english;
 }

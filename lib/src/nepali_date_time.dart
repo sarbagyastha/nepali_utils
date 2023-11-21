@@ -2,26 +2,31 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
-import 'language.dart';
-import 'nepali_date_format.dart';
+import 'package:nepali_utils/src/language.dart';
+import 'package:nepali_utils/src/nepali_date_format.dart';
 
 ///
 extension ENepaliDateTime on DateTime {
   /// Converts the [DateTime] to [NepaliDateTime].
   NepaliDateTime toNepaliDateTime() {
+    const nepalTzOffset = Duration(hours: 5, minutes: 45);
+    final now = toUtc().add(nepalTzOffset);
     // Setting nepali reference to 1970/1/1 with english date 1913/4/13
     var nepaliYear = 1970;
     var nepaliMonth = 1;
     var nepaliDay = 1;
 
     // Time was causing error while differencing dates.
-    final _date = DateTime(year, month, day);
-    var difference = _date.difference(DateTime(1913, 4, 13)).inDays;
+    final date = DateTime(now.year, now.month, now.day);
+    var difference = date.difference(DateTime(1913, 4, 13)).inDays;
 
-    // 1986-1-1's duration is only 23 hours 45 minutes in Dart
-    // This can be tested using `print(DateTime(1986,1,2).difference(DateTime(1986,1,1)))`;
+    // 1986-1-1's duration is only 23 hours 45 minutes in Dart for Nepal Time.
+    // This can be tested using
+    // `print(DateTime(1986,1,2).difference(DateTime(1986,1,1)))`;
     // So, in order to compensate it one extra day is added from this date.
-    if (_date.isAfter(DateTime(1986, 1, 1))) difference++;
+    if (date.timeZoneOffset == nepalTzOffset && date.isAfter(DateTime(1986))) {
+      difference += 1;
+    }
 
     // Getting nepali year until the difference remains less than 365
     var daysInYear = _nepaliYears[nepaliYear]!.first;
@@ -46,17 +51,39 @@ extension ENepaliDateTime on DateTime {
       nepaliYear,
       nepaliMonth,
       nepaliDay,
-      hour,
-      minute,
-      second,
-      millisecond,
-      microsecond,
+      now.hour,
+      now.minute,
+      now.second,
+      now.millisecond,
+      now.microsecond,
     );
   }
 }
 
 /// An instant in time, such as Mangsir 05, 2076, 11:05am
 class NepaliDateTime implements DateTime {
+  /// Constructs a NepaliDateTime instance specified.
+  NepaliDateTime(
+    this.year, [
+    this.month = 1,
+    this.day = 1,
+    this.hour = 0,
+    this.minute = 0,
+    this.second = 0,
+    this.millisecond = 0,
+    this.microsecond = 0,
+  ]) : assert(year >= 1969 && year <= 2100, 'Supported year is 1970-2100');
+
+  /// Constructs a DateTime instance with current date and time
+  factory NepaliDateTime.now() => DateTime.now().toNepaliDateTime();
+
+  /// Converts the specified [DateTime] to [NepaliDateTime].
+  ///
+  /// Use [toNepaliDateTime()] exposed to [DateTime] object instead.
+  @Deprecated('Use toNepaliDateTime() instead.')
+  factory NepaliDateTime.fromDateTime(DateTime dateTime) {
+    return dateTime.toNepaliDateTime();
+  }
   @override
   final int year;
 
@@ -81,18 +108,6 @@ class NepaliDateTime implements DateTime {
   @override
   final int microsecond;
 
-  /// Constructs a NepaliDateTime instance specified.
-  NepaliDateTime(
-    this.year, [
-    this.month = 1,
-    this.day = 1,
-    this.hour = 0,
-    this.minute = 0,
-    this.second = 0,
-    this.millisecond = 0,
-    this.microsecond = 0,
-  ]) : assert(year >= 1969 && year <= 2100, 'Supported year is 1970-2100');
-
   List<int> get _englishMonths =>
       [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   List<int> get _englishLeapMonths =>
@@ -104,7 +119,7 @@ class NepaliDateTime implements DateTime {
   /// Returns total days in the [year].
   int get totalDaysInYear => _nepaliYears[year]!.first;
 
-  /// The day of the week [Sunday]..[Saturday].
+  /// The day of the week Sunday..Saturday.
   @override
   int get weekday => toDateTime().weekday % 7 + 1;
 
@@ -122,15 +137,12 @@ class NepaliDateTime implements DateTime {
   NepaliDateTime mergeTime(int hour, int minute, int second) =>
       NepaliDateTime(year, month, day, hour, minute, second);
 
-  /// Constructs a DateTime instance with current date and time
-  factory NepaliDateTime.now() => DateTime.now().toNepaliDateTime();
-
   ///Constructs a new [DateTime] instance based on [formattedString].
   ///
   ///Throws a [FormatException] if the input cannot be parsed.
   static NepaliDateTime parse(String formattedString) {
-    var re = _parseFormat;
-    Match? match = re.firstMatch(formattedString);
+    final re = _parseFormat;
+    final Match? match = re.firstMatch(formattedString);
     if (match != null) {
       int parseIntOrZero(String? matched) {
         if (matched == null) return 0;
@@ -142,8 +154,8 @@ class NepaliDateTime implements DateTime {
       // precision of 999 milliseconds and 999 microseconds.
       int parseMilliAndMicroseconds(String? matched) {
         if (matched == null) return 0;
-        var length = matched.length;
-        assert(length >= 1);
+        final length = matched.length;
+        assert(length >= 1, 'matched string is empty');
         var result = 0;
         for (var i = 0; i < 6; i++) {
           result *= 10;
@@ -154,16 +166,16 @@ class NepaliDateTime implements DateTime {
         return result;
       }
 
-      var years = int.parse(match[1]!);
-      var month = int.parse(match[2]!);
-      var day = int.parse(match[3]!);
-      var hour = parseIntOrZero(match[4]);
-      var minute = parseIntOrZero(match[5]);
-      var second = parseIntOrZero(match[6]);
-      var milliAndMicroseconds = parseMilliAndMicroseconds(match[7]);
-      var millisecond =
+      final years = int.parse(match[1]!);
+      final month = int.parse(match[2]!);
+      final day = int.parse(match[3]!);
+      final hour = parseIntOrZero(match[4]);
+      final minute = parseIntOrZero(match[5]);
+      final second = parseIntOrZero(match[6]);
+      final milliAndMicroseconds = parseMilliAndMicroseconds(match[7]);
+      final millisecond =
           milliAndMicroseconds ~/ Duration.microsecondsPerMillisecond;
-      var microsecond =
+      final microsecond =
           milliAndMicroseconds.remainder(Duration.microsecondsPerMillisecond);
 
       return NepaliDateTime(
@@ -209,8 +221,8 @@ class NepaliDateTime implements DateTime {
   int get microsecondsSinceEpoch => toDateTime().microsecondsSinceEpoch;
 
   static String _fourDigits(int n) {
-    var absN = n.abs();
-    var sign = n < 0 ? '-' : '';
+    final absN = n.abs();
+    final sign = n < 0 ? '-' : '';
     if (absN >= 1000) return '$n';
     if (absN >= 100) return '${sign}0$absN';
     if (absN >= 10) return '${sign}00$absN';
@@ -218,9 +230,9 @@ class NepaliDateTime implements DateTime {
   }
 
   static String _sixDigits(int n) {
-    assert(n < -9999 || n > 9999);
-    var absN = n.abs();
-    var sign = n < 0 ? '-' : '+';
+    assert(n < -9999 || n > 9999, "abs($n) can't be >= 10000");
+    final absN = n.abs();
+    final sign = n < 0 ? '-' : '+';
     if (absN >= 100000) return '$sign$absN';
     return '${sign}0$absN';
   }
@@ -246,42 +258,35 @@ class NepaliDateTime implements DateTime {
   ///
   @override
   String toString() {
-    var y = _fourDigits(year);
-    var m = _twoDigits(month);
-    var d = _twoDigits(day);
-    var h = _twoDigits(hour);
-    var min = _twoDigits(minute);
-    var sec = _twoDigits(second);
-    var ms = _threeDigits(millisecond);
-    var us = microsecond == 0 ? '' : _threeDigits(microsecond);
+    final y = _fourDigits(year);
+    final m = _twoDigits(month);
+    final d = _twoDigits(day);
+    final h = _twoDigits(hour);
+    final min = _twoDigits(minute);
+    final sec = _twoDigits(second);
+    final ms = _threeDigits(millisecond);
+    final us = microsecond == 0 ? '' : _threeDigits(microsecond);
     return '$y-$m-$d $h:$min:$sec.$ms$us';
   }
 
   @override
   String toIso8601String() {
-    var y =
+    final y =
         (year >= -9999 && year <= 9999) ? _fourDigits(year) : _sixDigits(year);
-    var m = _twoDigits(month);
-    var d = _twoDigits(day);
-    var h = _twoDigits(hour);
-    var min = _twoDigits(minute);
-    var sec = _twoDigits(second);
-    var ms = _threeDigits(millisecond);
-    var us = microsecond == 0 ? '' : _threeDigits(microsecond);
+    final m = _twoDigits(month);
+    final d = _twoDigits(day);
+    final h = _twoDigits(hour);
+    final min = _twoDigits(minute);
+    final sec = _twoDigits(second);
+    final ms = _threeDigits(millisecond);
+    final us = microsecond == 0 ? '' : _threeDigits(microsecond);
     return '$y-$m-${d}T$h:$min:$sec.$ms$us';
   }
 
   static final RegExp _parseFormat = RegExp(
       r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)' // Day part.
       r'(?:[ T](\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,6}))?)?)?' // Time part.
-      r'( ?[zZ]| ?([-+])(\d\d)(?::?(\d\d))?)?)?$'); // Timezone part.
-
-  /// Converts the specified [DateTime] to [NepaliDateTime].
-  ///
-  /// Use [toNepaliDateTime()] exposed to [DateTime] object instead.
-  @deprecated
-  factory NepaliDateTime.fromDateTime(DateTime dateTime) =>
-      dateTime.toNepaliDateTime();
+      r'( ?[zZ]| ?([-+])(\d\d)(?::?(\d\d))?)?)?$');
 
   /// Formats [NepaliDateTime] as per the pattern provided.
   ///
@@ -310,7 +315,7 @@ class NepaliDateTime implements DateTime {
     }
 
     // Getting english month until the difference remains less than 31
-    var monthDays =
+    final monthDays =
         _isLeapYear(englishYear) ? _englishLeapMonths : _englishMonths;
     var i = 0;
     while (difference >= monthDays[i]) {
@@ -335,9 +340,10 @@ class NepaliDateTime implements DateTime {
   }
 
   int _nepaliDateDifference(NepaliDateTime date, NepaliDateTime refDate) {
-    //Getting difference from the current nepaliDateTime with the nepaliDateTime provided
-    //final difference = (refDate.year-nepaliDateTime.year)*12*()
-    var difference = _countTotalNepaliDays(date.year, date.month, date.day) -
+    // Getting difference from the current nepaliDateTime
+    // with the nepaliDateTime provided
+    // final difference = (refDate.year-nepaliDateTime.year)*12*()
+    final difference = _countTotalNepaliDays(date.year, date.month, date.day) -
         _countTotalNepaliDays(refDate.year, refDate.month, refDate.day);
     return (difference < 0 ? -difference : difference);
   }
@@ -386,7 +392,7 @@ class NepaliDateTime implements DateTime {
   String get timeZoneName => 'Nepal Time';
 
   @override
-  Duration get timeZoneOffset => Duration(hours: 5, minutes: 45);
+  Duration get timeZoneOffset => const Duration(hours: 5, minutes: 45);
 
   @override
   NepaliDateTime toLocal() => this;
