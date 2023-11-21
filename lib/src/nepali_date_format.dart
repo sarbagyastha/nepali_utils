@@ -492,7 +492,7 @@ class NepaliDateFormat {
     final monthsInNepali = [
       _Month('बैशाख', 'बै'),
       _Month('जेष्ठ', 'जे'),
-      _Month('अषाढ', 'अ'),
+      _Month('आषाढ', 'अ'),
       _Month('श्रावण', 'श्रा'),
       _Month('भाद्र', 'भा'),
       _Month('आश्विन', 'आ'),
@@ -500,7 +500,7 @@ class NepaliDateFormat {
       _Month('मंसिर', 'मं'),
       _Month('पौष', 'पौ'),
       _Month('माघ', 'मा'),
-      _Month('फाल्गुन', 'फा'),
+      _Month('फाल्गुण', 'फा'),
       _Month('चैत्र', 'चै'),
     ];
 
