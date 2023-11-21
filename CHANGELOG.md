@@ -1,8 +1,11 @@
+# 3.0.4
+* Fixes date time conversion for timezone other than Nepal.
+
 # 3.0.3
-* Added english support for moment conversion.
+* Adds english support for moment conversion.
 
 # 3.0.2
-* Added `delimiter` property to **NumberFormat**. [PR #6](https://github.com/sarbagyastha/nepali_utils/pull/6) Thanks to [@Ravikant](https://github.com/ravikant-paudel)
+* Adds `delimiter` property to **NumberFormat**. [PR #6](https://github.com/sarbagyastha/nepali_utils/pull/6) Thanks to [@Ravikant](https://github.com/ravikant-paudel)
 
 # 3.0.1
 * Fixed incorrect date conversion for the year 1970.
