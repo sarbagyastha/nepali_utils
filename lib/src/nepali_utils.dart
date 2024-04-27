@@ -6,7 +6,6 @@ import 'package:nepali_utils/nepali_utils.dart';
 
 /// Nepali Utilities
 class NepaliUtils {
-
   /// Nepali Utilities
   ///
   /// Default language for nepali utilities can be set using [lang].
