@@ -1,5 +1,8 @@
-# 3.0.5
+# 3.0.6
 * Added support for `NepaliDateTime` up to 2250 BS.
+
+# 3.0.5
+* Same as [3.0.6]
 
 # 3.0.4
 * Fixes date time conversion for timezone other than Nepal.

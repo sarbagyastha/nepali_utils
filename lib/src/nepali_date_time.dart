@@ -72,7 +72,7 @@ class NepaliDateTime implements DateTime {
     this.second = 0,
     this.millisecond = 0,
     this.microsecond = 0,
-  ]) : assert(year >= 1969 && year <= 2100, 'Supported year is 1970-2100');
+  ]) : assert(year >= 1969 && year <= 2250, 'Supported year is 1970-2250');
 
   /// Constructs a DateTime instance with current date and time
   factory NepaliDateTime.now() => DateTime.now().toNepaliDateTime();
