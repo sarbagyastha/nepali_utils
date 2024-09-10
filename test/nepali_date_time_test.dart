@@ -3,10 +3,9 @@ import 'package:test/test.dart';
 
 void main() {
   bool dateEquals(NepaliDateTime actual, NepaliDateTime expected) {
-    final isEqual = actual.year == expected.year &&
+    return actual.year == expected.year &&
         actual.month == expected.month &&
         actual.day == expected.day;
-    return isEqual;
   }
 
   group('supports days arithmetic', () {
