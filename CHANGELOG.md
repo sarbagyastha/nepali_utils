@@ -1,3 +1,6 @@
+# 3.0.7
+* Added `MMMMM` support for NepaliDateFormat; alt version of months.
+
 # 3.0.6
 * Added support for `NepaliDateTime` up to 2250 BS.
 

@@ -263,10 +263,13 @@ class NepaliDateFormat {
         _replacer(match, _prependZero(date.month));
         break;
       case 'MMM':
-        _replacer(match, _monthString(date.month, short: true));
+        _replacer(match, _monthString(date.month, index: 2));
         break;
       case 'MMMM':
-        _replacer(match, _monthString(date.month));
+        _replacer(match, _monthString(date.month, index: 0));
+        break;
+      case 'MMMMM':
+        _replacer(match, _monthString(date.month, index: 1));
         break;
       case 'd':
         _replacer(
@@ -473,39 +476,39 @@ class NepaliDateFormat {
     return weeksInNepali[day - 1].get(short: short);
   }
 
-  String _monthString(int month, {bool short = false}) {
+  String _monthString(int month, {required int index}) {
     assert(month > 0 && month < 13, 'Month must be between 1 and 12');
     final monthsInEnglish = [
-      _Month('Baishakh', 'Bai'),
-      _Month('Jestha', 'Jes'),
-      _Month('Ashadh', 'Asar'),
-      _Month('Shrawan', 'Shr'),
-      _Month('Bhadra', 'Bha'),
-      _Month('Ashwin', 'Ash'),
-      _Month('Kartik', 'Kar'),
-      _Month('Mangsir', 'Marg'),
-      _Month('Poush', 'Pou'),
-      _Month('Magh', 'Mag'),
-      _Month('Falgun', 'Fal'),
-      _Month('Chaitra', 'Cha'),
+      ['Baishakh', 'Baisak', 'Bai'],
+      ['Jestha', 'Jeth', 'Jes'],
+      ['Ashadh', 'Asar', 'Asar'],
+      ['Shrawan', 'Saun', 'Shr'],
+      ['Bhadra', 'Bhadau', 'Bha'],
+      ['Ashwin', 'Asoj', 'Ash'],
+      ['Kartik', 'Kartik', 'Kar'],
+      ['Mangsir', 'Marga', 'Marg'],
+      ['Poush', 'Pus', 'Pou'],
+      ['Magh', 'Magh', 'Mag'],
+      ['Falgun', 'Fagun', 'Fal'],
+      ['Chaitra', 'Chait', 'Cha'],
     ];
     final monthsInNepali = [
-      _Month('बैशाख', 'बै'),
-      _Month('जेष्ठ', 'जे'),
-      _Month('आषाढ', 'अ'),
-      _Month('श्रावण', 'श्रा'),
-      _Month('भाद्र', 'भा'),
-      _Month('आश्विन', 'आ'),
-      _Month('कार्तिक', 'का'),
-      _Month('मंसिर', 'मं'),
-      _Month('पौष', 'पौ'),
-      _Month('माघ', 'मा'),
-      _Month('फाल्गुण', 'फा'),
-      _Month('चैत्र', 'चै'),
+      ['बैशाख', 'बैशाख', 'बै'],
+      ['जेष्ठ', 'जेठ', 'जे'],
+      ['आषाढ', 'असार', 'अ'],
+      ['श्रावण', 'साउन', 'श्रा'],
+      ['भाद्र', 'भदौ', 'भा'],
+      ['आश्विन', 'असोज', 'आ'],
+      ['कार्तिक', 'कात्तिक', 'का'],
+      ['मंसिर', 'मार्ग', 'मं'],
+      ['पौष', 'पुस', 'पौ'],
+      ['माघ', 'माघ', 'मा'],
+      ['फाल्गुण', 'फागुन', 'फा'],
+      ['चैत्र', 'चैत', 'चै'],
     ];
 
-    if (_isEnglish) return monthsInEnglish[month - 1].get(short: short);
-    return monthsInNepali[month - 1].get(short: short);
+    if (_isEnglish) return monthsInEnglish[month - 1][index];
+    return monthsInNepali[month - 1][index];
   }
 
   bool get _isEnglish => _language == Language.english;
@@ -540,14 +543,6 @@ class NepaliDateFormat {
     // e.g. in "hh:mm:ss" will match the colons.
     RegExp("^[^'GyMkSEahKHcLQdDmsvzZ]+"),
   ];
-}
-
-class _Month {
-  _Month(this.name, this.shortName);
-  final String name;
-  final String shortName;
-
-  String get({bool short = false}) => short ? shortName : name;
 }
 
 class _Week {
