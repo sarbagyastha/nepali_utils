@@ -63,7 +63,59 @@ extension ENepaliDateTime on DateTime {
 /// An instant in time, such as Mangsir 05, 2076, 11:05am
 class NepaliDateTime implements DateTime {
   /// Constructs a NepaliDateTime instance specified.
-  NepaliDateTime(
+  factory NepaliDateTime(
+    int year, [
+    int month = 1,
+    int day = 1,
+    int hour = 0,
+    int minute = 0,
+    int second = 0,
+    int millisecond = 0,
+    int microsecond = 0,
+  ]) {
+    // Adjusting month
+    if (month > 12) {
+      year += (month - 1) ~/ 12;
+      month = (month - 1) % 12 + 1;
+    } else if (month < 1) {
+      year -= month.abs() ~/ 12 + 1;
+      month = 12 - month.abs() % 12;
+    }
+    // Adjusting day
+    while (true) {
+      final currentMonthDays = _getMonthList(year)[month];
+      if (day > 0 && day <= currentMonthDays) {
+        break;
+      }
+      if (day > currentMonthDays) {
+        day -= currentMonthDays;
+        if (++month > 12) {
+          month = 1;
+          year++;
+        }
+      } else if (day < 1) {
+        if (--month < 1) {
+          month = 12;
+          year--;
+        }
+        day += _getMonthList(year)[month];
+      }
+    }
+
+    return NepaliDateTime._internal(
+      year,
+      month,
+      day,
+      hour,
+      minute,
+      second,
+      millisecond,
+      microsecond,
+    );
+  }
+
+  /// Constructs a NepaliDateTime instance specified.
+  NepaliDateTime._internal(
     this.year, [
     this.month = 1,
     this.day = 1,
@@ -400,6 +452,20 @@ class NepaliDateTime implements DateTime {
   @Deprecated('Non operational')
   @override
   DateTime toUtc() => throw UnimplementedError();
+}
+
+List<int> _getMonthList(int year) {
+  final list = _nepaliYears[year];
+  if (list == null) {
+    throw RangeError.range(
+      year,
+      1969,
+      2250,
+      'Unsupported year',
+      'Supported year is 1970-2250',
+    );
+  }
+  return list;
 }
 
 const Map<int, List<int>> _nepaliYears = {
