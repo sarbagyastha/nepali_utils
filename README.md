@@ -119,10 +119,11 @@ Q|quarter|(Text)|3
 QQ|quarter|(Text)|03
 QQQ|quarter|(Text)|Q3
 QQQQ|quarter|(Text)|3rd quarter
-M|month in year|(Text & Number)|1 / १
-MM|month in year|(Text & Number)|01 / ०१
-MMM|month in year|(Text & Number)|Bai / बै
-MMMM|month in year|(Text & Number)|Baishakh / बैशाख
+M|month in year|(Text & Number)|8 / ८
+MM|month in year|(Text & Number)|08 / ०८
+MMM|month in year|(Text & Number)|Marg / मं
+MMMM|month in year|(Text & Number)|Mangsir / मंसिर
+MMMMM|month in year|(Text & Number)|Marga / मार्ग
 d|day in month|(Number)|9 / ९
 dd|day in month|(Number)|09 / ०९
 E|day of week|(Text)|M / सो
