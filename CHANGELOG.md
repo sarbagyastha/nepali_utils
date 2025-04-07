@@ -1,3 +1,6 @@
+# 3.0.8
+* Fixed dates for year 2082 & 2093.
+
 # 3.0.7
 * Added `MMMMM` support for NepaliDateFormat; alt version of months.
 
