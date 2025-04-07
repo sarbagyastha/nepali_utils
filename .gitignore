@@ -1,5 +1,6 @@
 .idea/
 .vscode/
+.DS_Store
 
 # Files and directories created by pub
 .dart_tool/
@@ -9,6 +10,9 @@ pubspec.lock
 
 # Conventional directory for build outputs
 build/
+panchang/
 
 # Directory created by dartdoc
 doc/api/
+
+
