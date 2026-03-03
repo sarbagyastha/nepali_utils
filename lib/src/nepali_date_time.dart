@@ -5,6 +5,9 @@
 import 'package:nepali_utils/src/language.dart';
 import 'package:nepali_utils/src/nepali_date_format.dart';
 
+/// Reference instant: Nepali 1970-01-01 00:00:00 = 1913-04-13 00:00 Nepal time = 1913-04-12 18:15:00 UTC.
+final DateTime _nepaliEpochUtc = DateTime.utc(1913, 4, 12, 18, 15, 0);
+
 ///
 extension ENepaliDateTime on DateTime {
   /// Converts the [DateTime] to [NepaliDateTime].
@@ -56,6 +59,51 @@ extension ENepaliDateTime on DateTime {
       now.second,
       now.millisecond,
       now.microsecond,
+    );
+  }
+
+  /// Converts this [DateTime] to [NepaliDateTime] using the full instant (date + time).
+  ///
+  /// Unlike [toNepaliDateTime], this uses the input time for conversion: the day
+  /// count is derived from the exact UTC instant relative to the Nepali epoch,
+  /// so there is no off-by-one day error near midnight or across timezones.
+  /// Prefer this when you need consistent results regardless of timezone or time of day.
+  NepaliDateTime toNepaliDateTimeFromInstant() {
+    const nepalTzOffset = Duration(hours: 5, minutes: 45);
+    final inputUtc = toUtc();
+    final inNepalTime = inputUtc.add(nepalTzOffset);
+
+    var difference = inputUtc.difference(_nepaliEpochUtc).inDays;
+
+    var nepaliYear = 1970;
+    var nepaliMonth = 1;
+    var nepaliDay = 1;
+
+    var daysInYear = _nepaliYears[nepaliYear]!.first;
+    while (difference >= daysInYear) {
+      nepaliYear += 1;
+      difference -= daysInYear;
+      daysInYear = _nepaliYears[nepaliYear]!.first;
+    }
+
+    var daysInMonth = _nepaliYears[nepaliYear]![nepaliMonth];
+    while (difference >= daysInMonth) {
+      difference -= daysInMonth;
+      nepaliMonth += 1;
+      daysInMonth = _nepaliYears[nepaliYear]![nepaliMonth];
+    }
+
+    nepaliDay += difference;
+
+    return NepaliDateTime(
+      nepaliYear,
+      nepaliMonth,
+      nepaliDay,
+      inNepalTime.hour,
+      inNepalTime.minute,
+      inNepalTime.second,
+      inNepalTime.millisecond,
+      inNepalTime.microsecond,
     );
   }
 }
