@@ -123,7 +123,7 @@ class NepaliDateTime implements DateTime {
   ]) : assert(year >= 1969 && year <= 2250, 'Supported year is 1970-2250');
 
   /// Constructs a DateTime instance with current date and time
-  factory NepaliDateTime.now() => DateTime.now().toNepaliDateTime();
+  factory NepaliDateTime.now() => DateTime.now().toNepaliDateTimeFromInstant();
 
   /// Converts the specified [DateTime] to [NepaliDateTime].
   ///
@@ -156,10 +156,8 @@ class NepaliDateTime implements DateTime {
   @override
   final int microsecond;
 
-  List<int> get _englishMonths =>
-      [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  List<int> get _englishLeapMonths =>
-      [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  List<int> get _englishMonths => [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  List<int> get _englishLeapMonths => [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
   /// Returns total days in the [month] of the [year].
   int get totalDays => _nepaliYears[year]![month];
@@ -173,17 +171,14 @@ class NepaliDateTime implements DateTime {
 
   /// Returns true if this occurs after other
   @override
-  bool isAfter(covariant NepaliDateTime nepaliDateTime) =>
-      toDateTime().isAfter(nepaliDateTime.toDateTime());
+  bool isAfter(covariant NepaliDateTime nepaliDateTime) => toDateTime().isAfter(nepaliDateTime.toDateTime());
 
   /// Returns true if this occurs before other.
   @override
-  bool isBefore(covariant NepaliDateTime nepaliDateTime) =>
-      toDateTime().isBefore(nepaliDateTime.toDateTime());
+  bool isBefore(covariant NepaliDateTime nepaliDateTime) => toDateTime().isBefore(nepaliDateTime.toDateTime());
 
   /// Merges specified time to current date.
-  NepaliDateTime mergeTime(int hour, int minute, int second) =>
-      NepaliDateTime(year, month, day, hour, minute, second);
+  NepaliDateTime mergeTime(int hour, int minute, int second) => NepaliDateTime(year, month, day, hour, minute, second);
 
   ///Constructs a new [DateTime] instance based on [formattedString].
   ///
@@ -221,10 +216,8 @@ class NepaliDateTime implements DateTime {
       final minute = parseIntOrZero(match[5]);
       final second = parseIntOrZero(match[6]);
       final milliAndMicroseconds = parseMilliAndMicroseconds(match[7]);
-      final millisecond =
-          milliAndMicroseconds ~/ Duration.microsecondsPerMillisecond;
-      final microsecond =
-          milliAndMicroseconds.remainder(Duration.microsecondsPerMillisecond);
+      final millisecond = milliAndMicroseconds ~/ Duration.microsecondsPerMillisecond;
+      final microsecond = milliAndMicroseconds.remainder(Duration.microsecondsPerMillisecond);
 
       return NepaliDateTime(
         years,
@@ -251,16 +244,13 @@ class NepaliDateTime implements DateTime {
   }
 
   @override
-  Duration difference(covariant NepaliDateTime other) =>
-      toDateTime().difference(other.toDateTime());
+  Duration difference(covariant NepaliDateTime other) => toDateTime().difference(other.toDateTime());
 
   @override
-  NepaliDateTime add(Duration duration) =>
-      toDateTime().add(duration).toNepaliDateTime();
+  NepaliDateTime add(Duration duration) => toDateTime().add(duration).toNepaliDateTimeFromInstant();
 
   @override
-  NepaliDateTime subtract(Duration duration) =>
-      toDateTime().subtract(duration).toNepaliDateTime();
+  NepaliDateTime subtract(Duration duration) => toDateTime().subtract(duration).toNepaliDateTimeFromInstant();
 
   @override
   int get millisecondsSinceEpoch => toDateTime().millisecondsSinceEpoch;
@@ -319,8 +309,7 @@ class NepaliDateTime implements DateTime {
 
   @override
   String toIso8601String() {
-    final y =
-        (year >= -9999 && year <= 9999) ? _fourDigits(year) : _sixDigits(year);
+    final y = (year >= -9999 && year <= 9999) ? _fourDigits(year) : _sixDigits(year);
     final m = _twoDigits(month);
     final d = _twoDigits(day);
     final h = _twoDigits(hour);
@@ -331,16 +320,14 @@ class NepaliDateTime implements DateTime {
     return '$y-$m-${d}T$h:$min:$sec.$ms$us';
   }
 
-  static final RegExp _parseFormat = RegExp(
-      r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)' // Day part.
+  static final RegExp _parseFormat = RegExp(r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)' // Day part.
       r'(?:[ T](\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,6}))?)?)?' // Time part.
       r'( ?[zZ]| ?([-+])(\d\d)(?::?(\d\d))?)?)?$');
 
   /// Formats [NepaliDateTime] as per the pattern provided.
   ///
   /// For wider set of formatting, use [NepaliDateFormat].
-  String format(String pattern, [Language? language]) =>
-      NepaliDateFormat(pattern, language).format(this);
+  String format(String pattern, [Language? language]) => NepaliDateFormat(pattern, language).format(this);
 
   /// Converts the [NepaliDateTime] to corresponding [DateTime].
   ///
@@ -363,8 +350,7 @@ class NepaliDateTime implements DateTime {
     }
 
     // Getting english month until the difference remains less than 31
-    final monthDays =
-        _isLeapYear(englishYear) ? _englishLeapMonths : _englishMonths;
+    final monthDays = _isLeapYear(englishYear) ? _englishLeapMonths : _englishMonths;
     var i = 0;
     while (difference >= monthDays[i]) {
       englishMonth++;
@@ -415,8 +401,7 @@ class NepaliDateTime implements DateTime {
     return total;
   }
 
-  bool _isLeapYear(int year) =>
-      (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
+  bool _isLeapYear(int year) => (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
 
   @override
   int compareTo(covariant NepaliDateTime other) {
