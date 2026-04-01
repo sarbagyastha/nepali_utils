@@ -14,7 +14,7 @@ void main() {
             // This represents 00:00 in Nepal for the given AD date.
             final adNepalMidnightUtc = DateTime.utc(year, month, day).subtract(nepalTzOffset);
 
-            final bs = adNepalMidnightUtc.toNepaliDateTimeFromInstant();
+            final bs = adNepalMidnightUtc.toNepaliDateTime();
 
             final adBack = bs.toDateTime();
 
@@ -47,7 +47,7 @@ void main() {
             final bs = NepaliDateTime(year, month, day);
 
             final ad = bs.toDateTime();
-            final bsBack = ad.toNepaliDateTimeFromInstant();
+            final bsBack = ad.toNepaliDateTime();
 
             expect(
               bsBack.year,

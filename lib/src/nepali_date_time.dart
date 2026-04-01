@@ -11,7 +11,7 @@ final DateTime _nepaliEpochUtc = DateTime.utc(1913, 4, 12, 18, 15, 0);
 ///
 extension ENepaliDateTime on DateTime {
   /// Converts the [DateTime] to [NepaliDateTime].
-  NepaliDateTime toNepaliDateTime() {
+  NepaliDateTime toNepaliDateTimePreInstant() {
     const nepalTzOffset = Duration(hours: 5, minutes: 45);
     final now = toUtc().add(nepalTzOffset);
     // Setting nepali reference to 1970/1/1 with english date 1913/4/13
@@ -68,7 +68,7 @@ extension ENepaliDateTime on DateTime {
   /// count is derived from the exact UTC instant relative to the Nepali epoch,
   /// so there is no off-by-one day error near midnight or across timezones.
   /// Prefer this when you need consistent results regardless of timezone or time of day.
-  NepaliDateTime toNepaliDateTimeFromInstant() {
+  NepaliDateTime toNepaliDateTime() {
     const nepalTzOffset = Duration(hours: 5, minutes: 45);
     final inputUtc = toUtc();
     final inNepalTime = inputUtc.add(nepalTzOffset);
@@ -123,7 +123,7 @@ class NepaliDateTime implements DateTime {
   ]) : assert(year >= 1969 && year <= 2250, 'Supported year is 1970-2250');
 
   /// Constructs a DateTime instance with current date and time
-  factory NepaliDateTime.now() => DateTime.now().toNepaliDateTimeFromInstant();
+  factory NepaliDateTime.now() => DateTime.now().toNepaliDateTime();
 
   /// Converts the specified [DateTime] to [NepaliDateTime].
   ///
@@ -247,10 +247,10 @@ class NepaliDateTime implements DateTime {
   Duration difference(covariant NepaliDateTime other) => toDateTime().difference(other.toDateTime());
 
   @override
-  NepaliDateTime add(Duration duration) => toDateTime().add(duration).toNepaliDateTimeFromInstant();
+  NepaliDateTime add(Duration duration) => toDateTime().add(duration).toNepaliDateTime();
 
   @override
-  NepaliDateTime subtract(Duration duration) => toDateTime().subtract(duration).toNepaliDateTimeFromInstant();
+  NepaliDateTime subtract(Duration duration) => toDateTime().subtract(duration).toNepaliDateTime();
 
   @override
   int get millisecondsSinceEpoch => toDateTime().millisecondsSinceEpoch;
