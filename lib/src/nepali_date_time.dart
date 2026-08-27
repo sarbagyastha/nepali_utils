@@ -11,25 +11,26 @@ final DateTime _nepaliEpochUtc = DateTime.utc(1913, 4, 12, 18, 15, 0);
 ///
 extension ENepaliDateTime on DateTime {
   /// Converts the [DateTime] to [NepaliDateTime].
+  ///
+  /// This treats [year]/[month]/[day] as a calendar date and converts it
+  /// directly, without regard to the device's live timezone offset — so the
+  /// same calendar date always converts to the same [NepaliDateTime]
+  /// regardless of which timezone the device happens to be set to.
   NepaliDateTime toNepaliDateTime() {
-    const nepalTzOffset = Duration(hours: 5, minutes: 45);
-    final now = toUtc().add(nepalTzOffset);
     // Setting nepali reference to 1970/1/1 with english date 1913/4/13
     var nepaliYear = 1970;
     var nepaliMonth = 1;
     var nepaliDay = 1;
 
-    // Time was causing error while differencing dates.
-    final date = DateTime(now.year, now.month, now.day);
-    var difference = date.difference(DateTime(1913, 4, 13)).inDays;
-
-    // 1986-1-1's duration is only 23 hours 45 minutes in Dart for Nepal Time.
-    // This can be tested using
-    // `print(DateTime(1986,1,2).difference(DateTime(1986,1,1)))`;
-    // So, in order to compensate it one extra day is added from this date.
-    if (date.timeZoneOffset == nepalTzOffset && date.isAfter(DateTime(1986))) {
-      difference += 1;
-    }
+    // Using UTC-tagged dates for the day-count arithmetic keeps this
+    // independent of the device's local timezone offset. Nepal's own offset
+    // changed from +5:30 to +5:45 on 1986-01-01; the old implementation
+    // needed a +1 day compensation for dates after that because it derived
+    // the difference from device-local (historically-offset-aware) dates.
+    // Diffing UTC-tagged dates has no such offset artifact, so no
+    // compensation is needed here.
+    final date = DateTime.utc(year, month, day);
+    var difference = date.difference(DateTime.utc(1913, 4, 13)).inDays;
 
     // Getting nepali year until the difference remains less than 365
     var daysInYear = _nepaliYears[nepaliYear]!.first;
@@ -54,11 +55,11 @@ extension ENepaliDateTime on DateTime {
       nepaliYear,
       nepaliMonth,
       nepaliDay,
-      now.hour,
-      now.minute,
-      now.second,
-      now.millisecond,
-      now.microsecond,
+      hour,
+      minute,
+      second,
+      millisecond,
+      microsecond,
     );
   }
 
