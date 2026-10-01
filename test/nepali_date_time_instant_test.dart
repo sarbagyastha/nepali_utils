@@ -3,48 +3,55 @@ import 'package:test/test.dart';
 
 void main() {
   group('DateTime <-> NepaliDateTime instant-based conversion', () {
-    test('round-trips AD dates via instant-based conversion for a wide range', () {
-      const nepalTzOffset = Duration(hours: 5, minutes: 45);
+    test(
+      'round-trips AD dates via instant-based conversion for a wide range',
+      () {
+        const nepalTzOffset = Duration(hours: 5, minutes: 45);
 
-      // Chosen to cover the full supported Nepali calendar range.
-      for (var year = 1913; year <= 2100; year++) {
-        for (var month = 1; month <= 12; month++) {
-          final maxDay = _daysInGregorianMonth(year, month);
-          for (var day = 1; day <= maxDay; day++) {
-            // This represents 00:00 in Nepal for the given AD date.
-            final adNepalMidnightUtc = DateTime.utc(year, month, day).subtract(nepalTzOffset);
+        // Chosen to cover the full supported Nepali calendar range.
+        for (var year = 1913; year <= 2100; year++) {
+          for (var month = 1; month <= 12; month++) {
+            final maxDay = _daysInGregorianMonth(year, month);
+            for (var day = 1; day <= maxDay; day++) {
+              // This represents 00:00 in Nepal for the given AD date.
+              final adNepalMidnightUtc =
+                  DateTime.utc(year, month, day).subtract(nepalTzOffset);
 
-            final bs = adNepalMidnightUtc.toNepaliDateTimeFromInstant();
+              final bs = adNepalMidnightUtc.toNepaliDateTimeFromInstant();
 
-            final adBack = bs.toDateTime();
+              final adBack = bs.toDateTime();
 
-            expect(
-              adBack.year,
-              year,
-              reason: 'Year mismatch for AD date $year-$month-$day',
-            );
-            expect(
-              adBack.month,
-              month,
-              reason: 'Month mismatch for AD date $year-$month-$day',
-            );
-            expect(
-              adBack.day,
-              day,
-              reason: 'Day mismatch for AD date $year-$month-$day',
-            );
+              expect(
+                adBack.year,
+                year,
+                reason: 'Year mismatch for AD date $year-$month-$day',
+              );
+              expect(
+                adBack.month,
+                month,
+                reason: 'Month mismatch for AD date $year-$month-$day',
+              );
+              expect(
+                adBack.day,
+                day,
+                reason: 'Day mismatch for AD date $year-$month-$day',
+              );
+            }
           }
         }
-      }
-    });
+      },
+    );
 
-    test('round-trips BS dates via AD and instant-based conversion for a wide range', () {
-      // Use a broad but bounded range within the supported BS years.
-      for (var year = 1970; year <= 2100; year++) {
-        for (var month = 1; month <= 12; month++) {
-          final daysInMonth = NepaliDateTime(year, month, 1).totalDays;
-          for (var day = 1; day <= daysInMonth; day++) {
-            final bs = NepaliDateTime(year, month, day);
+    test(
+      'round-trips BS dates via AD and instant-based conversion '
+      'for a wide range',
+      () {
+        // Use a broad but bounded range within the supported BS years.
+        for (var year = 1970; year <= 2100; year++) {
+          for (var month = 1; month <= 12; month++) {
+            final daysInMonth = NepaliDateTime(year, month).totalDays;
+            for (var day = 1; day <= daysInMonth; day++) {
+              final bs = NepaliDateTime(year, month, day);
 
             final ad = bs.toDateTime();
             final bsBack = ad.toNepaliDateTimeFromInstant();

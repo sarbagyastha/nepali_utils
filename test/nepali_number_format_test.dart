@@ -35,7 +35,7 @@ void main() {
 
     test(
       'default is 2 for input type other than integer',
-      () => expect(NepaliNumberFormat().format(1234), '1,234.00'),
+      () => expect(NepaliNumberFormat().format('1234'), '1,234.00'),
     );
 
     test(
