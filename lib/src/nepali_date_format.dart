@@ -111,12 +111,12 @@ class NepaliDateFormat {
   NepaliDateFormat.H([Language? language]) : this('H', language);
 
   /// 2076-08-05T21:04:25 => 21:04
-  NepaliDateFormat.Hm([Language? language]) : this('HH:MM', language);
+  NepaliDateFormat.Hm([Language? language]) : this('HH:mm', language);
 
   /// 2076-08-05T21:04:25 => 21:04:25
   NepaliDateFormat.Hms([Language? language]) : this('HH:mm:ss', language);
 
-  /// 2076-08-05T21:04:25 => p PM
+  /// 2076-08-05T21:04:25 => 9 PM
   NepaliDateFormat.j([Language? language])
       : this(
           language == Language.nepali ? 'aa h' : 'h aa',
@@ -137,11 +137,11 @@ class NepaliDateFormat {
           language,
         );
 
-  /// 2076-08-05T21:04:25 => 9
-  NepaliDateFormat.m([Language? language]) : this('h', language);
+  /// 2076-08-05T21:04:25 => 4
+  NepaliDateFormat.m([Language? language]) : this('m', language);
 
-  /// 2076-08-05T21:04:25 => 9:04
-  NepaliDateFormat.ms([Language? language]) : this('hh:mm', language);
+  /// 2076-08-05T21:04:25 => 04:25
+  NepaliDateFormat.ms([Language? language]) : this('mm:ss', language);
 
   /// 2076-08-05T21:04:25 => 25
   NepaliDateFormat.s([Language? language]) : this('s', language);
