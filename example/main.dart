@@ -93,6 +93,18 @@ void main(List<String> arguments) {
   print('${NepaliWeight.tola(2, lal: 50).to(.gram)} g');
   print(NepaliWeight(5, .kilogram).format(.dharni, long: true));
   print(NepaliVolume.muri(1, pathi: 5, mana: 4).format(long: true));
+
+  heading('Nepali Phone Number');
+  final phone = NepaliPhoneNumber.parse('+977 ९८४१२३४५६७');
+  print('${phone.format()} (${phone.operator?.label()})');
+  print(phone.format(style: .international, language: .nepali));
+  final office = NepaliPhoneNumber.parse('061-523456');
+  print('${office.format(style: .e164)} (${office.areaName()})');
+  for (final match in NepaliPhoneNumber.findAll(
+    'Call 9801234567 or ०१-४४१२३४५.',
+  )) {
+    print('Found ${match.text} → ${match.number.e164}');
+  }
 }
 
 void heading(String text) {

@@ -397,6 +397,41 @@ print(rice.to(.liter)); // 115.92198
 print(rice.format(long: true)); // 1 muri 5 pathi 4 mana
 ```
 
+### Nepali Phone Number
+`NepaliPhoneNumber` validates, formats and finds Nepali mobile and landline numbers. Input can use ASCII or Devanagari digits, an optional `+977`/`00977` country code, and spaces, dashes, dots or parentheses.
+
+| Type | Format | Operators / areas |
+|---|---|---|
+| Mobile | 10 digits, `9XX-XXXXXXX` | Nepal Telecom 974-976, 984-986 · Ncell 970, 980-982 · Smart 961, 962, 988 · UTL 972 |
+| Landline | `01-XXXXXXX` (Kathmandu Valley), `0XX-XXXXXX` elsewhere | Area code with district name, e.g. `061` Kaski |
+
+```dart
+final phone = NepaliPhoneNumber.parse('+977 ९८४१२३४५६७');
+print(phone.type); // PhoneType.mobile
+print(phone.operator?.label()); // Nepal Telecom
+print(phone.format()); // 984-1234567
+print(phone.format(style: .international)); // +977 984-1234567
+print(phone.format(language: .nepali)); // ९८४-१२३४५६७
+print(phone.e164); // +9779841234567
+
+final office = NepaliPhoneNumber.parse('061-523456');
+print(office.areaCode); // 061
+print(office.areaName(.nepali)); // कास्की
+
+print(NepaliPhoneNumber.isValid('9801234567')); // true
+print(NepaliPhoneNumber.isMobile('01-4412345')); // false
+print(NepaliPhoneNumber.tryParse('9901234567')); // null
+
+// Find numbers in text.
+for (final match in NepaliPhoneNumber.findAll('Call 9841234567 or ०१-४४१२३४५.')) {
+  print('${match.text} at ${match.start}: ${match.number.e164}');
+}
+print(NepaliPhoneNumber.replaceAll(
+  'Call 9841234567',
+  (match) => '${match.text.substring(0, 3)}*******',
+)); // Call 984*******
+```
+
 ## Example
 Find more detailed example [here](https://github.com/sarbagyastha/nepali_utils/tree/master/example/main.dart).
 

@@ -1,5 +1,5 @@
 name: nepali_utils
-description: Nepali utilities for Dart: BS dates and formatting, Nepali numbers, Unicode and Preeti, relative time, and land, weight and volume unit conversion.
+description: "Nepali utilities for Dart: Bikram Sambat dates, Nepali numbers, Unicode/Preeti conversion, relative time, units, and phone validation."
 version: 4.0.0
 repository: https://github.com/sarbagyastha/nepali_utils
 homepage: https://sarbagyastha.com.np

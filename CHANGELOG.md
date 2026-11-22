@@ -81,6 +81,7 @@
 
 **New**
 * Conversions between Nepali units with `NepaliArea` (ropani-aana-paisa-daam, bigha-kattha-dhur, square feet/metres, acres, hectares), `NepaliWeight` (tola-lal, dharni-ser-pau-chhatak, grams) and `NepaliVolume` (muri-pathi-mana-muthi, litres). Each converts with `to(unit)`, splits into mixed units (`ropaniParts`), formats (`2-3-1-0` / `२ रोपनी ३ आना १ पैसा`), parses ASCII or Devanagari input and supports arithmetic and comparison.
+* `NepaliPhoneNumber` validates and parses Nepali mobile and landline numbers (ASCII or Devanagari digits, with or without `+977`), reports the mobile operator (per NTA's National Numbering Allocation Plan, 2079) or the landline area code and district, formats them as national, international or E.164, and finds them in text with `findAll` and `replaceAll`.
 * `NepaliUnicode` gains:
   * Styles: `NepaliUnicode(style: .google)` for Google Input Tools style romanization (`nepaal` → `नेपाल`, `~` for a halant), and Madan Puraskar Pustakalaya's keyboard layouts `.mppRomanized` and `.mppTraditional`.
   * `toRoman`, the reverse conversion (`नेपाली` → `nepaalii`), which round-trips through `convert`.
