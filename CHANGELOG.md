@@ -69,8 +69,24 @@
   * The thresholds are moment.js's: e.g. 22 hours is `a day`, 26 days is `a month`, and 320 days is `a year`. Previously 350 days could give `12 months`.
   * About an hour, a month or a year is now `an hour` / `एक घण्टा` (was `about an hour` / `लगभग एक घण्टा`).
   * Removed the `showToday` parameter, which had no effect; use `calendar` or `formatUnit(0, .day, numeric: false)`.
+* `NepaliUnicode` is now an immutable `Converter<String, String>`:
+
+  | 3.x | 4.0 |
+  |---|---|
+  | `NepaliUnicode.convert(text)` | `const NepaliUnicode().convert(text)` |
+  | `NepaliUnicode.convert(text, live: true)` | `const NepaliUnicode().convertLive(text)`, or just `convert`: Devanagari followed by romanized text is joined either way |
+
+  * The default `classic` style keeps the 3.x rules, with these fixes: zero width spaces no longer leak into the output (`sayau` gave `स​यौ`), `am` no longer gives य (`kamal` was `कयल्`), `chh` gives छ (`chhoraa` was `छ्ोरा`), `gy` gives ज्ञ (`gyaan` was `ज्ञ्ान्`), `ngh` gives ंह (`singha` was `सिहं`), any whitespace (not only a space) drops a halant, and `kchy` no longer gives क्ष.
+  * Text inside `{}` is now kept as it is, so a literal `{` must be escaped as `{{}`.
 
 **New**
+* `NepaliUnicode` gains:
+  * Styles: `NepaliUnicode(style: .google)` for Google Input Tools style romanization (`nepaal` → `नेपाल`, `~` for a halant), and Madan Puraskar Pustakalaya's keyboard layouts `.mppRomanized` and `.mppTraditional`.
+  * `toRoman`, the reverse conversion (`नेपाली` → `nepaalii`), which round-trips through `convert`.
+  * `{English}` escapes (`mero naam {Sarbagya} ho` → `मेरो नाम Sarbagya हो`) and `nepaliDigits: false`.
+  * Stream support: `stream.transform(const NepaliUnicode())`.
+* `Preeti.toUnicode` and `Preeti.fromUnicode` convert legacy Preeti-font text (`g]kfn` ↔ `नेपाल`), reordering ि and the reph.
+* `Devanagari` helpers: `isDevanagari`, `containsDevanagari`, `toNepaliDigits`, `toEnglishDigits` and `aksharas` (`संस्कृति` → `[सं, स्कृ, ति]`).
 * `NepaliMoment` gains:
   * `formatDuration` (`3 days`, or `in 3 days` with `withSuffix`).
   * `formatUnit`, like `Intl.RelativeTimeFormat`: `formatUnit(-1, .day)` is `1 day ago`, and with `numeric: false` it is `yesterday` / `हिजो`.
@@ -98,6 +114,7 @@
 **Performance**
 * Conversion is constant time using a precomputed month index and pure integer Gregorian arithmetic (AD → BS ~16x faster, `weekday` ~500x faster than 3.x).
 * Formatting compiles the pattern once and converts digits directly.
+* `NepaliUnicode` converts in a single pass instead of ~170 `replaceAll` passes per character: linear instead of quadratic, e.g. 10,000 characters take 0.4 ms instead of 13.6 s.
 
 # 3.0.8
 * Fixed dates for year 2082 & 2093.

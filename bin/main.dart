@@ -71,14 +71,24 @@ void main(List<String> arguments) {
   print('123.00 -> ${formatter.format(123.001)}');
 
   heading('Nepali Unicode');
+  const unicode = NepaliUnicode();
   print(
-    NepaliUnicode.convert(
-      "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii",
-    ),
+    unicode.convert("sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"),
   );
-  print(
-    NepaliUnicode.convert('saarwabhauma bhai failiekaa, mecii-mahaakaalii\n'),
-  );
+  print(unicode.convert('saarwabhauma bhai failiekaa, mecii-mahaakaalii'));
+  print(unicode.convert('mero naam {Sarbagya} ho'));
+  print(unicode.toRoman('नेपाली'));
+
+  const google = NepaliUnicode(style: .google);
+  print(google.convert('nepaal ko maayaa, bhagawaan~ ko dayaa'));
+  print(google.toRoman('क्षत्रिय'));
+  print(const NepaliUnicode(style: .mppRomanized).convert('nepal'));
+
+  heading('Preeti & Devanagari');
+  print(Preeti.toUnicode('sfof{no / lxdfn'));
+  print(Preeti.fromUnicode('काठमाडौं'));
+  print(Devanagari.aksharas('संस्कृति'));
+  print(Devanagari.toEnglishDigits('२०८१'));
 
   heading('Nepali Moment - In Nepali');
   print(NepaliMoment.fromBS(NepaliDateTime.parse('2076-03-22T08:41:14')));

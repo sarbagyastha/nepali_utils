@@ -12,7 +12,7 @@ A pure dart package with collection of Nepali Utilities like Date converter, Dat
 * **DateConversion**
 * **NepaliDateFormat**
 * **NepaliNumberFormat**
-* **NepaliUnicode**
+* **NepaliUnicode**, **Preeti** & **Devanagari**
 * **NepaliMoment**
 * many yet to come
 
@@ -278,18 +278,58 @@ print(noGrouping.format(12345.678)); // 12345.68
 ```
 
 ### Nepali Unicode
-Converts English literal (Roman Literals) into Nepali Unicode.
+`NepaliUnicode` converts romanized text into Nepali Unicode (Devanagari), and back.
 ```dart
-print(NepaliUnicode.convert("sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"));
-print(NepaliUnicode.convert("saarwabhauma bhai failiekaa, mecii-mahaakaalii\n"));
-
-// स​यौं थुँगा फूलका हामी, एउटै माला नेपाली
+const unicode = NepaliUnicode();
+unicode.convert("sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii");
+unicode.convert('saarwabhauma bhai failiekaa, mecii-mahaakaalii');
+// सयौं थुँगा फूलका हामी, एउटै माला नेपाली
 // सार्वभौम भै फैलिएका, मेची-महाकाली
+
+unicode.convert('mero naam {Sarbagya} ho'); // मेरो नाम Sarbagya हो
+unicode.toRoman('नेपाली');                  // nepaalii
 ```
 
-If live conversion is required *i.e. conversion as you type*, then set `live: true`.
+Pick the mapping you are used to with `style`:
+
+| Style | Example | |
+|---|---|---|
+| `.classic` (default) | `nepaala` → नेपाल | The rules of earlier versions: a consonant keeps its halant until a vowel or a space follows. `'` ं, `''` ँ, `:` ः, `.` । |
+| `.google` | `nepaal` → नेपाल | Google Input Tools style: words end with their inherent vowel, `~` forces a halant (`bhagawaan~` → भगवान्). `M` ं, `^` ँ, `H` ः, `.` । |
+| `.mppRomanized` | `nepal` → नेपाल | Madan Puraskar Pustakalaya's *Romanized* keyboard: one key, one character. |
+| `.mppTraditional` | `g]kfn` → नेपाल | Madan Puraskar Pustakalaya's *Traditional* keyboard (Preeti key positions). |
+
 ```dart
-NepaliUnicode.convert(textFromTextField, live: true);
+const google = NepaliUnicode(style: .google);
+google.convert('nepaal ko maayaa'); // नेपाल को माया
+google.toRoman('क्षत्रिय');          // kshatriy
+```
+
+For the phonetic styles, text inside `{}` is kept as it is, and Devanagari already in the text is kept and joined with romanized letters typed after it. To convert a text field as the user types, call `convertLive` on each change and put the result back:
+```dart
+google.convertLive('k');    // क्
+google.convertLive('क्a');  // क
+google.convertLive('कm');   // कम्
+google.convertLive('कम् '); // कम
+```
+
+`NepaliUnicode` is a `Converter`, so it also works on streams: `stream.transform(const NepaliUnicode())`. Pass `nepaliDigits: false` to keep ASCII digits.
+
+#### Preeti
+Converts text written in the legacy Preeti font to Unicode, and back:
+```dart
+Preeti.toUnicode('g]kfn');      // नेपाल
+Preeti.toUnicode('sfof{no');    // कार्यालय
+Preeti.fromUnicode('हिमाल');    // lxdfn
+```
+
+#### Devanagari helpers
+```dart
+Devanagari.isDevanagari('नमस्ते, संसार!'); // true
+Devanagari.containsDevanagari('Hi नेपाल'); // true
+Devanagari.toNepaliDigits('2081');        // २०८१
+Devanagari.toEnglishDigits('२०८१');       // 2081
+Devanagari.aksharas('संस्कृति');           // [सं, स्कृ, ति]
 ```
 
 ### Nepali Moment

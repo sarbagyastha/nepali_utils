@@ -24,3 +24,24 @@ String toNepaliDigits(String text) {
         unit,
   ]);
 }
+
+/// Replaces Devanagari digits in [text] with ASCII digits.
+///
+/// Every other character is left untouched.
+String toEnglishDigits(String text) {
+  const devanagariNine = _devanagariZero + 9;
+  final units = text.codeUnits;
+  var i = 0;
+  while (i < units.length &&
+      (units[i] < _devanagariZero || units[i] > devanagariNine)) {
+    i++;
+  }
+  if (i == units.length) return text;
+  return String.fromCharCodes([
+    for (final unit in units)
+      if (unit >= _devanagariZero && unit <= devanagariNine)
+        unit - _devanagariZero + _zero
+      else
+        unit,
+  ]);
+}

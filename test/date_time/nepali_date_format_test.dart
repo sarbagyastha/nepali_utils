@@ -343,7 +343,10 @@ void main() {
   });
 
   test('toNepaliDigits matches NepaliUnicode for digits', () {
-    expect(toNepaliDigits('0123456789'), NepaliUnicode.convert('0123456789'));
+    expect(
+      toNepaliDigits('0123456789'),
+      const NepaliUnicode().convert('0123456789'),
+    );
     expect(toNepaliDigits('a1-b2'), 'a१-b२');
     expect(toNepaliDigits('abc'), 'abc');
   });
