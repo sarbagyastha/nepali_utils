@@ -4,10 +4,174 @@ description: Step-by-step guide to migrating from nepali_utils 3.x to 4.0, cover
 ---
 
 import { Tabs, TabItem, Aside, Steps, Badge } from '@astrojs/starlight/components';
+import CopyPrompt from '../../../components/CopyPrompt.astro';
 
 nepali_utils 4.0 is a near-total rewrite. Most of the API is still there, but almost every class has changed. Some changes break the build, so the compiler will point you to them. Others compile fine and **return different values**. This guide covers both kinds.
 
 Changes that compile but behave differently are marked with <Badge text="Silent" variant="caution" />. Changes the compiler will report are marked with <Badge text="Compile error" variant="danger" />.
+
+## Recommended: migrate with an AI coding agent
+
+The quickest way to upgrade is to let a coding agent do it. Copy the prompt below into Claude Code, Codex, Antigravity, Cursor or any other coding agent, and run it from the root of your project. The prompt contains every rule from this guide, so the agent doesn't need web access.
+
+The rest of this page explains each change, in case you prefer to migrate by hand or want to review what the agent did.
+
+<Aside type="tip">
+Commit your work before you start, so you can review the agent's changes as a diff. Then read the list of silent changes the agent reports: those changes compile, but they can change what your app shows.
+</Aside>
+
+<CopyPrompt>
+
+````markdown title="Migration prompt"
+Migrate this Dart/Flutter project from nepali_utils 3.x to nepali_utils 4.0.
+
+4.0 is a near-total rewrite. Some changes break the build; others still compile but
+return different values ("silent changes"). Handle both. The full guide is at
+https://nepali-utils.sarbagyastha.com.np/migration/v4/ — read it if you can browse,
+but the rules below are complete.
+
+## Workflow
+
+1. Find every usage. Search all Dart files (lib/, test/, bin/, integration_test/,
+   example/, packages/*) for: nepali_utils, NepaliUtils, NepaliDateTime,
+   toNepaliDateTime, NepaliDateFormat, NepaliNumberFormat, NepaliMoment,
+   NepaliUnicode, Language.
+2. Update pubspec.yaml: `environment: sdk: ^3.13.0` and `nepali_utils: ^4.0.0`.
+   Run `dart pub get` (or `flutter pub get`). If the SDK constraint can't be raised,
+   stop and tell me.
+3. Fix all compile errors using the rules below.
+4. Review every silent-change site below and decide what the code meant.
+5. Run `dart analyze` (or `flutter analyze`) and the tests. Fix what this migration broke.
+6. Only touch code related to this migration. Don't reformat or refactor anything else.
+
+## Compile-breaking changes
+
+- Imports: deep imports of `package:nepali_utils/src/...` no longer work. Use only
+  `import 'package:nepali_utils/nepali_utils.dart';`.
+- Every public class is now `final` (NepaliUtils, Preeti and Devanagari are
+  `abstract final` with static members only). Classes that extend or implement
+  NepaliDateTime, NepaliDateFormat, NepaliNumberFormat, NepaliMoment or NepaliUnicode
+  must use composition instead. NepaliDateTime still implements DateTime.
+- NepaliUtils is no longer a singleton:
+  - `NepaliUtils(lang)` → `NepaliUtils.defaultLanguage = lang`
+  - `NepaliUtils().language` → `NepaliUtils.currentLanguage`
+  - `NepaliUtils().language = lang` → `NepaliUtils.defaultLanguage = lang`
+  - New: `NepaliUtils.withLanguage(lang, () => ...)` for a scoped override.
+  - Formatters read the language when they are created, not when they format.
+    If code changes the language and then reuses a formatter created earlier,
+    recreate the formatter (or pass the language explicitly).
+- NepaliNumberFormat: the constructor with named arguments is removed. Map as follows:
+  - `NepaliNumberFormat()` → `NepaliNumberFormat.decimalPattern()`
+  - `NepaliNumberFormat(language: lang)` → `NepaliNumberFormat.decimalPattern(lang)`
+  - `decimalDigits: n` → `NepaliNumberFormat.decimalPatternDigits(decimalDigits: n)`
+  - `isMonetory: true, symbol: 'Rs.'` → `NepaliNumberFormat.simpleCurrency()`
+    or `NepaliNumberFormat.currency(symbol: 'Rs.')`
+  - `symbolOnLeft: false` → `.currency(symbol: 'Rs.', customPattern: '#,##,##0.00 ¤')`
+  - `spaceBetweenAmountAndSymbol: false` → `.currency(symbol: 'Rs.', customPattern: '¤#,##,##0.00')`
+  - `inWords: true` → `NepaliNumberFormat.words(useDigits: true)` to keep the old
+    `1 lakh 23 thousand` style, or `NepaliNumberFormat.words()` for real words
+    (`one lakh twenty-three thousand`). Ask me if it is unclear which is wanted.
+  - `inWords: true, isMonetory: true` → `NepaliNumberFormat.words(currency: true)`
+  - `delimiter: ''` → `.copyWith(groupSeparator: '')`
+  - `includeDecimalIfZero: false` → `.copyWith(includeDecimalIfZero: false)`
+  - `format(null)` used to return `''`; `format` now takes a non-null `Object`.
+    Handle null at the call site, e.g. `value == null ? '' : f.format(value)`.
+- NepaliMoment: the `showToday` parameter is removed (it had no effect) — delete it.
+  `NepaliMoment.fromAD` / `fromBS` still work. For "Today at …" use
+  `NepaliMoment().calendar(date)`; for "today" use
+  `NepaliMoment().formatUnit(0, MomentUnit.day, numeric: false)`.
+- NepaliUnicode is now an instance `Converter<String, String>`:
+  - `NepaliUnicode.convert(text)` → `const NepaliUnicode().convert(text)`
+  - `NepaliUnicode.convert(text, live: true)` → `const NepaliUnicode().convertLive(text)`
+- `toNepaliDateTimeFromInstant()` (only on the develop branch) is removed →
+  `toNepaliDateTime().toNepalTime()`.
+
+## Silent changes (compile fine, behave differently) — check every site
+
+1. `NepaliDateTime.now()` now returns the device's LOCAL time (like DateTime.now()),
+   not Nepal time. If the code means "now / today in Nepal" (calendar UI, today's BS
+   date, business logic for Nepal), replace it with `NepaliDateTime.nepalNow()`.
+   Keep `now()` only when local time is really intended. Default to `nepalNow()` and
+   list each decision in your report.
+2. `DateTime.toNepaliDateTime()` (and `NepaliDateTime.fromDateTime`) now KEEPS the
+   time zone. In 3.x the result was always shifted to Nepal time. For UTC values
+   (API/server timestamps, `DateTime.parse('...Z')`, `DateTime.utc(...)`,
+   `.toUtc()`, Firestore timestamps) append `.toNepalTime()` wherever Nepal time is
+   expected. This affects devices in Nepal too.
+3. NepaliDateTime is now instant-based:
+   - `toDateTime()` returns the same instant (UTC stays UTC). In 3.x it returned a
+     local DateTime with the same wall-clock fields.
+   - `toUtc()` now works (it used to throw); `toLocal()` now converts (it used to
+     return `this`); new `toNepalTime()`, `isNepalTime`.
+   - `timeZoneName` / `timeZoneOffset` now reflect the real zone (were always
+     Nepal Time / +5:45).
+   - `NepaliDateTime(...)` creates a LOCAL value. Use `NepaliDateTime.nepal(...)` for
+     Nepal time or `NepaliDateTime.utc(...)` for UTC.
+   - `==` / `hashCode` now compare instant + zone (before: identity). Code relying on
+     two equal dates being unequal, or on Set/Map duplicates, behaves differently.
+   - Out-of-range fields roll over like DateTime (`NepaliDateTime(2080, 1, 35)` is
+     2080-02-04). Years outside 1969–2250 BS throw RangeError in all builds.
+   - `NepaliDateTime.parse` honours `Z` and offsets like DateTime.parse (3.x ignored
+     them): no suffix → local, `Z` → UTC, `+05:45` → Nepal time.
+4. NepaliDateFormat now follows intl's DateFormat:
+   - Named skeleton constructors (`yM`, `yMd`, `yMEd`, `yMMMd`, `jm`, `H`, …) and
+     skeleton strings like `NepaliDateFormat('yMd')` now produce intl `en`/`ne`
+     layouts, e.g. `yMd` was `2076/08/05` and is now `8/5/2076` (English) or
+     `२०७६-०८-०५` (Nepali). Where the exact old output matters (stored strings,
+     API payloads, file names, tests), use an explicit pattern such as
+     `NepaliDateFormat('y/MM/dd')`.
+   - Pattern letters changed: `E`/`EE`/`EEE` are all `Thu` (use `EEEE` for
+     `Thursday`, `EEEEE` for `T`); `G`/`GG`/`GGG` are all `BS` (`GGGG` is
+     `Bikram Sambat`); English `a`/`aa` give `PM`; the colloquial month name moved
+     from `MMMMM` to `MMMMMM`; `S` now prints at least 3 digits.
+   - Bug fixes: `Hm()`, `m()`, `ms()`, `h` at midnight and `hh` padding now give the
+     correct values.
+   - Formatters are immutable: `addPattern` and `add_*()` return a NEW formatter.
+     Code like `f.add_jm(); f.format(d);` must become `f = f.add_jm();` or chaining.
+   - English time skeletons put a narrow no-break space (U+202F) before AM/PM.
+5. NepaliNumberFormat:
+   - Numbers are rounded half away from zero instead of truncated (`2.999` with 2
+     digits → `3.00`, was `2.99`).
+   - `decimalPattern()` shows up to 3 fraction digits and drops trailing zeros
+     (`1234.5` → `1,234.5`, was `1,234.50`). Use `decimalPatternDigits` for fixed digits.
+   - `currency()` / `simpleCurrency()` always show 2 decimals (`Rs. 1,234.00` for an
+     int, was `Rs. 1,234`). Pass `decimalDigits: 0` to keep the old output.
+   - `currency()` without `symbol` uses `NPR`; `simpleCurrency()` uses `Rs.` / `रु.`.
+   - A no-break space (U+00A0) separates the symbol and the amount.
+   - Nepali "rupees" is now spelled `रुपैयाँ` (was `रुपैया`).
+   - `words(useDigits: true).format(100000)` gives `1 lakh` (zero groups omitted).
+6. NepaliMoment wording and thresholds now match moment.js, e.g. `few moment ago` →
+   `a few seconds ago`, `one minute ago` → `a minute ago`, `5 minute ago` →
+   `5 minutes ago`, `about an hour ago` → `an hour ago`, 22 hours → `a day ago`,
+   26 days → `a month ago`, 320 days → `a year ago`, `3 days from now` → `in 3 days`.
+   Nepali drops `लगभग` and follows the same thresholds. The language comes from the
+   `language` argument or `NepaliUtils.currentLanguage` at creation time.
+7. NepaliUnicode leaves text inside `{}` unchanged and removes the braces
+   (`mero naam {Sarbagya} ho` → `मेरो नाम Sarbagya हो`). If input can contain a
+   literal `{`, escape it as `{{}`. Spelling fixes in the classic style
+   (`kamal` → `कमल्`, `chhoraa` → `छोरा`, `gyaan` → `ज्ञान्`, `singha` → `सिंह`);
+   any whitespace now drops a halant; `kchy` no longer gives `क्ष`.
+
+## Tests
+
+Tests that compare strings will fail because of the changes above (date skeletons,
+U+202F before AM/PM, U+00A0 in currency, rounding, fraction digits, NepaliMoment
+wording, NepaliUnicode output). Update an expected value only after confirming the
+new output is the intended 4.0 behaviour. Do not weaken or delete assertions.
+Use ` ` / ` ` escapes in expected strings so the special spaces are visible.
+
+## Report
+
+When done, give me:
+- the files you changed;
+- every silent-change site (file:line), what you chose and why — especially each
+  `now()` vs `nepalNow()`, each `toNepaliDateTime()` with or without `.toNepalTime()`,
+  and each place where a skeleton or number output changed;
+- anything you weren't sure about and left for me to decide;
+- the analyzer and test results.
+````
+
+</CopyPrompt>
 
 <Aside type="caution" title="Read the silent changes first">
 These five changes still compile but give different results. Search your code for each of them:

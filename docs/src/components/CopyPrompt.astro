@@ -1,0 +1,97 @@
+---
+/**
+ * Wraps a single code block and adds a prominent "Copy" button above it.
+ * The text is taken from Expressive Code's own copy button (`data-code`),
+ * so it is exactly what the built-in copy icon would copy.
+ */
+interface Props {
+  label?: string;
+}
+
+const { label = 'Copy prompt' } = Astro.props;
+---
+
+<copy-prompt class="not-content">
+  <div class="copy-prompt-bar">
+    <button type="button" class="copy-prompt-button" data-label={label}>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      <span class="copy-prompt-text">{label}</span>
+    </button>
+    <span class="sr-only" aria-live="polite"></span>
+  </div>
+  <slot />
+</copy-prompt>
+
+<style>
+  copy-prompt {
+    display: block;
+    margin-top: 1rem;
+  }
+  .copy-prompt-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.5rem;
+  }
+  .copy-prompt-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--sl-color-accent);
+    border-radius: 0.5rem;
+    background: var(--sl-color-accent);
+    color: var(--sl-color-black);
+    font: inherit;
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .copy-prompt-button:hover {
+    background: var(--sl-color-accent-high);
+    border-color: var(--sl-color-accent-high);
+  }
+  .copy-prompt-button:focus-visible {
+    outline: 2px solid var(--sl-color-accent-high);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  class CopyPrompt extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector<HTMLButtonElement>('.copy-prompt-button');
+      const text = this.querySelector<HTMLElement>('.copy-prompt-text');
+      const live = this.querySelector<HTMLElement>('[aria-live]');
+      if (!button || !text) return;
+      const label = button.dataset.label ?? 'Copy prompt';
+      let timer: ReturnType<typeof setTimeout> | undefined;
+
+      button.addEventListener('click', async () => {
+        const source = this.querySelector<HTMLElement>('.expressive-code [data-code]');
+        const code =
+          source?.dataset.code?.replace(/\u007f/g, '\n') ??
+          this.querySelector('pre')?.innerText ??
+          '';
+        let ok = false;
+        try {
+          await navigator.clipboard.writeText(code);
+          ok = true;
+        } catch {
+          ok = false;
+        }
+        const message = ok ? 'Copied!' : 'Copy failed';
+        text.textContent = message;
+        if (live) live.textContent = message;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          text.textContent = label;
+          if (live) live.textContent = '';
+        }, 2000);
+      });
+    }
+  }
+  if (!customElements.get('copy-prompt')) customElements.define('copy-prompt', CopyPrompt);
+</script>
