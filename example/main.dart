@@ -34,28 +34,31 @@ void main(List<String> arguments) {
   print(date6.format(gorkhaEarthQuake));
 
   heading('Nepali Number Format');
-  final numberFormat = NepaliNumberFormat(symbol: 'Rs.');
-  final commaSeparated = NepaliNumberFormat(decimalDigits: 2);
+  final numberFormat = NepaliNumberFormat.simpleCurrency(decimalDigits: 0);
+  final commaSeparated = NepaliNumberFormat.decimalPatternDigits(
+    decimalDigits: 2,
+  );
 
-  final numberFormatWithDefaultDelimiter = NepaliNumberFormat(symbol: 'Rs.');
-  final numberFormatWithEmptyDelimiter = NepaliNumberFormat(
-    symbol: 'Rs.',
-    delimiter: '',
+  final numberFormatWithDefaultDelimiter = numberFormat;
+  final numberFormatWithEmptyDelimiter = numberFormat.copyWith(
+    groupSeparator: '',
   );
 
   // Sets default language for nepali utilities to be Nepali.
   NepaliUtils.defaultLanguage = Language.fromLocale('ne_NP');
 
-  final inWords = NepaliNumberFormat(inWords: true, language: Language.nepali);
-  final currencyInWords = NepaliNumberFormat(
-    inWords: true,
+  final inWords = NepaliNumberFormat.words(language: Language.nepali);
+  final currencyInWords = NepaliNumberFormat.words(
     language: Language.nepali,
-    isMonetory: true,
+    currency: true,
   );
+  final compact = NepaliNumberFormat.compact(language: Language.nepali);
   print('123456 -> ${numberFormat.format(123456)}');
   print('123456789.6548 -> ${commaSeparated.format(123456789.6548)}');
   print('123456 -> ${inWords.format(123456)}');
   print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
+  print('1234567 -> ${compact.format(1234567)}');
+  print('१२,३४,५६७.८९ -> ${commaSeparated.parse('१२,३४,५६७.८९')}');
 
   heading('Number Format With Delimiter');
   print('12345 -> ${numberFormatWithDefaultDelimiter.format(12345)}');

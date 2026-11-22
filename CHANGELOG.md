@@ -46,7 +46,32 @@
   * `NepaliUtils().language` → `NepaliUtils.currentLanguage`.
   * Formatters read the language when they are created, so `withLanguage` applies to formatters created inside it.
 
+* `NepaliNumberFormat` now follows `package:intl`'s `NumberFormat` and is an immutable `final class`:
+
+  | 3.x | 4.0 |
+  |---|---|
+  | `NepaliNumberFormat()` | `NepaliNumberFormat.decimalPattern()` (up to 3 fraction digits), or `NepaliNumberFormat([pattern])` |
+  | `NepaliNumberFormat(decimalDigits: 2)` | `NepaliNumberFormat.decimalPatternDigits(decimalDigits: 2)` |
+  | `isMonetory: true, symbol: 'Rs.'` | `NepaliNumberFormat.simpleCurrency()` (`Rs. 1,234.00`) or `.currency(symbol: 'Rs.')` |
+  | `symbolOnLeft`, `spaceBetweenAmountAndSymbol` | `currency(customPattern: '#,##,##0.00 ¤')` |
+  | `inWords: true` | `NepaliNumberFormat.words()`, which now gives real words; `words(useDigits: true)` for the old `1 lakh 23 thousand` style |
+  | `inWords: true, isMonetory: true` | `NepaliNumberFormat.words(currency: true)` |
+  | `delimiter: ''` | `copyWith(groupSeparator: '')` |
+  | `includeDecimalIfZero: false` | `copyWith(includeDecimalIfZero: false)` |
+  | `format<T>(T? number)`; `null` gave `''` | `format(Object number)`; `null` is a compile error |
+
+  * The currency patterns are those of intl's `ne` locale, with a no-break space after the symbol.
+  * Numbers are rounded half away from zero instead of truncated: `2.999` with 2 digits is `3.00`, not `2.99`.
+  * In Nepali, rupees is spelled `रुपैयाँ`.
+
 **New**
+* `NepaliNumberFormat` gains what intl's `NumberFormat` has:
+  * `percentPattern`, `decimalPercentPattern`, `currency`, `simpleCurrency`, `compact` (`12.3L`), `compactLong` (`12.3 lakh`), `compactCurrency` and `compactSimpleCurrency`. Compact formats use thousand, lakh, crore, arab and kharab.
+  * Custom patterns: `NepaliNumberFormat('#,##0.00')` for international grouping, `%`, `‰`, `¤`, quoted text and negative subpatterns (`#,##0;(#,##0)`).
+  * `parse` and `tryParse`, which accept ASCII and Devanagari digits.
+  * `minimumIntegerDigits`, `minimumFractionDigits`, `maximumFractionDigits` and significant digits, set with `copyWith`.
+* `NepaliNumberFormat` formats negative numbers, doubles such as `1e21` and `1.5e-7`, `BigInt`s and numeric strings without losing digits. Doubles are rounded as written, so `1.005` rounds to `1.01`.
+* `NepaliNumberFormat.words` spells numbers out (`one lakh twenty-three thousand four hundred fifty-six` / `एक लाख तेइस हजार चार सय छपन्न`). It also handles negative numbers, fractions and values beyond a sankha, and no longer shows zero groups (`1 lakh 00 thousand 0 hundred 00`).
 * `NepaliDateTime.utc`, `.nepal`, `.nepalNow`, `.fromMicrosecondsSinceEpoch`, `.fromMillisecondsSinceEpoch`, `copyWith`, `toNepalTime`, `isNepalTime` and weekday/month constants (`NepaliDateTime.sunday`, `NepaliDateTime.baishakh`, ...).
 * `NepaliDateTime.fromDateTime` is no longer deprecated.
 * `NepaliDateFormat` gains what intl's `DateFormat` has:

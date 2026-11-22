@@ -35,10 +35,7 @@ final class LanguageSymbols {
     required this.nepalTime,
     required this.utc,
     required this.skeletons,
-    required this.hundred,
-    required this.scales,
-    required this.rupees,
-    required this.paisa,
+    required this.numbers,
     required this.relativeTime,
   });
 
@@ -87,17 +84,8 @@ final class LanguageSymbols {
   /// The pattern for each `package:intl` skeleton.
   final Map<String, String> skeletons;
 
-  /// The word for hundred.
-  final String hundred;
-
-  /// Words for thousand, lakh, crore, arab, kharab, nil, padam and sankha.
-  final List<String> scales;
-
-  /// The word for rupees.
-  final String rupees;
-
-  /// The word for paisa.
-  final String paisa;
+  /// Words and symbols used by `NepaliNumberFormat`.
+  final NumberSymbols numbers;
 
   /// Phrases used by `NepaliMoment`.
   final RelativeTimeSymbols relativeTime;
@@ -118,6 +106,55 @@ final class LanguageSymbols {
   /// [value] zero-padded to [width], in this language's digits.
   String number(int value, [int width = 0]) =>
       digits(width > 0 ? '$value'.padLeft(width, '0') : '$value');
+}
+
+/// Words and symbols used to format numbers.
+final class NumberSymbols {
+  /// Creates the number symbols of a language.
+  const new({
+    required this.belowHundred,
+    required this.hundred,
+    required this.scales,
+    required this.compactShort,
+    required this.compactLong,
+    required this.minus,
+    required this.point,
+    required this.rupees,
+    required this.paisa,
+    required this.currencySymbol,
+  });
+
+  /// The words for 0 to 99, e.g. fifty-six / छपन्न.
+  final List<String> belowHundred;
+
+  /// The word for hundred.
+  final String hundred;
+
+  /// Words for thousand, lakh, crore, arab, kharab, nil, padam and sankha.
+  final List<String> scales;
+
+  /// Short compact suffixes for thousand, lakh, crore, arab and kharab,
+  /// including any leading space, e.g. `K` or ` लाख`.
+  final List<String> compactShort;
+
+  /// Long compact suffixes for thousand, lakh, crore, arab and kharab,
+  /// including any leading space, e.g. ` lakh`.
+  final List<String> compactLong;
+
+  /// The word for a negative number, e.g. minus / ऋण.
+  final String minus;
+
+  /// The word for the decimal point, e.g. point / दशमलव.
+  final String point;
+
+  /// The word for rupees.
+  final String rupees;
+
+  /// The word for paisa.
+  final String paisa;
+
+  /// The symbol of the Nepalese rupee, e.g. Rs. / रु.
+  final String currencySymbol;
 }
 
 /// Phrases for a fuzzy time span such as "3 days ago".

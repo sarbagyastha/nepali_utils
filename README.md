@@ -243,35 +243,38 @@ print(date5.format(gorkhaEarthQuake)); // 2072.Baishakh.12 Bikram Sambat 11:56 A
 **Note:** Always wrap pattern string in double quote (`"`).
 
 ### Nepali Number
-Converts English numbers into Nepali  number literals.
+`NepaliNumberFormat` has the same API as `package:intl`'s `NumberFormat`. It groups numbers in lakhs and crores and uses Devanagari digits in Nepali.
 ```dart
-var currencyFormat = NepaliNumberFormat(
-    symbol: 'Rs.',
-);
-var commaSeparated = NepaliNumberFormat(
-    decimalDigits: 2,
-);
-var inWords = NepaliNumberFormat(
-    inWords: true,
-    language: Language.nepali,
-);
-var currencyInWords = NepaliNumberFormat(
-    inWords: true,
-    language: Language.nepali,
-    isMonetory: true,
-    decimalDigits: 2,
-);
-print('123456 -> ${currencyFormat.format(123456)}');
-// 123456 -> 1,23,456
+final decimal = NepaliNumberFormat.decimalPattern();
+print(decimal.format(123456789.6548)); // 12,34,56,789.655
+print(decimal.format(-1234.5)); // -1,234.5
 
-print('123456789.6548 -> ${commaSeparated.format(123456789.6548)}');
-// 123456789.6548 -> 12,34,56,789.65
+final currency = NepaliNumberFormat.simpleCurrency(language: .nepali);
+print(currency.format(123456)); // रु. १,२३,४५६.००
+print(NepaliNumberFormat.currency().format(123456)); // NPR 1,23,456.00
 
-print('123456 -> ${inWords.format(123456)}');
-// 123456 -> 1 lakh 23 thousand 4 hundred 56
+print(NepaliNumberFormat.percentPattern().format(0.1234)); // 12%
+print(NepaliNumberFormat.compact().format(1234567)); // 12.3L
+print(NepaliNumberFormat.compactLong(language: .nepali).format(1234567)); // १२.३ लाख
 
-print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
-// 123456789.6548 -> १२ करोड ३४ लाख ५६ हजार ७ सय ८९ रुपैया ६५ पैसा
+// International grouping, or any other intl pattern.
+print(NepaliNumberFormat('#,##0.00').format(1234567)); // 1,234,567.00
+
+// Spell numbers out.
+print(NepaliNumberFormat.words().format(123456));
+// one lakh twenty-three thousand four hundred fifty-six
+print(NepaliNumberFormat.words(language: .nepali, currency: true).format(123456789.6548));
+// बाह्र करोड चौंतीस लाख छपन्न हजार सात सय उनान्नब्बे रुपैयाँ पैंसट्ठी पैसा
+print(NepaliNumberFormat.words(useDigits: true).format(123456));
+// 1 lakh 23 thousand 4 hundred 56
+
+// Parse ASCII or Devanagari digits.
+print(decimal.parse('१२,३४,५६७.८९')); // 1234567.89
+print(NepaliNumberFormat.compact().parse('1.23L')); // 123000
+
+// Formatters are immutable; copyWith replaces intl's setters.
+final noGrouping = decimal.copyWith(groupSeparator: '', maximumFractionDigits: 2);
+print(noGrouping.format(12345.678)); // 12345.68
 ```
 
 ### Nepali Unicode

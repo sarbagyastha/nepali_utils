@@ -47,40 +47,28 @@ void main(List<String> arguments) {
   print(date8.format(gorkhaEarthQuake));
 
   heading('Nepali Number Format');
-  final currencyFormat = NepaliNumberFormat(
-    symbol: 'Rs.',
-  );
-  final commaSeparated = NepaliNumberFormat(
+  final currencyFormat = NepaliNumberFormat.simpleCurrency(decimalDigits: 0);
+  final commaSeparated = NepaliNumberFormat.decimalPatternDigits(
     decimalDigits: 2,
-    isMonetory: true,
   );
 
   // Sets default language for nepali utilities to be Nepali.
   NepaliUtils.defaultLanguage = Language.nepali;
 
-  final inWords = NepaliNumberFormat(
-    inWords: true,
-  );
-  final currencyInWords = NepaliNumberFormat(
-    inWords: true,
-    isMonetory: true,
-    decimalDigits: 2,
-  );
-  print('123456 -> ${currencyFormat.format<int>(123456)}');
-  print('57.0 -> ${commaSeparated.format<double>(57)}');
-  print('100.0 -> ${commaSeparated.format<String>('100.0')}');
-  print('9999.0 -> ${commaSeparated.format<String>('9999.0')}');
-  print('123456789.6548 -> ${commaSeparated.format<double>(123456789.6548)}');
-  print('123456 -> ${inWords.format<String>('123456')}');
-  print('123456789.6548 -> ${currencyInWords.format<num>(123456789.6548)}');
+  final inWords = NepaliNumberFormat.words();
+  final currencyInWords = NepaliNumberFormat.words(currency: true);
+  print('123456 -> ${currencyFormat.format(123456)}');
+  print('57.0 -> ${commaSeparated.format(57)}');
+  print('100.0 -> ${commaSeparated.format('100.0')}');
+  print('9999.0 -> ${commaSeparated.format('9999.0')}');
+  print('123456789.6548 -> ${commaSeparated.format(123456789.6548)}');
+  print('123456 -> ${inWords.format('123456')}');
+  print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
+  print('1234567 -> ${NepaliNumberFormat.compact().format(1234567)}');
+  print('१२,३४,५६७.८९ -> ${commaSeparated.parse('१२,३४,५६७.८९')}');
 
-  final formatter = NepaliNumberFormat(
-    decimalDigits: 2,
-    includeDecimalIfZero: false,
-  );
-  print(
-    '123.00 -> ${formatter.format(123.001)}',
-  );
+  final formatter = commaSeparated.copyWith(includeDecimalIfZero: false);
+  print('123.00 -> ${formatter.format(123.001)}');
 
   heading('Nepali Unicode');
   print(
@@ -93,11 +81,7 @@ void main(List<String> arguments) {
   );
 
   heading('Nepali Moment - In Nepali');
-  print(
-    NepaliMoment.fromBS(
-      NepaliDateTime.parse('2076-03-22T08:41:14'),
-    ),
-  );
+  print(NepaliMoment.fromBS(NepaliDateTime.parse('2076-03-22T08:41:14')));
 
   print(
     NepaliMoment.fromBS(
@@ -114,11 +98,7 @@ void main(List<String> arguments) {
 
   heading('Nepali Moment - In English');
   NepaliUtils.defaultLanguage = Language.english;
-  print(
-    NepaliMoment.fromBS(
-      NepaliDateTime.parse('2078-09-27T08:41:14'),
-    ),
-  );
+  print(NepaliMoment.fromBS(NepaliDateTime.parse('2078-09-27T08:41:14')));
 
   print(
     NepaliMoment.fromBS(
