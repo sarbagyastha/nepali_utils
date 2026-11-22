@@ -21,12 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Build with Astro
-        uses: withastro/action@v3
-        with:
-          path: docs
-          node-version: 24
+        uses: withastro/action@v6
 
   deploy:
     needs: build
@@ -37,4 +34,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
