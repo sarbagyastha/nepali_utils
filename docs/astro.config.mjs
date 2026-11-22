@@ -2,7 +2,6 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-// TODO: replace with the real custom domain (also update public/CNAME).
 const site = 'https://nepali-utils.sarbagyastha.com.np';
 
 export default defineConfig({
