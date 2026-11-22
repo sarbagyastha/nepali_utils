@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:nepali_utils/nepali_utils.dart';
-import 'package:nepali_utils/src/nepali_digits.dart';
+import 'package:nepali_utils/src/core/nepali_digits.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -326,12 +326,20 @@ void main() {
   });
 
   test('uses the NepaliUtils default language', () {
-    addTearDown(() => NepaliUtils(Language.english));
-    NepaliUtils(Language.nepali);
+    addTearDown(() => NepaliUtils.defaultLanguage = .english);
+    NepaliUtils.defaultLanguage = .nepali;
     expect(NepaliDateFormat('MMMM d').format(date), 'मंसिर ५');
     expect(NepaliDateFormat.yMd().format(date), '२०७६-०८-०५');
     expect(NepaliDateFormat.j().format(date), '२१');
     expect(date.format('y'), '२०७६');
+  });
+
+  test('uses the NepaliUtils.withLanguage override', () {
+    NepaliUtils.withLanguage(.nepali, () {
+      expect(NepaliDateFormat('MMMM d').format(date), 'मंसिर ५');
+      expect(date.format('y'), '२०७६');
+    });
+    expect(NepaliDateFormat('MMMM d').format(date), 'Mangsir 5');
   });
 
   test('toNepaliDigits matches NepaliUnicode for digits', () {

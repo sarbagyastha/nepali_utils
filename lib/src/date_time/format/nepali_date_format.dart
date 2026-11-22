@@ -5,15 +5,13 @@
 // Constructor and constant names mirror package:intl's DateFormat.
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names
 
+import 'package:nepali_utils/src/core/language/language.dart';
+import 'package:nepali_utils/src/core/language/language_symbols.dart';
+import 'package:nepali_utils/src/core/nepali_utils.dart';
 import 'package:nepali_utils/src/date_time/calendar/bs_calendar.dart';
 import 'package:nepali_utils/src/date_time/format/format_token.dart';
-import 'package:nepali_utils/src/date_time/format/locale_names.dart';
-import 'package:nepali_utils/src/date_time/format/skeletons.dart';
 import 'package:nepali_utils/src/date_time/nepali_date_time.dart';
 import 'package:nepali_utils/src/date_time/nepali_date_time_extension.dart';
-import 'package:nepali_utils/src/language.dart';
-import 'package:nepali_utils/src/nepali_digits.dart';
-import 'package:nepali_utils/src/nepali_utils.dart';
 
 /// Formats dates in the Bikram Sambat calendar.
 ///
@@ -74,9 +72,10 @@ final class NepaliDateFormat._(
   /// [language]) or an explicit pattern such as `'MMMM d, y'`. Without one,
   /// the format is `yMMMMd jms`.
   ///
-  /// [language] defaults to the one set through [NepaliUtils].
+  /// [language] defaults to [NepaliUtils.currentLanguage] at the time the
+  /// formatter is created.
   factory([String? newPattern, Language? language]) {
-    final lang = language ?? NepaliUtils().language;
+    final lang = language ?? NepaliUtils.currentLanguage;
     return ._(newPattern == null ? null : _resolve(newPattern, lang), lang);
   }
 
@@ -485,7 +484,7 @@ final class NepaliDateFormat._(
   NepaliDateFormat add_s() => addPattern(SECOND);
 
   static String _resolve(String pattern, Language language) =>
-      skeletonsFor(language)[pattern] ?? pattern;
+      symbolsOf(language).skeletons[pattern] ?? pattern;
 
   /// Formats [date] according to [pattern] and [language].
   ///
@@ -507,13 +506,15 @@ final class NepaliDateFormat._(
   String parseAndFormat(String dateString) =>
       format(NepaliDateTime.parse(dateString));
 
+  LanguageSymbols get _symbols => symbolsOf(language);
+
   String _formatField(FieldToken field, NepaliDateTime date) {
     final count = field.count;
-    String number(int value, [int width = 0]) =>
-        localizedNumber(value, language, width);
+    final symbols = _symbols;
+    String number(int value, [int width = 0]) => symbols.number(value, width);
 
     return switch (field.letter) {
-      'G' => eraName(language, long: count >= 4),
+      'G' => count >= 4 ? symbols.eras.long : symbols.eras.short,
       'y' => count == 2 ? number(date.year % 100, 2) : number(date.year, count),
       'Q' => _quarter((date.month + 2) ~/ 3, count),
       'M' || 'L' => _month(date.month, count),
@@ -524,7 +525,7 @@ final class NepaliDateFormat._(
         count >= 3 && count <= 5
             ? _weekday(date.weekday, count)
             : number(date.day),
-      'a' => _period(date.hour),
+      'a' => symbols.dayPeriod(date.hour),
       'h' => number((date.hour + 11) % 12 + 1, count),
       'H' => number(date.hour, count),
       'K' => number(date.hour % 12, count),
@@ -539,50 +540,32 @@ final class NepaliDateFormat._(
   }
 
   String _quarter(int quarter, int count) => switch (count) {
-    3 || 4 => quarterName(quarter, language, long: count == 4),
-    _ => localizedNumber(quarter, language, count),
+    3 => _symbols.quartersShort[quarter - 1],
+    4 => _symbols.quarters[quarter - 1],
+    _ => _symbols.number(quarter, count),
   };
 
-  String _month(int month, int count) {
-    final name = BsMonthName.of(month);
-    return switch (count) {
-      1 || 2 => localizedNumber(month, language, count),
-      3 => name.short(language),
-      4 => name.full(language),
-      5 => name.narrow(language),
-      _ => name.alt(language),
-    };
-  }
+  String _month(int month, int count) => switch (count) {
+    1 || 2 => _symbols.number(month, count),
+    3 => _symbols.monthsShort[month - 1],
+    4 => _symbols.months[month - 1],
+    5 => _symbols.monthsNarrow[month - 1],
+    _ => _symbols.monthsAlt[month - 1],
+  };
 
-  String _weekday(int weekday, int count) {
-    final name = WeekdayName.of(weekday);
-    return switch (count) {
-      <= 3 => name.short(language),
-      4 => name.full(language),
-      5 => name.initial(language),
-      _ => throw UnsupportedError(
-        '"Short" weekdays are currently not supported.',
-      ),
-    };
-  }
+  String _weekday(int weekday, int count) => switch (count) {
+    <= 3 => _symbols.weekdaysShort[weekday - 1],
+    4 => _symbols.weekdays[weekday - 1],
+    5 => _symbols.weekdaysNarrow[weekday - 1],
+    _ => throw UnsupportedError(
+      '"Short" weekdays are currently not supported.',
+    ),
+  };
 
   static int _dayOfYear(NepaliDateTime date) =>
       BsCalendar.toEpochDay(date.year, date.month, date.day).value -
       BsCalendar.toEpochDay(date.year).value +
       1;
-
-  String _period(int hour) {
-    if (language == .nepali) {
-      return switch (hour) {
-        < 12 => 'बिहान',
-        12 => 'मध्यान्न',
-        < 16 => 'दिउसो',
-        < 20 => 'साँझ',
-        _ => 'बेलुकी',
-      };
-    }
-    return hour < 12 ? 'AM' : 'PM';
-  }
 
   String _fraction(NepaliDateTime date, int count) {
     final String text;
@@ -598,7 +581,7 @@ final class NepaliDateFormat._(
           ? micros.substring(0, count)
           : micros.padRight(count, '0');
     }
-    return language == .nepali ? toNepaliDigits(text) : text;
+    return _symbols.digits(text);
   }
 
   String _zoneName(NepaliDateTime date, int count) {
@@ -606,7 +589,7 @@ final class NepaliDateFormat._(
     if (count < 4 || !(date.isNepalTime || date.isUtc)) {
       return date.timeZoneName;
     }
-    return longZoneName(language, nepal: date.isNepalTime);
+    return date.isNepalTime ? _symbols.nepalTime : _symbols.utc;
   }
 
   String _zoneOffset(Duration offset, int count) {
@@ -621,6 +604,6 @@ final class NepaliDateFormat._(
       5 => '$sign$hh:$mm',
       _ => '$sign$hh$mm',
     };
-    return language == .nepali ? toNepaliDigits(text) : text;
+    return _symbols.digits(text);
   }
 }

@@ -2,9 +2,9 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
-import 'package:nepali_utils/src/language.dart';
-import 'package:nepali_utils/src/nepali_unicode.dart';
-import 'package:nepali_utils/src/nepali_utils.dart';
+import 'package:nepali_utils/src/core/language/language.dart';
+import 'package:nepali_utils/src/core/language/language_symbols.dart';
+import 'package:nepali_utils/src/core/nepali_utils.dart';
 
 /// Provides the ability to format a number in a Nepali way.
 class NepaliNumberFormat {
@@ -19,14 +19,14 @@ class NepaliNumberFormat {
     this.spaceBetweenAmountAndSymbol = true,
     this.includeDecimalIfZero = true,
     Language? language,
-  }) : _lang = language ?? NepaliUtils().language;
+  }) : _symbols = symbolsOf(language ?? NepaliUtils.currentLanguage);
 
   /// If true, formats the number in words.
   ///
   /// Default is false.
   final bool inWords;
 
-  final Language _lang;
+  final LanguageSymbols _symbols;
 
   /// If true, formats the number as if it is monetary value.
   /// Also, [symbol] can be added while true.
@@ -123,11 +123,11 @@ class NepaliNumberFormat {
 
     if (digit.length == 3) {
       numberInWordBuffer.write(
-        '${_languageNumber(digit[0])} ${_language('hundred')} '
-        '${_languageNumber(digit.substring(1))}',
+        '${_symbols.digits(digit[0])} ${_symbols.hundred} '
+        '${_symbols.digits(digit.substring(1))}',
       );
     } else {
-      numberInWordBuffer.write(_languageNumber(digit));
+      numberInWordBuffer.write(_symbols.digits(digit));
     }
 
     final numberInWord = numberInWordBuffer.toString();
@@ -135,69 +135,18 @@ class NepaliNumberFormat {
     if (isMonetory) {
       return numberInWord.trimRight() +
           (decimal.isEmpty
-              ? ' ${_language('rupees')}'
-              : ' ${_language('rupees')} '
-                    '${_isEnglish ? decimal : NepaliUnicode.convert(decimal)} '
-                    '${_language('paisa')}');
+              ? ' ${_symbols.rupees}'
+              : ' ${_symbols.rupees} '
+                    '${_symbols.digits(decimal)} '
+                    '${_symbols.paisa}');
     }
     return numberInWord.trimRight();
   }
 
   String _digitGroupToWord(int index, String number) {
-    switch (index) {
-      case 0:
-        return '${_languageNumber(number)} ${_language('thousand')} ';
-      case 1:
-        return '${_languageNumber(number)} ${_language('lakh')} ';
-      case 2:
-        return '${_languageNumber(number)} ${_language('crore')} ';
-      case 3:
-        return '${_languageNumber(number)} ${_language('arab')} ';
-      case 4:
-        return '${_languageNumber(number)} ${_language('kharab')} ';
-      case 5:
-        return '${_languageNumber(number)} ${_language('nil')} ';
-      case 6:
-        return '${_languageNumber(number)} ${_language('padam')} ';
-      case 7:
-        return '${_languageNumber(number)} ${_language('sankha')} ';
-      default:
-        return '';
-    }
-  }
-
-  String _languageNumber(String number) =>
-      _isEnglish ? number : NepaliUnicode.convert(number);
-
-  bool get _isEnglish => _lang == Language.english;
-
-  String _language(String word) {
-    switch (word) {
-      case 'rupees':
-        return _isEnglish ? word : 'रुपैया';
-      case 'paisa':
-        return _isEnglish ? word : 'पैसा';
-      case 'hundred':
-        return _isEnglish ? word : 'सय';
-      case 'thousand':
-        return _isEnglish ? word : 'हजार';
-      case 'lakh':
-        return _isEnglish ? word : 'लाख';
-      case 'crore':
-        return _isEnglish ? word : 'करोड';
-      case 'arab':
-        return _isEnglish ? word : 'अर्ब';
-      case 'kharab':
-        return _isEnglish ? word : 'खर्ब';
-      case 'nil':
-        return _isEnglish ? word : 'नील';
-      case 'padam':
-        return _isEnglish ? word : 'पद्म';
-      case 'sankha':
-        return _isEnglish ? word : 'शंख';
-      default:
-        return '';
-    }
+    final scales = _symbols.scales;
+    if (index < 0 || index >= scales.length) return '';
+    return '${_symbols.digits(number)} ${scales[index]} ';
   }
 
   String _formatWithComma<T extends Object>(T number) {
@@ -232,23 +181,19 @@ class NepaliNumberFormat {
     final hideDecimal =
         !includeDecimalIfZero && RegExp(r'^0+$').hasMatch(fractionalPart);
 
-    fractionalPart = _isEnglish
-        ? fractionalPart
-        : NepaliUnicode.convert(fractionalPart);
+    fractionalPart = _symbols.digits(fractionalPart);
     if (decimalDigits > 0) {
       fractionalPart = '.$fractionalPart';
     }
 
     if (number0.length <= 3) {
       if (hideDecimal) {
-        return _isEnglish ? number0 : NepaliUnicode.convert(number0);
+        return _symbols.digits(number0);
       }
-      return '${_isEnglish ? number0 : NepaliUnicode.convert(number0)}'
+      return '${_symbols.digits(number0)}'
           '$fractionalPart';
     } else if (number0.length < 5) {
-      final localizedNum = _isEnglish
-          ? number0
-          : NepaliUnicode.convert(number0);
+      final localizedNum = _symbols.digits(number0);
       if (hideDecimal) {
         return '${localizedNum[0]}$delimiter${localizedNum.substring(1)}';
       }
@@ -273,9 +218,7 @@ class NepaliNumberFormat {
       formattedString = formattedString[0] == '0'
           ? formattedString.substring(1)
           : formattedString;
-      formattedString = _isEnglish
-          ? formattedString
-          : NepaliUnicode.convert(formattedString);
+      formattedString = _symbols.digits(formattedString);
 
       if (hideDecimal) return formattedString;
       return '$formattedString$fractionalPart';

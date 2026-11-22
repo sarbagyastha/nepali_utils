@@ -40,10 +40,81 @@ void main() {
     expect(Language.fromLocale('fr', orElse: Language.nepali), Language.nepali);
   });
 
-  test('NepaliUtils.fromLocale', () {
-    addTearDown(() => NepaliUtils(Language.english));
-    expect(NepaliUtils.fromLocale('ne-NP').language, Language.nepali);
-    expect(NepaliUtils.fromLocale('fr').language, Language.nepali);
-    expect(NepaliUtils.fromLocale('en').language, Language.english);
+  group('NepaliUtils', () {
+    tearDown(() => NepaliUtils.defaultLanguage = .english);
+
+    test('defaultLanguage is English and settable', () {
+      expect(NepaliUtils.defaultLanguage, Language.english);
+      expect(NepaliUtils.currentLanguage, Language.english);
+      NepaliUtils.defaultLanguage = Language.fromLocale('ne-NP');
+      expect(NepaliUtils.defaultLanguage, Language.nepali);
+      expect(NepaliUtils.currentLanguage, Language.nepali);
+    });
+
+    test('withLanguage overrides only inside the body', () {
+      final result = NepaliUtils.withLanguage(.nepali, () {
+        expect(NepaliUtils.currentLanguage, Language.nepali);
+        expect(NepaliUtils.defaultLanguage, Language.english);
+        return 42;
+      });
+      expect(result, 42);
+      expect(NepaliUtils.currentLanguage, Language.english);
+    });
+
+    test('withLanguage nests', () {
+      NepaliUtils.withLanguage(.nepali, () {
+        NepaliUtils.withLanguage(.english, () {
+          expect(NepaliUtils.currentLanguage, Language.english);
+        });
+        expect(NepaliUtils.currentLanguage, Language.nepali);
+      });
+    });
+
+    test('withLanguage carries across async gaps', () async {
+      final language = await NepaliUtils.withLanguage(.nepali, () async {
+        await Future<void>.delayed(Duration.zero);
+        return NepaliUtils.currentLanguage;
+      });
+      expect(language, Language.nepali);
+      expect(NepaliUtils.currentLanguage, Language.english);
+    });
+
+    test('withLanguage wins over defaultLanguage', () {
+      NepaliUtils.defaultLanguage = .nepali;
+      NepaliUtils.withLanguage(.english, () {
+        expect(NepaliUtils.currentLanguage, Language.english);
+      });
+    });
+  });
+
+  group('NepaliMoment language', () {
+    final reference = DateTime.utc(2024, 1, 10);
+    final date = DateTime.utc(2024, 1, 7);
+
+    test('defaults to the current language', () {
+      expect(NepaliMoment.fromAD(date, referenceDate: reference), '3 days ago');
+      expect(
+        NepaliUtils.withLanguage(
+          .nepali,
+          () => NepaliMoment.fromAD(date, referenceDate: reference),
+        ),
+        '३ दिन पहिले',
+      );
+    });
+
+    test('accepts an explicit language', () {
+      expect(
+        NepaliMoment.fromAD(date, referenceDate: reference, language: .nepali),
+        '३ दिन पहिले',
+      );
+      expect(
+        NepaliMoment.fromBS(
+          date.toNepaliDateTime(),
+          referenceDate: reference.toNepaliDateTime(),
+          language: .nepali,
+        ),
+        '३ दिन पहिले',
+      );
+    });
   });
 }

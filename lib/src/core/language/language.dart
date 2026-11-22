@@ -8,7 +8,8 @@
 /// with `package:intl` or Flutter's `Locale`:
 ///
 /// ```dart
-/// final language = Language.fromLocale(locale.toLanguageTag()); // Flutter
+/// // Flutter
+/// NepaliUtils.defaultLanguage = Language.fromLocale(locale.toLanguageTag());
 /// final locale = Locale(language.languageCode, language.countryCode);
 /// ```
 enum Language(final String languageCode, final String countryCode) {

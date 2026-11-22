@@ -2,8 +2,6 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
-import 'package:nepali_utils/src/language.dart';
-
 const int _zero = 0x30; // '0'
 const int _nine = 0x39; // '9'
 const int _devanagariZero = 0x0966; // '०'
@@ -25,10 +23,4 @@ String toNepaliDigits(String text) {
       else
         unit,
   ]);
-}
-
-/// [value] padded to [width] with zeros, using digits of [language].
-String localizedNumber(int value, Language language, [int width = 0]) {
-  final text = width > 0 ? '$value'.padLeft(width, '0') : '$value';
-  return language == .nepali ? toNepaliDigits(text) : text;
 }

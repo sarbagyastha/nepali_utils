@@ -44,7 +44,7 @@ void main(List<String> arguments) {
   );
 
   // Sets default language for nepali utilities to be Nepali.
-  NepaliUtils.fromLocale('ne_NP');
+  NepaliUtils.defaultLanguage = Language.fromLocale('ne_NP');
 
   final inWords = NepaliNumberFormat(inWords: true, language: Language.nepali);
   final currencyInWords = NepaliNumberFormat(

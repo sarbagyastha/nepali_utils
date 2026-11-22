@@ -2,9 +2,10 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
+import 'package:nepali_utils/src/core/language/language.dart';
+import 'package:nepali_utils/src/core/language/language_symbols.dart';
+import 'package:nepali_utils/src/core/nepali_utils.dart';
 import 'package:nepali_utils/src/date_time/nepali_date_time.dart';
-import 'package:nepali_utils/src/nepali_digits.dart';
-import 'package:nepali_utils/src/nepali_utils.dart';
 
 /// NepaliMoment describes the moment in Nepali locale.
 ///
@@ -15,28 +16,49 @@ class NepaliMoment {
   ///
   /// If [referenceDate] is null, the difference between [date]
   /// and the current date is converted into moment.
+  ///
+  /// [language] defaults to [NepaliUtils.currentLanguage].
   static String fromBS(
     NepaliDateTime date, {
     NepaliDateTime? referenceDate,
     bool showToday = false,
+    Language? language,
   }) {
-    return _calc(date, referenceDate ?? NepaliDateTime.now(), showToday);
+    return _calc(
+      date,
+      referenceDate ?? NepaliDateTime.now(),
+      showToday,
+      language ?? NepaliUtils.currentLanguage,
+    );
   }
 
   /// Converts the difference between [date] and [referenceDate]
   /// in [DateTime] into moment string.
   ///
-  /// If [referenceDate] is null, the difference between [date]\
+  /// If [referenceDate] is null, the difference between [date]
   /// and the current date is converted into moment.
+  ///
+  /// [language] defaults to [NepaliUtils.currentLanguage].
   static String fromAD(
     DateTime date, {
     DateTime? referenceDate,
     bool showToday = false,
+    Language? language,
   }) {
-    return _calc(date, referenceDate ?? DateTime.now(), showToday);
+    return _calc(
+      date,
+      referenceDate ?? DateTime.now(),
+      showToday,
+      language ?? NepaliUtils.currentLanguage,
+    );
   }
 
-  static String _calc(DateTime date, DateTime referenceDate, bool showToday) {
+  static String _calc(
+    DateTime date,
+    DateTime referenceDate,
+    bool showToday,
+    Language language,
+  ) {
     final elapsedDuration = referenceDate.difference(date);
     final elapsed = elapsedDuration.inMilliseconds;
     final isFuture = elapsed.isNegative;
@@ -47,42 +69,25 @@ class NepaliMoment {
     final months = days / 30;
     final years = days / 365;
 
-    final isEnglish = NepaliUtils().language == .english;
+    final symbols = symbolsOf(language);
+    final phrases = symbols.relativeTime;
+    String count(String template, double value) =>
+        template.replaceFirst('#', symbols.number(value.round()));
 
-    String momentString;
-    if (seconds < 45) {
-      momentString = isEnglish ? 'few moment' : 'केही क्षण';
-    } else if (seconds < 90) {
-      momentString = isEnglish ? 'one minute' : 'एक मिनेट';
-    } else if (minutes < 45) {
-      final min = minutes.round();
-      momentString = isEnglish ? '$min minute' : _nepaliMoment(min, 'मिनेट');
-    } else if (minutes < 90) {
-      momentString = isEnglish ? 'about an hour' : 'लगभग एक घण्टा';
-    } else if (hours < 24) {
-      final hr = hours.round();
-      momentString = isEnglish ? '$hr hours' : _nepaliMoment(hr, 'घण्टा');
-    } else if (hours < 48) {
-      momentString = isEnglish ? 'one day' : 'एक दिन';
-    } else if (days < 30) {
-      final day = days.round();
-      momentString = isEnglish ? '$day days' : _nepaliMoment(day, 'दिन');
-    } else if (days < 60) {
-      momentString = isEnglish ? 'about a month' : 'लगभग एक महिना';
-    } else if (days < 365) {
-      final month = months.round();
-      momentString = isEnglish ? '$month month' : _nepaliMoment(month, 'महिना');
-    } else if (years < 2) {
-      momentString = isEnglish ? 'about one year' : 'लगभग एक वर्ष';
-    } else {
-      final year = years.round();
-      momentString = isEnglish ? '$year year' : _nepaliMoment(year, 'वर्ष');
+    String span() {
+      if (seconds < 45) return phrases.moments;
+      if (seconds < 90) return phrases.minute;
+      if (minutes < 45) return count(phrases.minutes, minutes);
+      if (minutes < 90) return phrases.hour;
+      if (hours < 24) return count(phrases.hours, hours);
+      if (hours < 48) return phrases.day;
+      if (days < 30) return count(phrases.days, days);
+      if (days < 60) return phrases.month;
+      if (days < 365) return count(phrases.months, months);
+      if (years < 2) return phrases.year;
+      return count(phrases.years, years);
     }
-    if (isFuture) return momentString += isEnglish ? ' from now' : ' पछि';
-    return momentString += isEnglish ? ' ago' : ' पहिले';
-  }
-}
 
-String _nepaliMoment(int number, String label) {
-  return '${toNepaliDigits('$number')} $label';
+    return (isFuture ? phrases.future : phrases.past).replaceFirst('#', span());
+  }
 }

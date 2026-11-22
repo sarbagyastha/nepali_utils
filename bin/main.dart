@@ -56,7 +56,7 @@ void main(List<String> arguments) {
   );
 
   // Sets default language for nepali utilities to be Nepali.
-  NepaliUtils(Language.nepali);
+  NepaliUtils.defaultLanguage = Language.nepali;
 
   final inWords = NepaliNumberFormat(
     inWords: true,
@@ -113,7 +113,7 @@ void main(List<String> arguments) {
   );
 
   heading('Nepali Moment - In English');
-  NepaliUtils().language = Language.english;
+  NepaliUtils.defaultLanguage = Language.english;
   print(
     NepaliMoment.fromBS(
       NepaliDateTime.parse('2078-09-27T08:41:14'),

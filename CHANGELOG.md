@@ -41,7 +41,10 @@
   * Fixed the patterns of `NepaliDateFormat.Hm` (`HH:mm`), `.m` (`m`) and `.ms` (`mm:ss`).
   * The skeletons honour the default language set through `NepaliUtils`.
 * Removed the unreleased `toNepaliDateTimeFromInstant()`; use `toNepaliDateTime().toNepalTime()`.
-* `NepaliUtils` is now a `final class`.
+* The default language API now works like intl's `Intl.defaultLocale` and `Intl.withLocale`. `NepaliUtils` only has static members and can't be instantiated:
+  * `NepaliUtils(language)` → `NepaliUtils.defaultLanguage = language`.
+  * `NepaliUtils().language` → `NepaliUtils.currentLanguage`.
+  * Formatters read the language when they are created, so `withLanguage` applies to formatters created inside it.
 
 **New**
 * `NepaliDateTime.utc`, `.nepal`, `.nepalNow`, `.fromMicrosecondsSinceEpoch`, `.fromMillisecondsSinceEpoch`, `copyWith`, `toNepalTime`, `isNepalTime` and weekday/month constants (`NepaliDateTime.sunday`, `NepaliDateTime.baishakh`, ...).
@@ -52,7 +55,9 @@
   * The skeleton constants (`NepaliDateFormat.YEAR_MONTH_DAY`, ...).
   * `addPattern` and `add_*()` (e.g. `NepaliDateFormat.yMd().add_jms()`). These return a new formatter, because `NepaliDateFormat` is immutable.
   * `NepaliDateFormat()` without a pattern uses `yMMMMd jms`.
-* `Language` converts to and from locales: `languageCode`, `countryCode`, `localeName`, `toLanguageTag()`, `Language.parse`, `Language.tryParse`, `Language.fromLocale` and `NepaliUtils.fromLocale`.
+* `Language` converts to and from locales: `languageCode`, `countryCode`, `localeName`, `toLanguageTag()`, `Language.parse`, `Language.tryParse` and `Language.fromLocale`.
+* `NepaliUtils.withLanguage(language, () => ...)` overrides the language for the code run inside the callback, including async work. `NepaliUtils.currentLanguage` returns the language in effect.
+* `NepaliMoment.fromBS` and `fromAD` accept a `language`.
 
 **Performance**
 * Conversion is constant time using a precomputed month index and pure integer Gregorian arithmetic (AD → BS ~16x faster, `weekday` ~500x faster than 3.x).

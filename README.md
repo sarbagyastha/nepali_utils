@@ -22,11 +22,23 @@ Requires Dart 3.13 or later.
 Default language for Nepali Utility classes can be set as:
 ```dart
 void main() {
-  NepaliUtils(Language.nepali);
+  NepaliUtils.defaultLanguage = Language.nepali;
 }
 ```
 
 This is completely optional. Default language will be English if not set.
+Every formatter also accepts a language directly, which takes precedence.
+
+Use `withLanguage` to change the language only for some code, like intl's
+`Intl.withLocale`. It also covers async work started inside the callback:
+
+```dart
+final text = NepaliUtils.withLanguage(Language.nepali, () {
+  return NepaliDateFormat.yMMMd().format(date);
+});
+
+NepaliUtils.currentLanguage; // the override in effect, else defaultLanguage
+```
 
 `Language` converts to and from locale identifiers, which makes it easy to bridge
 with `package:intl` or Flutter's `Locale`:
@@ -39,7 +51,8 @@ Language.nepali.localeName;            // 'ne_NP'
 Language.nepali.toLanguageTag();       // 'ne-NP'
 
 // Flutter
-NepaliUtils.fromLocale(Localizations.localeOf(context).toLanguageTag());
+NepaliUtils.defaultLanguage =
+    Language.fromLocale(Localizations.localeOf(context).toLanguageTag());
 final locale = Locale(language.languageCode, language.countryCode);
 ```
 

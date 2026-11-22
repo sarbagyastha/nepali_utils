@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
+import 'package:nepali_utils/src/core/language/language.dart';
 import 'package:nepali_utils/src/date_time/calendar/bs_calendar.dart';
 import 'package:nepali_utils/src/date_time/calendar/epoch_day.dart';
 import 'package:nepali_utils/src/date_time/calendar/gregorian.dart';
@@ -9,7 +10,6 @@ import 'package:nepali_utils/src/date_time/format/nepali_date_format.dart';
 import 'package:nepali_utils/src/date_time/parsing.dart';
 import 'package:nepali_utils/src/date_time/time_units.dart';
 import 'package:nepali_utils/src/date_time/time_zone.dart';
-import 'package:nepali_utils/src/language.dart';
 
 /// Wall-clock parts cached by every [NepaliDateTime].
 typedef _Parts = ({int wallClock, int year, int month, int day});
