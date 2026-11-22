@@ -112,6 +112,19 @@ void main(List<String> arguments) {
       referenceDate: DateTime.parse('2019-06-15T18:34:14'),
     ),
   );
+
+  heading('Nepali Moment - More');
+  final moment = NepaliMoment();
+  final reference = DateTime(2024, 1, 10, 8);
+  print(moment.formatDuration(const Duration(days: 3), withSuffix: true));
+  print(moment.formatUnit(-1, MomentUnit.day, numeric: false));
+  print(moment.calendar(DateTime(2024, 1, 9, 21, 4), reference: reference));
+  print(
+    NepaliMoment(
+      language: Language.nepali,
+      style: MomentStyle.short,
+    ).format(DateTime(2024, 1, 10, 5), reference: reference),
+  );
 }
 
 void heading(String text) {

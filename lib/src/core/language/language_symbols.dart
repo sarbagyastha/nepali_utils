@@ -157,63 +157,126 @@ final class NumberSymbols {
   final String currencySymbol;
 }
 
-/// Phrases for a fuzzy time span such as "3 days ago".
+/// Phrases used by `NepaliMoment`.
 ///
-/// In the templates, `#` is replaced by the localized number.
+/// In the templates, `#` is replaced by the localized number or phrase.
 final class RelativeTimeSymbols {
   /// Creates the relative time phrases of a language.
   const new({
-    required this.moments,
-    required this.minute,
-    required this.minutes,
-    required this.hour,
-    required this.hours,
-    required this.day,
-    required this.days,
-    required this.month,
-    required this.months,
-    required this.year,
-    required this.years,
+    required this.fewSeconds,
     required this.past,
     required this.future,
+    required this.second,
+    required this.minute,
+    required this.hour,
+    required this.day,
+    required this.week,
+    required this.month,
+    required this.year,
+    required this.calendar,
   });
 
-  /// Under 45 seconds.
-  final String moments;
-
-  /// About one minute.
-  final String minute;
-
-  /// Some minutes.
-  final String minutes;
-
-  /// About one hour.
-  final String hour;
-
-  /// Some hours.
-  final String hours;
-
-  /// About one day.
-  final String day;
-
-  /// Some days.
-  final String days;
-
-  /// About one month.
-  final String month;
-
-  /// Some months.
-  final String months;
-
-  /// About one year.
-  final String year;
-
-  /// Some years.
-  final String years;
+  /// A span under 45 seconds, e.g. a few seconds / केही क्षण.
+  final String fewSeconds;
 
   /// A span in the past, e.g. `# ago`.
   final String past;
 
-  /// A span in the future, e.g. `# from now`.
+  /// A span in the future, e.g. `in #`.
   final String future;
+
+  /// Phrases for seconds.
+  final UnitSymbols second;
+
+  /// Phrases for minutes.
+  final UnitSymbols minute;
+
+  /// Phrases for hours.
+  final UnitSymbols hour;
+
+  /// Phrases for days.
+  final UnitSymbols day;
+
+  /// Phrases for weeks.
+  final UnitSymbols week;
+
+  /// Phrases for months.
+  final UnitSymbols month;
+
+  /// Phrases for years.
+  final UnitSymbols year;
+
+  /// Phrases for calendar times such as "Yesterday at 9:04 PM".
+  final CalendarSymbols calendar;
+}
+
+/// Phrases for one unit of time, e.g. days.
+///
+/// In the templates, `#` is replaced by the localized count.
+final class UnitSymbols {
+  /// Creates the phrases of a unit.
+  const new({
+    required this.approximate,
+    required this.one,
+    required this.other,
+    required this.shortOne,
+    required this.shortOther,
+    this.previous,
+    this.current,
+    this.next,
+  });
+
+  /// About one unit, e.g. a day / एक दिन.
+  final String approximate;
+
+  /// Exactly one unit, e.g. `# day`.
+  final String one;
+
+  /// Any other count, e.g. `# days`.
+  final String other;
+
+  /// Exactly one unit, abbreviated, e.g. `# hr.`.
+  final String shortOne;
+
+  /// Any other count, abbreviated, e.g. `# hr.`.
+  final String shortOther;
+
+  /// The previous unit, e.g. yesterday / हिजो.
+  final String? previous;
+
+  /// The current unit, e.g. today / आज.
+  final String? current;
+
+  /// The next unit, e.g. tomorrow / भोलि.
+  final String? next;
+}
+
+/// Phrases for a date relative to today.
+///
+/// In the templates, `{time}` is replaced by the time and `{weekday}` by
+/// the name of the day.
+final class CalendarSymbols {
+  /// Creates the calendar phrases of a language.
+  const new({
+    required this.sameDay,
+    required this.previousDay,
+    required this.nextDay,
+    required this.previousWeek,
+    required this.nextWeek,
+  });
+
+  /// Today, e.g. `Today at {time}`.
+  final String sameDay;
+
+  /// Yesterday, e.g. `Yesterday at {time}`.
+  final String previousDay;
+
+  /// Tomorrow, e.g. `Tomorrow at {time}`.
+  final String nextDay;
+
+  /// Within the past week, e.g. `Last {weekday} at {time}`.
+  final String previousWeek;
+
+  /// Within the coming week, e.g. `{weekday} at {time}`.
+  final String nextWeek;
 }

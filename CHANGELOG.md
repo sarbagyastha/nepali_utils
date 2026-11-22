@@ -64,7 +64,18 @@
   * Numbers are rounded half away from zero instead of truncated: `2.999` with 2 digits is `3.00`, not `2.99`.
   * In Nepali, rupees is spelled `रुपैयाँ`.
 
+* `NepaliMoment` is now an immutable formatter (`NepaliMoment(language:, style:, useWeeks:)`) in the style of moment.js. `fromBS` and `fromAD` remain as shorthands:
+  * Fixed English phrases: `a few seconds ago`, `5 minutes ago`, `2 months ago` and `in 3 days` (was `few moment ago`, `5 minute ago`, `2 month ago` and `3 days from now`).
+  * The thresholds are moment.js's: e.g. 22 hours is `a day`, 26 days is `a month`, and 320 days is `a year`. Previously 350 days could give `12 months`.
+  * About an hour, a month or a year is now `an hour` / `एक घण्टा` (was `about an hour` / `लगभग एक घण्टा`).
+  * Removed the `showToday` parameter, which had no effect; use `calendar` or `formatUnit(0, .day, numeric: false)`.
+
 **New**
+* `NepaliMoment` gains:
+  * `formatDuration` (`3 days`, or `in 3 days` with `withSuffix`).
+  * `formatUnit`, like `Intl.RelativeTimeFormat`: `formatUnit(-1, .day)` is `1 day ago`, and with `numeric: false` it is `yesterday` / `हिजो`.
+  * `calendar`: `Today at 9:04 PM`, `Yesterday at …`, `Last Sunday at …`, or the date / `आज २१:०४`, `गएको आइतबार, २१:०४`.
+  * Short style (`3 hr. ago` / `३ घ. पहिले`) and optional weeks (`3 weeks ago`).
 * `NepaliNumberFormat` gains what intl's `NumberFormat` has:
   * `percentPattern`, `decimalPercentPattern`, `currency`, `simpleCurrency`, `compact` (`12.3L`), `compactLong` (`12.3 lakh`), `compactCurrency` and `compactSimpleCurrency`. Compact formats use thousand, lakh, crore, arab and kharab.
   * Custom patterns: `NepaliNumberFormat('#,##0.00')` for international grouping, `%`, `‰`, `¤`, quoted text and negative subpatterns (`#,##0;(#,##0)`).

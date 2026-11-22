@@ -293,23 +293,36 @@ NepaliUnicode.convert(textFromTextField, live: true);
 ```
 
 ### Nepali Moment
-Generates a fuzzy timestamp using dates provided.
+`NepaliMoment` describes dates relative to now, like moment.js and `Intl.RelativeTimeFormat`. It accepts both `DateTime` and `NepaliDateTime`.
 ```dart
-print(NepaliMoment.fromBS(NepaliDateTime.parse('2076-03-22T08:41:14')));
-// २२ दिन पछि
-```
-Here, the current DateTime is 2076-02-32 19:09:25 *i.e. reference date*
+final moment = NepaliMoment(); // or NepaliMoment(language: .nepali)
+final now = DateTime(2024, 1, 10, 8);
 
-```dart
+print(moment.format(DateTime(2024, 1, 7), reference: now)); // 3 days ago
+print(moment.format(DateTime(2024, 1, 10, 11), reference: now)); // in 3 hours
+print(NepaliMoment(language: .nepali).format(DateTime(2024, 1, 7), reference: now));
+// ३ दिन पहिले
+
+// Abbreviated units, and weeks instead of days.
+print(NepaliMoment(style: .short).format(DateTime(2024, 1, 10, 5), reference: now)); // 3 hr. ago
+print(NepaliMoment(useWeeks: true).format(DateTime(2023, 12, 20), reference: now)); // 3 weeks ago
+
+// Durations and units.
+print(moment.formatDuration(const Duration(minutes: 5))); // 5 minutes
+print(moment.formatUnit(-1, .day)); // 1 day ago
+print(moment.formatUnit(-1, .day, numeric: false)); // yesterday
+
+// Calendar time.
+print(moment.calendar(DateTime(2024, 1, 9, 21, 4), reference: now)); // Yesterday at 9:04 PM
+print(NepaliMoment(language: .nepali).calendar(DateTime(2024, 1, 7, 21, 4), reference: now));
+// गएको आइतबार, २१:०४
+
+// Shorthands; the reference defaults to now.
 print(NepaliMoment.fromBS(NepaliDateTime.parse('2076-02-32T18:25:14'),
-      referenceDate: NepaliDateTime.parse('2076-02-32T18:34:14')));
-// ९ मिनेट पहिले
-
+    referenceDate: NepaliDateTime.parse('2076-02-32T18:34:14'))); // 9 minutes ago
 print(NepaliMoment.fromAD(DateTime.parse('2019-06-02T18:22:14'),
-      referenceDate: DateTime.parse('2019-06-15T18:34:14')));
-// १३ दिन पहिले
+    referenceDate: DateTime.parse('2019-06-15T18:34:14'))); // 13 days ago
 ```
-
 
 ## Example
 Find more detailed example [here](https://github.com/sarbagyastha/nepali_utils/tree/master/example/main.dart).
