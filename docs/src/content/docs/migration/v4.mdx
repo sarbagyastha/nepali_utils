@@ -4,7 +4,6 @@ description: Step-by-step guide to migrating from nepali_utils 3.x to 4.0, cover
 ---
 
 import { Tabs, TabItem, Aside, Steps, Badge } from '@astrojs/starlight/components';
-import CopyPrompt from '../../../components/CopyPrompt.astro';
 
 nepali_utils 4.0 is a near-total rewrite. Most of the API is still there, but almost every class has changed. Some changes break the build, so the compiler will point you to them. Others compile fine and **return different values**. This guide covers both kinds.
 
@@ -20,9 +19,7 @@ The rest of this page explains each change, in case you prefer to migrate by han
 Commit your work before you start, so you can review the agent's changes as a diff. Then read the list of silent changes the agent reports: those changes compile, but they can change what your app shows.
 </Aside>
 
-<CopyPrompt>
-
-````markdown title="Migration prompt"
+````markdown title="Migration prompt" collapse={7-146}
 Migrate this Dart/Flutter project from nepali_utils 3.x to nepali_utils 4.0.
 
 4.0 is a near-total rewrite. Some changes break the build; others still compile but
@@ -170,9 +167,6 @@ When done, give me:
 - anything you weren't sure about and left for me to decide;
 - the analyzer and test results.
 ````
-
-</CopyPrompt>
-
 <Aside type="caution" title="Read the silent changes first">
 These five changes still compile but give different results. Search your code for each of them:
 

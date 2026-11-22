@@ -178,6 +178,9 @@ importers:
       '@astrojs/starlight':
         specifier: 0.43.1
         version: 0.43.1(astro@7.4.13(@types/node@26.6.6)(yaml@2.9.1))
+      '@expressive-code/plugin-collapsible-sections':
+        specifier: 0.44.4
+        version: 0.44.4
       astro:
         specifier: 7.4.13
         version: 7.4.13(@types/node@26.6.6)(yaml@2.9.1)
@@ -473,6 +476,9 @@ packages:
 
   '@expressive-code/core@0.44.4':
     resolution: {integrity: sha512-dkn3fyIZeHaqQCnpX5ESSR7eI9FMeLFiKDCzFliFy2SPog6sf9NFmiO9wzvEMfgmL8GMWK6P25l6JYLP2wRoLA==}
+
+  '@expressive-code/plugin-collapsible-sections@0.44.4':
+    resolution: {integrity: sha512-j13t8fd+qmV5QjhWvYpO7AlrfHQSoLZBcOwLPAU8lkOGZRQPTSN3bBXjS9FSqecAskl1hjZJgMQ3x119oQLSQA==}
 
   '@expressive-code/plugin-frames@0.44.4':
     resolution: {integrity: sha512-wlfwIl62MlPiE6qj1HuqMfpDF96RyAn2YxaD9qct5d+CjmH8G3j819wPJ23NgWtEqSVIJKdZVeN8OcRHafUiyw==}
@@ -2209,6 +2215,10 @@ snapshots:
       postcss-nested: 7.0.2(postcss@8.5.33)
       unist-util-visit: 5.2.0
       unist-util-visit-parents: 6.1.0
+
+  '@expressive-code/plugin-collapsible-sections@0.44.4':
+    dependencies:
+      '@expressive-code/core': 0.44.4
 
   '@expressive-code/plugin-frames@0.44.4':
     dependencies:

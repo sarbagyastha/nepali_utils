@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections';
 
 const site = 'https://nepali-utils.sarbagyastha.com.np';
 
@@ -23,6 +24,9 @@ export default defineConfig({
         baseUrl: 'https://github.com/sarbagyastha/nepali_utils/edit/develop/docs/',
       },
       lastUpdated: true,
+      expressiveCode: {
+        plugins: [pluginCollapsibleSections()],
+      },
       // English only for now. Add `ne: { label: 'नेपाली', lang: 'ne' }` and
       // translated pages under src/content/docs/ne/ to ship Nepali docs.
       defaultLocale: 'root',
