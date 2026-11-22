@@ -13,6 +13,7 @@
 
 [📖 **Documentation**](https://nepali-utils.sarbagyastha.com.np) &nbsp;·&nbsp;
 [🚀 **Getting started**](https://nepali-utils.sarbagyastha.com.np/getting-started/installation/) &nbsp;·&nbsp;
+[🧪 **Demo**](https://nepali-utils.sarbagyastha.com.np/tool/) &nbsp;·&nbsp;
 [🔄 **Migrating from 3.x**](https://nepali-utils.sarbagyastha.com.np/migration/v4/)
 
 </div>

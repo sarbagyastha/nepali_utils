@@ -1,0 +1,19 @@
+---
+import Default from '@astrojs/starlight/components/SocialIcons.astro';
+---
+
+<a href="/tool/" target="_blank" class="demo-link">Demo</a>
+<Default />
+
+<style>
+	.demo-link {
+		color: var(--sl-color-text-accent);
+		font-size: var(--sl-text-sm);
+		font-weight: 600;
+		text-decoration: none;
+		margin-inline-end: 0.5rem;
+	}
+	.demo-link:hover {
+		color: var(--sl-color-white);
+	}
+</style>

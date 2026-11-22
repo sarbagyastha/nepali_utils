@@ -20,6 +20,9 @@ export default defineConfig({
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/sarbagyastha/nepali_utils' },
       ],
+      components: {
+        SocialIcons: './src/components/SocialIcons.astro',
+      },
       editLink: {
         baseUrl: 'https://github.com/sarbagyastha/nepali_utils/edit/develop/docs/',
       },
