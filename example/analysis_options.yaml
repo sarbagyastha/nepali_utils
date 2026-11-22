@@ -1,0 +1,10 @@
+analyzer:
+  exclude:
+    - build/**
+    - web/**
+include: package:very_good_analysis/analysis_options.yaml
+
+linter:
+  rules:
+    # An example app, not a published API.
+    public_member_api_docs: false

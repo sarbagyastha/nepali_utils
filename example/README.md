@@ -1,4 +1,33 @@
-# Nepali Utilities Example
+# Nepali Utils web app
+
+**[Open Nepali Utils →](https://nepali-utils.sarbagyastha.com.np/tool/)**
+
+This example is a Flutter web app built on `nepali_utils`, made for everyday use. It uses every part of the package, and its UI is built with Material 3 Expressive from the [`material_ui`](https://pub.dev/packages/material_ui) package.
+
+| Tool | What it does | APIs used |
+| --- | --- | --- |
+| Today | Today's date in BS, a live Nepal Time clock, a month calendar with AD dates, and countdowns | `NepaliDateTime.nepalNow`, `NepaliDateFormat`, `NepaliMoment.formatUnit` |
+| Dates | BS ⇄ AD converter with a BS date picker, ready-made formats, a pattern playground, and an age / days-between calculator | `toNepaliDateTime`, `toDateTime`, a `CalendarDelegate` built on `NepaliDateTime`, `NepaliMoment` |
+| Money | Lakh/crore formatting, amounts in words for cheques (English and Nepali), compact forms, and a 13% VAT calculator | `NepaliNumberFormat` (`decimalPattern`, `currency`, `simpleCurrency`, `compact*`, `words`, `percentPattern`, `parse`) |
+| Type | Romanized and keyboard typing to Unicode (also live, in place), Preeti ⇄ Unicode, and Devanagari digits and syllables | `NepaliUnicode`, `Preeti`, `Devanagari` |
+| Units | Land (ropani/bigha/metric), gold and weight with a price calculator, and grain volume | `NepaliArea`, `NepaliWeight`, `NepaliVolume` |
+| Phone | Validates and formats a number, finds, tidies and hides numbers in pasted text, and lists operator prefixes | `NepaliPhoneNumber`, `MobileOperator`, `PhoneNumberMatch` |
+
+The EN/ने button switches the whole app, including every formatter, between English and Nepali. Links can open a specific tool: `?tool=money&lang=ne&theme=dark`.
+
+## Run it locally
+
+```sh
+cd example
+flutter pub get
+flutter run -d chrome
+```
+
+Run the tests with `flutter test`.
+
+---
+
+## Using the package
 
 ### Nepali Date Time
 The class is similar to `dart:core`'s [DateTime]() class, except that, this works with Bikram Sambat.

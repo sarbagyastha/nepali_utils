@@ -68,7 +68,7 @@ void main() {
 }
 ```
 
-Set the default language once with `NepaliUtils.defaultLanguage = Language.nepali`, or pass a `language` to any formatter. See the [full example](https://github.com/sarbagyastha/nepali_utils/blob/develop/example/main.dart) and the [guides](https://nepali-utils.sarbagyastha.com.np) for much more.
+Set the default language once with `NepaliUtils.defaultLanguage = Language.nepali`, or pass a `language` to any formatter. Try everything in the browser with the [Nepali Utils web app](https://nepali-utils.sarbagyastha.com.np/tool/) ([source](https://github.com/sarbagyastha/nepali_utils/tree/develop/example)), and see the [guides](https://nepali-utils.sarbagyastha.com.np) for much more.
 
 ## 🔄 Upgrading from 3.x?
 

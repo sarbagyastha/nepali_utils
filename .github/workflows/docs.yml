@@ -5,6 +5,9 @@ on:
     branches: [develop]
     paths:
       - 'docs/**'
+      # The Nepali Utils app in example/ is served at /tool/.
+      - 'example/**'
+      - 'lib/**'
   workflow_dispatch:
 
 permissions:
@@ -22,6 +25,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Build Nepali Utils
+        working-directory: example
+        run: |
+          flutter pub get
+          flutter build web --release --wasm --base-href /tool/
+      - name: Copy Nepali Utils into the docs site
+        run: |
+          rm -rf docs/public/tool
+          cp -R example/build/web docs/public/tool
       - name: Build with Astro
         uses: withastro/action@v6
         with:

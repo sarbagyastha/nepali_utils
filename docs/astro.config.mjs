@@ -35,6 +35,12 @@ export default defineConfig({
       },
       sidebar: [
         {
+          label: 'Try the web app',
+          link: '/tool/',
+          attrs: { target: '_blank' },
+          badge: { text: 'App', variant: 'tip' },
+        },
+        {
           label: 'Getting started',
           items: [
             { label: 'Installation', slug: 'getting-started/installation' },

@@ -1,0 +1,23 @@
+name: nepali_utils_example
+description: "Nepali Utils: an everyday Flutter web app built on nepali_utils."
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: ^3.14.0
+  flutter: ">=3.50.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  material_ui: ^1.11.1
+  nepali_utils:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^11.0.0
+
+flutter:
+  uses-material-design: true

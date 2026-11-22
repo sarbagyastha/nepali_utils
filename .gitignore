@@ -21,3 +21,5 @@ doc/api/
 docs/node_modules/
 docs/dist/
 docs/.astro/
+# Built from example/ by the docs workflow
+docs/public/tool/
