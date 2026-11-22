@@ -383,4 +383,56 @@ void main() {
       }
     });
   });
+
+  // Regressions from #28: conversion must not depend on the device's time
+  // zone. Run with e.g. `TZ=America/Los_Angeles dart test`.
+  group('independent of the device time zone', () {
+    test('a local calendar date maps to the same BS date', () {
+      _expectFields(DateTime(2026, 8, 27).toNepaliDateTime(), 2083, 5, 11);
+    });
+
+    test('dates around the 1986 Nepal offset change (+05:30 -> +05:45)', () {
+      const expected = {
+        (1985, 12, 30): (2042, 9, 15),
+        (1985, 12, 31): (2042, 9, 16),
+        (1986, 1, 1): (2042, 9, 17),
+        (1986, 1, 2): (2042, 9, 18),
+        (1986, 1, 3): (2042, 9, 19),
+      };
+      for (final MapEntry(key: (y, m, d), value: (by, bm, bd))
+          in expected.entries) {
+        // Only the date is compared: in Asia/Kathmandu local midnight of
+        // 1986-01-01 does not exist, so DateTime(1986, 1, 1) is 00:15.
+        for (final ad in [DateTime(y, m, d), DateTime.utc(y, m, d)]) {
+          final bs = ad.toNepaliDateTime();
+          expect([bs.year, bs.month, bs.day], [by, bm, bd], reason: '$ad');
+        }
+      }
+    });
+
+    test('local BS dates round-trip through local AD dates', () {
+      for (var year = 1970; year <= 2100; year++) {
+        for (var month = 1; month <= 12; month++) {
+          final days = NepaliDateTime(year, month).totalDays;
+          for (var day = 1; day <= days; day++) {
+            final bs = NepaliDateTime(year, month, day);
+            final ad = bs.toDateTime();
+            final back = DateTime(ad.year, ad.month, ad.day).toNepaliDateTime();
+            expect(
+              [back.year, back.month, back.day],
+              [bs.year, bs.month, bs.day],
+              reason: '$bs',
+            );
+          }
+        }
+      }
+    });
+
+    test('toNepalTime gives the BS date in Nepal for the same instant', () {
+      // 20:00 UTC on 2026-08-26 is 01:45 on 2026-08-27 in Nepal.
+      final bs = DateTime.utc(2026, 8, 26, 20).toNepaliDateTime();
+      _expectFields(bs, 2083, 5, 10, 20);
+      _expectFields(bs.toNepalTime(), 2083, 5, 11, 1, 45);
+    });
+  });
 }
