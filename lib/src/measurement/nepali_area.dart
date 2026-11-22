@@ -79,7 +79,7 @@ enum AreaSystem(final List<AreaUnit> units) {
 }
 
 /// An amount of land, convertible between the Nepali units and square feet,
-/// square metres, acres and hectares:
+/// square metres, acres and hectares.
 ///
 /// ```dart
 /// final plot = NepaliArea.ropani(2, aana: 3, paisa: 1);

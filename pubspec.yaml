@@ -3,6 +3,14 @@ description: "Nepali utilities for Dart: Bikram Sambat dates, Nepali numbers, Un
 version: 4.0.0
 repository: https://github.com/sarbagyastha/nepali_utils
 homepage: https://sarbagyastha.com.np
+documentation: https://nepali-utils.sarbagyastha.com.np
+
+topics:
+  - nepali
+  - date
+  - calendar
+  - unicode
+  - localization
 
 environment:
   sdk: ^3.13.0

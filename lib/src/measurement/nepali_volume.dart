@@ -52,7 +52,7 @@ const List<VolumeUnit> _units = [.muri, .pathi, .mana, .muthi];
 final List<double> _factors = [for (final unit in _units) unit.liters];
 
 /// A volume of grain, convertible between muri, pathi, mana, muthi and
-/// litres:
+/// litres.
 ///
 /// ```dart
 /// final rice = NepaliVolume.muri(1, pathi: 5, mana: 4);

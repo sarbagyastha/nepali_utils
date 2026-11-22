@@ -31,14 +31,13 @@ final class PhoneticEngine {
       scheme.trie.startsWith(unit) ||
       (digits && unit >= _zero && unit <= _nine);
 
+  // Devanagari directly followed by romanized text is joined with it, so
+  // क + h gives ख. With live, the last word keeps its halant (its next
+  // letter is still being typed), a halant before whitespace in the
+  // Devanagari is dropped and escapes keep their braces, so converting the
+  // text again after each keystroke gives the same result as converting
+  // what was typed at once.
   /// Converts the romanized parts of [input].
-  ///
-  /// Devanagari directly followed by romanized text is joined with it, so
-  /// `क` + `h` gives ख. With [live], the last word keeps its halant (its
-  /// next letter is still being typed), a halant before whitespace in the
-  /// Devanagari is dropped and escapes keep their braces, so converting the
-  /// text again after each keystroke gives the same result as converting
-  /// what was typed at once.
   String convert(String input, {bool live = false}) {
     final text = _joinDevanagari(input, live: live);
     final out = StringBuffer();
@@ -110,10 +109,9 @@ final class PhoneticEngine {
     return out.toString();
   }
 
+  // Text that would be converted, like Latin words, is wrapped in {}
+  // escapes so that converting the result gives input back.
   /// Romanizes the Devanagari in [input] with the canonical spellings.
-  ///
-  /// Text that would be converted, like Latin words, is wrapped in `{}`
-  /// escapes so that converting the result gives [input] back.
   String toRoman(String input) {
     final units = input.codeUnits;
     final out = _RomanBuilder(this);
@@ -150,9 +148,9 @@ final class PhoneticEngine {
     return out.toString();
   }
 
-  /// Replaces the last akshara of each Devanagari run that is directly
-  /// followed by romanized text with its spelling, so the two convert
-  /// together.
+  // Replaces the last akshara of each Devanagari run that is directly
+  // followed by romanized text with its spelling, so the two convert
+  // together.
   String _joinDevanagari(String input, {required bool live}) {
     final units = input.codeUnits;
     if (!units.any(isDevanagariUnit)) return input;
@@ -214,8 +212,8 @@ final class PhoneticEngine {
   }
 }
 
-/// Builds romanized text token by token, writing the scheme's separator
-/// between tokens that would otherwise be read as a different token.
+// Builds romanized text token by token, writing the scheme's separator
+// between tokens that would otherwise be read as a different token.
 final class _RomanBuilder {
   new(this.engine);
 
@@ -242,7 +240,7 @@ final class _RomanBuilder {
     if (_recent.length > _scheme.trie.maxLength) _recent.removeAt(0);
   }
 
-  /// Whether [token] would change how the recent tokens are read.
+  // Whether [token] would change how the recent tokens are read.
   bool _merges(String token) {
     final joined = '${_recent.join()}$token';
     var offset = 0;
@@ -254,12 +252,10 @@ final class _RomanBuilder {
     return false;
   }
 
-  /// Adds the akshara `units[start, end)`, followed by [next] (`-1` at the
-  /// end). With [explicit], a bare consonant is always spelt with its
-  /// inherent `a` and a final halant isn't spelt at all, so that letters
-  /// typed after it join it.
-  ///
-  /// Returns false, adding nothing, if the akshara can't be romanized.
+  // Adds the akshara units[start, end), followed by next (-1 at the end).
+  // With explicit, a bare consonant is always spelt with its inherent `a`
+  // and a final halant isn't spelt at all, so that letters typed after it
+  // join it. Returns false, adding nothing, if it can't be romanized.
   bool addAkshara(
     List<int> units,
     int start,
@@ -328,8 +324,8 @@ final class _RomanBuilder {
     return true;
   }
 
-  /// Whether a bare consonant followed by [next] converts back without its
-  /// `a`, i.e. ends a word.
+  // Whether a bare consonant followed by [next] converts back without its
+  // `a`, i.e. ends a word.
   bool _omitsInherent(int next) {
     if (next < 0) return !_scheme.halantAtEnd;
     if (isLetter(next) || isMatra(next) || next == halant) return false;

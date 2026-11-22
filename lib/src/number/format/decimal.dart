@@ -2,10 +2,10 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
+// Formatting works on this instead of double so that rounding is exact and
+// values beyond the range of int (e.g. a BigInt) keep every digit.
+
 /// An exact, finite decimal number: `±unscaled × 10^-scale`.
-///
-/// Formatting works on this instead of `double` so that rounding is exact
-/// and values beyond the range of `int` (e.g. a [BigInt]) keep every digit.
 final class Decimal {
   const new _(this.negative, this.unscaled, this.scale);
 

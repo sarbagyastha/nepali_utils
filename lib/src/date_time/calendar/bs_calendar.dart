@@ -9,15 +9,12 @@ import 'package:nepali_utils/src/date_time/calendar/epoch_day.dart';
 import 'package:nepali_utils/src/date_time/calendar/gregorian.dart';
 import 'package:nepali_utils/src/date_time/time_units.dart';
 
-/// Constant-time Bikram Sambat (BS) calendar arithmetic.
-///
-/// On first use a single [Int32List] is built which holds the [EpochDay] of
-/// the first day of every supported BS month (plus one trailing sentinel for
-/// the end of the range). With it:
-///
-/// * BS date -> epoch day is one array read.
-/// * epoch day -> BS date is an estimate plus at most a couple of correction
-///   steps, independent of how far the date is from the reference point.
+// Holds the epoch day of the first day of every supported BS month, plus a
+// trailing entry for the end of the range, so that BS date -> epoch day is
+// one array read and epoch day -> BS date is an estimate plus a couple of
+// correction steps.
+
+/// Bikram Sambat (BS) calendar arithmetic.
 abstract final class BsCalendar {
   /// The first supported Bikram Sambat year.
   static const int minYear = bsDataFirstYear;
@@ -25,10 +22,10 @@ abstract final class BsCalendar {
   /// The last supported Bikram Sambat year.
   static const int maxYear = bsDataLastYear;
 
-  /// Average month length in thousandths of a day, used to estimate indices.
+  // Average month length in thousandths of a day, to estimate indices.
   static const int _avgMonthMilliDays = 30437;
 
-  /// Lazily initialised (Dart static fields are lazy) month-start index.
+  // Built on first use (static fields are lazy).
   static final Int32List _monthStarts = _buildIndex();
 
   static Int32List _buildIndex() {

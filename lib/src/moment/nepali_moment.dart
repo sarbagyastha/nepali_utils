@@ -12,8 +12,12 @@ import 'package:nepali_utils/src/moment/moment_unit.dart';
 import 'package:nepali_utils/src/moment/relative_span.dart';
 import 'package:nepali_utils/src/number/format/nepali_number_format.dart';
 
-/// Describes dates relative to now, like moment.js and
-/// `Intl.RelativeTimeFormat`:
+/// Describes dates relative to now, such as `3 days ago`, `in 2 hours` or
+/// `Yesterday at 9:04 PM`, in English or Nepali.
+///
+/// It follows moment.js (`fromNow`, `calendar`) and JavaScript's
+/// `Intl.RelativeTimeFormat`, so the phrases and thresholds will be familiar
+/// if you have used them.
 ///
 /// ```dart
 /// final moment = NepaliMoment();
@@ -44,22 +48,24 @@ final class NepaliMoment {
 
   new _(this.language, this.style, this.useWeeks);
 
-  /// The fuzzy time between [date] and [referenceDate], e.g. `3 days ago`.
+  /// Returns the fuzzy time between the Bikram Sambat [date] and
+  /// [referenceDate], e.g. `3 days ago`.
   ///
-  /// [referenceDate] defaults to now.
-  ///
-  /// [language] defaults to [NepaliUtils.currentLanguage].
+  /// [referenceDate] defaults to now and [language] to
+  /// [NepaliUtils.currentLanguage]. Shorthand for
+  /// `NepaliMoment(language: language).format(date, reference: referenceDate)`.
   static String fromBS(
     NepaliDateTime date, {
     NepaliDateTime? referenceDate,
     Language? language,
   }) => NepaliMoment(language: language).format(date, reference: referenceDate);
 
-  /// The fuzzy time between [date] and [referenceDate], e.g. `3 days ago`.
+  /// Returns the fuzzy time between the Gregorian [date] and
+  /// [referenceDate], e.g. `3 days ago`.
   ///
-  /// [referenceDate] defaults to now.
-  ///
-  /// [language] defaults to [NepaliUtils.currentLanguage].
+  /// [referenceDate] defaults to now and [language] to
+  /// [NepaliUtils.currentLanguage]. Shorthand for
+  /// `NepaliMoment(language: language).format(date, reference: referenceDate)`.
   static String fromAD(
     DateTime date, {
     DateTime? referenceDate,
@@ -77,21 +83,28 @@ final class NepaliMoment {
 
   RelativeTimeSymbols get _phrases => symbolsOf(language).relativeTime;
 
-  /// The fuzzy time from [reference] to [date], e.g. `3 days ago`,
-  /// `in 2 hours` / `३ दिन पहिले`, `२ घण्टा पछि`.
+  /// Returns the fuzzy time from [reference] to [date], such as
+  /// `3 days ago` or `in 2 hours` (`३ दिन पहिले`, `२ घण्टा पछि` in Nepali).
   ///
   /// [reference] defaults to now. See [formatDuration] for the thresholds.
+  ///
+  /// ```dart
+  /// final now = DateTime(2024, 1, 10, 12);
+  /// final moment = NepaliMoment();
+  /// moment.format(DateTime(2024, 1, 7, 12), reference: now); // 3 days ago
+  /// moment.format(DateTime(2024, 1, 10, 14), reference: now); // in 2 hours
+  /// ```
   String format(DateTime date, {DateTime? reference}) {
     final difference = date.difference(reference ?? DateTime.now());
     return _withSuffix(_span(difference), future: difference > Duration.zero);
   }
 
-  /// [duration] as a fuzzy span, e.g. `3 days` / `३ दिन`.
+  /// Returns [duration] as a fuzzy span, e.g. `3 days` / `३ दिन`.
   ///
   /// With [withSuffix], a positive duration is in the future (`in 3 days`)
   /// and a negative one in the past (`3 days ago`).
   ///
-  /// The thresholds are those of moment.js:
+  /// The thresholds are the same as moment.js's:
   ///
   /// | Range                 | Result              |
   /// |-----------------------|---------------------|
@@ -111,9 +124,9 @@ final class NepaliMoment {
     return withSuffix ? _withSuffix(span, future: !duration.isNegative) : span;
   }
 
-  /// [value] [unit]s from now, like `Intl.RelativeTimeFormat.format`:
-  /// `formatUnit(-3, .day)` is `3 days ago` and `formatUnit(2, .hour)` is
-  /// `in 2 hours`.
+  /// Returns [value] [unit]s relative to now, like
+  /// `Intl.RelativeTimeFormat.format`: `formatUnit(-3, .day)` is `3 days ago`
+  /// and `formatUnit(2, .hour)` is `in 2 hours`.
   ///
   /// When [numeric] is false, -1, 0 and 1 use words where the language has
   /// them: `yesterday`, `today`, `tomorrow`, `last month`, `now` /
@@ -147,8 +160,11 @@ final class NepaliMoment {
     );
   }
 
-  /// [date] relative to the day of [reference], like moment.js's
-  /// `calendar`:
+  /// Returns [date] described relative to the day of [reference], like
+  /// moment.js's `calendar`.
+  ///
+  /// Dates within a week of [reference] are described by day name and time;
+  /// others fall back to [NepaliDateFormat.yMd]:
   ///
   /// | Day             | English                  | Nepali               |
   /// |-----------------|--------------------------|----------------------|

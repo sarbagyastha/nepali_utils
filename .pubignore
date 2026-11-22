@@ -1,0 +1,14 @@
+# Inherit .gitignore entries that matter for publishing
+.dart_tool/
+pubspec.lock
+build/
+panchang/
+doc/api/
+
+# Not part of the Dart package
+docs/
+.github/
+node_modules/
+
+# Brand images (README links to them on GitHub)
+assets/

@@ -20,20 +20,9 @@ final class CurrencyAffix implements AffixPart {
   const new();
 }
 
-/// A compiled number pattern, using the same syntax as `package:intl`'s
-/// `NumberFormat`:
-///
-/// | Symbol | Meaning                                          |
-/// |--------|--------------------------------------------------|
-/// | 0      | a digit, always shown                            |
-/// | #      | a digit, hidden when it's a leading/trailing zero |
-/// | ,      | grouping separator                               |
-/// | .      | decimal separator                                |
-/// | ;      | separates the positive and negative subpatterns  |
-/// | %      | multiply by 100 and show as a percentage         |
-/// | ‰      | multiply by 1000 and show as per mille           |
-/// | ¤      | the currency symbol                              |
-/// | '      | quotes literal text, `''` for a single quote     |
+// The pattern syntax is documented on NepaliNumberFormat.
+
+/// A compiled number pattern, in the syntax of intl's `NumberFormat`.
 final class NumberPattern {
   const new _({
     required this.positivePrefix,
@@ -128,7 +117,7 @@ final class NumberPattern {
   ].any((part) => part is CurrencyAffix);
 }
 
-/// Splits [pattern] on the `;` characters which aren't quoted.
+// Splits [pattern] on the `;` characters which aren't quoted.
 List<String> _splitUnquoted(String pattern) {
   final parts = <String>[];
   var start = 0;

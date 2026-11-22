@@ -13,12 +13,12 @@ typedef ParsedDateTime = ({
   int millisecond,
   int microsecond,
 
-  /// `null` when the input had no time zone designator, otherwise the
-  /// offset from UTC in minutes (`Z` is 0).
+  // Null when the input had no time zone designator, otherwise the offset
+  // from UTC in minutes (`Z` is 0).
   int? offsetMinutes,
 });
 
-/// Same grammar as [DateTime.parse].
+// Same grammar as DateTime.parse.
 final RegExp _parseFormat = RegExp(
   r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)' // Day part.
   r'(?:[ T](\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d+))?)?)?' // Time part.

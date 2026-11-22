@@ -11,7 +11,7 @@ import 'package:nepali_utils/src/date_time/parsing.dart';
 import 'package:nepali_utils/src/date_time/time_units.dart';
 import 'package:nepali_utils/src/date_time/time_zone.dart';
 
-/// Wall-clock parts cached by every [NepaliDateTime].
+// Wall-clock fields, computed once per instance.
 typedef _Parts = ({int wallClock, int year, int month, int day});
 
 _Parts _partsOf(int microsecondsSinceEpoch, NepaliZone zone, int? knownWall) {
@@ -35,6 +35,16 @@ _Parts _partsOf(int microsecondsSinceEpoch, NepaliZone zone, int? knownWall) {
 /// values). Note however that [year], [month], [day] and [weekday] are Bikram
 /// Sambat values, and [weekday] runs from [sunday] (1) to [saturday] (7).
 ///
+/// ```dart
+/// final date = NepaliDateTime(2080, 1, 15, 10, 30);
+/// print(date); // 2080-01-15 10:30:00.000
+/// print(date.toDateTime()); // 2023-04-28 10:30:00.000
+///
+/// final today = NepaliDateTime.now();
+/// final fromGregorian = DateTime(2023, 4, 28).toNepaliDateTime();
+/// print(fromGregorian); // 2080-01-15 00:00:00.000
+/// ```
+///
 /// Out-of-range components are normalised like [DateTime] does:
 ///
 /// ```dart
@@ -42,6 +52,9 @@ _Parts _partsOf(int microsecondsSinceEpoch, NepaliZone zone, int? knownWall) {
 /// NepaliDateTime(2080, 13);    // 2081-01-01
 /// NepaliDateTime(2080, 2, 0);  // 2080-01-31
 /// ```
+///
+/// Supported years are [minYear] to [maxYear]. Use [NepaliDateFormat] or
+/// [format] to turn a date into text, and [parse] to read one back.
 final class NepaliDateTime._(
   @override final int microsecondsSinceEpoch,
   final NepaliZone _zone, [
@@ -99,6 +112,15 @@ final class NepaliDateTime._(
 
   /// Constructs a [NepaliDateTime] in Nepal Time (UTC+05:45), regardless of
   /// the device's time zone.
+  ///
+  /// Use this when the date and time refer to a moment in Nepal, for example
+  /// on a server or on a phone abroad:
+  ///
+  /// ```dart
+  /// final date = NepaliDateTime.nepal(2080, 1, 15, 10, 30);
+  /// print(date.toIso8601String()); // 2080-01-15T10:30:00.000+05:45
+  /// print(date.toUtc()); // 2080-01-15 04:45:00.000Z
+  /// ```
   factory nepal(
     int year, [
     int month = 1,
@@ -177,7 +199,7 @@ final class NepaliDateTime._(
     return NepaliDateTime._(wallClock - offset, zone, wallClock);
   }
 
-  /// The local [NepaliDateTime] at the same instant as the local [dateTime].
+  // The local NepaliDateTime at the same instant as the local dateTime.
   factory _fromLocal(DateTime dateTime) {
     final instant = dateTime.microsecondsSinceEpoch;
     return NepaliDateTime._(
@@ -201,8 +223,7 @@ final class NepaliDateTime._(
     _ => ._fromLocal(dateTime),
   };
 
-  /// Wall-clock parts, computed once from the primary constructor's
-  /// parameters (this also validates the supported range).
+  // Computed eagerly so that out-of-range instants throw on construction.
   final _Parts _parts = _partsOf(microsecondsSinceEpoch, _zone, wallClock);
 
   /// The first supported Bikram Sambat year.
@@ -288,7 +309,13 @@ final class NepaliDateTime._(
   /// * With `Z` or an offset the result is in UTC, like [DateTime.parse],
   ///   except that `+05:45` produces a value in Nepal Time.
   ///
-  /// Throws a [FormatException] if the input cannot be parsed.
+  /// Throws a [FormatException] if the input cannot be parsed or is outside
+  /// the supported range.
+  ///
+  /// ```dart
+  /// NepaliDateTime.parse('2080-01-15'); // 2080-01-15 00:00:00.000
+  /// NepaliDateTime.parse('2080-01-15T10:30:00Z'); // 2080-01-15 10:30:00.000Z
+  /// ```
   static NepaliDateTime parse(String formattedString) {
     final parsed = parseDateTime(formattedString);
     if (parsed == null) {
@@ -459,6 +486,12 @@ final class NepaliDateTime._(
   /// Creates a copy with the given fields replaced, in the same time zone.
   ///
   /// Out-of-range values are normalised, see [NepaliDateTime].
+  ///
+  /// ```dart
+  /// final date = NepaliDateTime(2080, 1, 15);
+  /// date.copyWith(month: 12); // 2080-12-15 00:00:00.000
+  /// date.copyWith(day: 32); // 2080-02-01 00:00:00.000
+  /// ```
   NepaliDateTime copyWith({
     int? year,
     int? month,
@@ -480,7 +513,8 @@ final class NepaliDateTime._(
     microsecond ?? this.microsecond,
   );
 
-  /// Same date with the time replaced by [hour]:[minute]:[second].
+  /// Returns the same date with the time set to [hour]:[minute]:[second] and
+  /// the milliseconds and microseconds cleared.
   NepaliDateTime mergeTime(int hour, int minute, int second) => copyWith(
     hour: hour,
     minute: minute,
@@ -489,9 +523,17 @@ final class NepaliDateTime._(
     microsecond: 0,
   );
 
-  /// Formats this as per [pattern].
+  /// Formats this date using [pattern], in [language] or
+  /// `NepaliUtils.currentLanguage` when omitted.
   ///
-  /// For a wider set of formatting, use [NepaliDateFormat].
+  /// Shorthand for `NepaliDateFormat(pattern, language).format(this)`; see
+  /// [NepaliDateFormat] for the pattern syntax.
+  ///
+  /// ```dart
+  /// final date = NepaliDateTime(2080, 1, 15);
+  /// date.format('yyyy MMMM d'); // 2080 Baishakh 15
+  /// date.format('yyyy MMMM d', .nepali); // २०८० बैशाख १५
+  /// ```
   String format(String pattern, [Language? language]) =>
       NepaliDateFormat(pattern, language).format(this);
 

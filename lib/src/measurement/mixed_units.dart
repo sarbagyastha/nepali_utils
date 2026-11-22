@@ -111,8 +111,8 @@ double? parseParts(String text, List<double> factors) {
   return value;
 }
 
-/// [value] with up to [fractionDigits] digits and no trailing zeros, e.g.
-/// `19.10` → `19.1`, `3.00` → `3`.
+// [value] with up to [fractionDigits] digits and no trailing zeros, e.g.
+// `19.10` → `19.1`, `3.00` → `3`.
 String _decimal(double value, int fractionDigits) {
   final text = value.toStringAsFixed(fractionDigits);
   return text.contains('.') ? text.replaceFirst(_trailingZeros, '') : text;

@@ -31,7 +31,7 @@
     | Pattern | 3.x | 4.0 |
     |---|---|---|
     | `E` / `EE` / `EEE` | `T` / `Thu` / `Thursday` | `Thu` (all three) |
-    | `EEEE` / `EEEEE` | `Thursday` | `Thursday` / `T` |
+    | `EEEE` / `EEEEE` | `EEEE` (printed literally) | `Thursday` / `T` |
     | `G` / `GG` / `GGG` | `BS` / `B.S.` / `Bikram Sambat` | `BS` (all three); `GGGG` is `Bikram Sambat` |
     | `a` / `aa` (English) | `pm` / `PM` | `PM` |
     | `MMMMM` | `Marga` (colloquial) | `M` (narrow); the colloquial name is now `MMMMMM` |

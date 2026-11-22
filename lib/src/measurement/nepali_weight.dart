@@ -72,7 +72,7 @@ enum WeightSystem(final List<WeightUnit> units) {
   List<double> get _factors => [for (final unit in units) unit.grams];
 }
 
-/// A weight, convertible between the Nepali units, grams and kilograms:
+/// A weight, convertible between the Nepali units, grams and kilograms.
 ///
 /// ```dart
 /// final gold = NepaliWeight.tola(2, lal: 50);

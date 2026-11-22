@@ -8,20 +8,20 @@ import 'package:nepali_utils/src/number/format/decimal.dart';
 /// and kharab.
 const List<int> compactExponents = [3, 5, 7, 9, 11];
 
-/// The significant digits shown by a compact format, like
-/// `package:intl`'s `NumberFormat.compact`.
+// The significant digits shown by a compact format, like
+// `package:intl`'s `NumberFormat.compact`.
 const int _significantDigits = 3;
+
+// Follows intl's NumberFormat.compact:
+// * At most three significant digits are kept, but digits before the decimal
+//   point are never dropped (1234567890000000 is 12345 kharab).
+// * When rounding reaches the next place value, that one is used instead, so
+//   99999 is 1 lakh rather than 100 thousand.
 
 /// [value] scaled down to its compact place value.
 ///
 /// Returns the rounded mantissa and the index into [compactExponents], or
-/// -1 when [value] is below a thousand. Like `package:intl`:
-///
-/// * At most three significant digits are kept, but digits before the
-///   decimal point are never dropped (`1234567890000000` is
-///   `12345 kharab`).
-/// * When rounding reaches the next place value, that one is used instead,
-///   so `99999` is `1 lakh` rather than `100 thousand`.
+/// -1 when [value] is below a thousand.
 ({Decimal mantissa, int scale}) compact(Decimal value) {
   var scale = -1;
   for (var i = compactExponents.length - 1; i >= 0; i--) {

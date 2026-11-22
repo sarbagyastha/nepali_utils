@@ -7,9 +7,6 @@ import 'package:nepali_utils/src/core/language/symbols/english.dart';
 import 'package:nepali_utils/src/core/language/symbols/nepali.dart';
 
 /// The localized text and digits for [language].
-///
-/// Supporting a new [Language] means adding its [LanguageSymbols] here; the
-/// exhaustive switch makes a missing one a compile-time error.
 LanguageSymbols symbolsOf(Language language) => switch (language) {
   .english => english,
   .nepali => nepali,

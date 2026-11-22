@@ -10,9 +10,8 @@ const int bsDataLastYear = 2250;
 
 /// Number of days in each month (Baishakh..Chaitra) of every supported
 /// Bikram Sambat year, starting at [bsDataFirstYear].
-///
-/// This table is the single source of truth for the calendar. It is only
-/// read once, when `BsCalendar` builds its lookup index.
+// The single source of truth for the calendar; BsCalendar reads it once to
+// build its index.
 const List<List<int>> bsMonthLengths = [
   //Bai Jes Asa Shr Bha Ash Kar Man Pou Mag Fal Cha
   [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], // 1969

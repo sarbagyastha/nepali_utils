@@ -4,19 +4,18 @@
 
 import 'package:nepali_utils/src/date_time/time_units.dart';
 
+// Shared by the Gregorian and Bikram Sambat calendars. An extension type
+// keeps day numbers from being mixed up with microseconds or other integers
+// at no runtime cost.
+
 /// A day number counted from 1970-01-01 (the Unix/[DateTime] epoch).
-///
-/// Shared currency between the Gregorian and Bikram Sambat calendars.
-/// Being an extension type, it has zero runtime cost while preventing day
-/// numbers from being mixed up with microseconds or other integers.
 extension type const EpochDay(int value) {
   /// The epoch day containing the wall-clock instant [microseconds].
   new ofMicroseconds(int microseconds)
     : value = floorDiv(microseconds, microsecondsPerDay);
 
   /// Day of the week, from Sunday (1) to Saturday (7).
-  ///
-  /// 1970-01-01 was a Thursday (5).
+  // 1970-01-01 was a Thursday (5).
   int get weekday => (value + 4) % 7 + 1;
 
   /// Microseconds from the epoch to the start of this day.

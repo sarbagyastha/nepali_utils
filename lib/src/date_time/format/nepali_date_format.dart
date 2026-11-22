@@ -15,6 +15,17 @@ import 'package:nepali_utils/src/date_time/nepali_date_time_extension.dart';
 
 /// Formats dates in the Bikram Sambat calendar.
 ///
+/// ```dart
+/// final date = NepaliDateTime(2076, 8, 5, 21, 4, 25);
+///
+/// NepaliDateFormat.yMMMMd().format(date); // Mangsir 5, 2076
+/// NepaliDateFormat.yMMMMd(.nepali).format(date); // २०७६ मंसिर ५
+/// NepaliDateFormat('EEEE, d MMMM y').format(date); // Thursday, 5 Mangsir 2076
+/// NepaliDateFormat.yMd().add_jm().format(date); // 8/5/2076 9:04 PM
+/// ```
+///
+/// When no language is given, [NepaliUtils.currentLanguage] is used.
+///
 /// It works like `package:intl`'s `DateFormat`: the same pattern syntax,
 /// the same skeletons (named constructors such as [NepaliDateFormat.yMMMd])
 /// and the same [addPattern] / `add_*` composition. Skeletons are laid out
@@ -79,133 +90,239 @@ final class NepaliDateFormat._(
     return ._(newPattern == null ? null : _resolve(newPattern, lang), lang);
   }
 
-  /// 2076-08-05 => 5
+  /// Creates a formatter that shows the day of month.
+  ///
+  /// For 2076-08-05 it gives `5`.
   factory d([Language? language]) => .new(DAY, language);
 
-  /// 2076-08-05 => Thu / बिहि
+  /// Creates a formatter that shows the abbreviated weekday.
+  ///
+  /// For 2076-08-05 it gives `Thu` in English or `बिहि` in Nepali.
   factory E([Language? language]) => .new(ABBR_WEEKDAY, language);
 
-  /// 2076-08-05 => Thursday / बिहिबार
+  /// Creates a formatter that shows the weekday.
+  ///
+  /// For 2076-08-05 it gives `Thursday` in English or `बिहिबार` in Nepali.
   factory EEEE([Language? language]) => .new(WEEKDAY, language);
 
-  /// 2076-08-05 => T / बि
+  /// Creates a formatter that shows the narrow weekday.
+  ///
+  /// For 2076-08-05 it gives `T` in English or `बि` in Nepali.
   factory EEEEE([Language? language]) => .new('EEEEE', language);
 
-  /// 2076-08-05 => Marg / मं
+  /// Creates a formatter that shows the abbreviated standalone month.
+  ///
+  /// For 2076-08-05 it gives `Marg` in English or `मं` in Nepali.
   factory LLL([Language? language]) => .new(ABBR_STANDALONE_MONTH, language);
 
-  /// 2076-08-05 => Mangsir / मंसिर
+  /// Creates a formatter that shows the standalone month.
+  ///
+  /// For 2076-08-05 it gives `Mangsir` in English or `मंसिर` in Nepali.
   factory LLLL([Language? language]) => .new(STANDALONE_MONTH, language);
 
-  /// 2076-08-05 => 8
+  /// Creates a formatter that shows the month number.
+  ///
+  /// For 2076-08-05 it gives `8`.
   factory M([Language? language]) => .new(NUM_MONTH, language);
 
-  /// 2076-08-05 => 8/5 / ०८-०५
+  /// Creates a formatter that shows the month and day numbers.
+  ///
+  /// For 2076-08-05 it gives `8/5` in English or `०८-०५` in Nepali.
   factory Md([Language? language]) => .new(NUM_MONTH_DAY, language);
 
-  /// 2076-08-05 => Thu, 8/5 / ०८-०५, बिहि
+  /// Creates a formatter that shows the weekday with the month and day numbers.
+  ///
+  /// For 2076-08-05 it gives `Thu, 8/5` in English or `०८-०५, बिहि` in Nepali.
   factory MEd([Language? language]) => .new(NUM_MONTH_WEEKDAY_DAY, language);
 
-  /// 2076-08-05 => Marg / मं
+  /// Creates a formatter that shows the abbreviated month.
+  ///
+  /// For 2076-08-05 it gives `Marg` in English or `मं` in Nepali.
   factory MMM([Language? language]) => .new(ABBR_MONTH, language);
 
-  /// 2076-08-05 => Marg 5 / मं ५
+  /// Creates a formatter that shows the abbreviated month and day.
+  ///
+  /// For 2076-08-05 it gives `Marg 5` in English or `मं ५` in Nepali.
   factory MMMd([Language? language]) => .new(ABBR_MONTH_DAY, language);
 
-  /// 2076-08-05 => Thu, Marg 5 / मं ५, बिहि
+  /// Creates a formatter that shows the weekday, abbreviated month and day.
+  ///
+  /// For 2076-08-05 it gives `Thu, Marg 5` in English or `मं ५, बिहि` in
+  /// Nepali.
   factory MMMEd([Language? language]) => .new(ABBR_MONTH_WEEKDAY_DAY, language);
 
-  /// 2076-08-05 => Mangsir / मंसिर
+  /// Creates a formatter that shows the month name.
+  ///
+  /// For 2076-08-05 it gives `Mangsir` in English or `मंसिर` in Nepali.
   factory MMMM([Language? language]) => .new(MONTH, language);
 
-  /// 2076-08-05 => Mangsir 5 / मंसिर ५
+  /// Creates a formatter that shows the month name and day.
+  ///
+  /// For 2076-08-05 it gives `Mangsir 5` in English or `मंसिर ५` in Nepali.
   factory MMMMd([Language? language]) => .new(MONTH_DAY, language);
 
-  /// 2076-08-05 => Thursday, Mangsir 5 / मंसिर ५, बिहिबार
+  /// Creates a formatter that shows the weekday, month name and day.
+  ///
+  /// For 2076-08-05 it gives `Thursday, Mangsir 5` in English or
+  /// `मंसिर ५, बिहिबार` in Nepali.
   factory MMMMEEEEd([Language? language]) => .new(MONTH_WEEKDAY_DAY, language);
 
-  /// 2076-08-05 => Q3 / तेस्रो त्रैमासिक
+  /// Creates a formatter that shows the abbreviated quarter.
+  ///
+  /// For 2076-08-05 it gives `Q3` in English or `तेस्रो त्रैमासिक` in Nepali.
   factory QQQ([Language? language]) => .new(ABBR_QUARTER, language);
 
-  /// 2076-08-05 => 3rd quarter / तेस्रो त्रैमासिक
+  /// Creates a formatter that shows the quarter.
+  ///
+  /// For 2076-08-05 it gives `3rd quarter` in English or `तेस्रो त्रैमासिक` in
+  /// Nepali.
   factory QQQQ([Language? language]) => .new(QUARTER, language);
 
-  /// 2076-08-05 => 2076
+  /// Creates a formatter that shows the year.
+  ///
+  /// For 2076-08-05 it gives `2076`.
   factory y([Language? language]) => .new(YEAR, language);
 
-  /// 2076-08-05 => 8/2076 / २०७६-०८
+  /// Creates a formatter that shows the year and month numbers.
+  ///
+  /// For 2076-08-05 it gives `8/2076` in English or `२०७६-०८` in Nepali.
   factory yM([Language? language]) => .new(YEAR_NUM_MONTH, language);
 
-  /// 2076-08-05 => 8/5/2076 / २०७६-०८-०५
+  /// Creates a formatter that shows the numeric date.
+  ///
+  /// For 2076-08-05 it gives `8/5/2076` in English or `२०७६-०८-०५` in Nepali.
   factory yMd([Language? language]) => .new(YEAR_NUM_MONTH_DAY, language);
 
-  /// 2076-08-05 => Thu, 8/5/2076 / २०७६-०८-०५, बिहि
+  /// Creates a formatter that shows the weekday and numeric date.
+  ///
+  /// For 2076-08-05 it gives `Thu, 8/5/2076` in English or `२०७६-०८-०५, बिहि`
+  /// in Nepali.
   factory yMEd([Language? language]) =>
       .new(YEAR_NUM_MONTH_WEEKDAY_DAY, language);
 
-  /// 2076-08-05 => Marg 2076 / २०७६ मं
+  /// Creates a formatter that shows the abbreviated month and year.
+  ///
+  /// For 2076-08-05 it gives `Marg 2076` in English or `२०७६ मं` in Nepali.
   factory yMMM([Language? language]) => .new(YEAR_ABBR_MONTH, language);
 
-  /// 2076-08-05 => Marg 5, 2076 / २०७६ मं ५
+  /// Creates a formatter that shows the abbreviated month, day and year.
+  ///
+  /// For 2076-08-05 it gives `Marg 5, 2076` in English or `२०७६ मं ५` in
+  /// Nepali.
   factory yMMMd([Language? language]) => .new(YEAR_ABBR_MONTH_DAY, language);
 
-  /// 2076-08-05 => Thu, Marg 5, 2076 / २०७६ मं ५, बिहि
+  /// Creates a formatter that shows the weekday, abbreviated month, day and
+  /// year.
+  ///
+  /// For 2076-08-05 it gives `Thu, Marg 5, 2076` in English or
+  /// `२०७६ मं ५, बिहि` in Nepali.
   factory yMMMEd([Language? language]) =>
       .new(YEAR_ABBR_MONTH_WEEKDAY_DAY, language);
 
-  /// 2076-08-05 => Mangsir 2076 / २०७६ मंसिर
+  /// Creates a formatter that shows the month name and year.
+  ///
+  /// For 2076-08-05 it gives `Mangsir 2076` in English or `२०७६ मंसिर` in
+  /// Nepali.
   factory yMMMM([Language? language]) => .new(YEAR_MONTH, language);
 
-  /// 2076-08-05 => Mangsir 5, 2076 / २०७६ मंसिर ५
+  /// Creates a formatter that shows the month name, day and year.
+  ///
+  /// For 2076-08-05 it gives `Mangsir 5, 2076` in English or `२०७६ मंसिर ५` in
+  /// Nepali.
   factory yMMMMd([Language? language]) => .new(YEAR_MONTH_DAY, language);
 
-  /// 2076-08-05 => Thursday, Mangsir 5, 2076 / २०७६ मंसिर ५, बिहिबार
+  /// Creates a formatter that shows the weekday, month name, day and year.
+  ///
+  /// For 2076-08-05 it gives `Thursday, Mangsir 5, 2076` in English or
+  /// `२०७६ मंसिर ५, बिहिबार` in Nepali.
   factory yMMMMEEEEd([Language? language]) =>
       .new(YEAR_MONTH_WEEKDAY_DAY, language);
 
-  /// 2076-08-05 => Q3 2076 / २०७६ तेस्रो त्रैमासिक
+  /// Creates a formatter that shows the abbreviated quarter and year.
+  ///
+  /// For 2076-08-05 it gives `Q3 2076` in English or `२०७६ तेस्रो त्रैमासिक` in
+  /// Nepali.
   factory yQQQ([Language? language]) => .new(YEAR_ABBR_QUARTER, language);
 
-  /// 2076-08-05 => 3rd quarter 2076 / २०७६ तेस्रो त्रैमासिक
+  /// Creates a formatter that shows the quarter and year.
+  ///
+  /// For 2076-08-05 it gives `3rd quarter 2076` in English or
+  /// `२०७६ तेस्रो त्रैमासिक` in Nepali.
   factory yQQQQ([Language? language]) => .new(YEAR_QUARTER, language);
 
-  /// 2076-08-05T21:04:25 => 21
+  /// Creates a formatter that shows the hour on a 24-hour clock.
+  ///
+  /// For 2076-08-05T21:04:25 it gives `21`.
   factory H([Language? language]) => .new(HOUR24, language);
 
-  /// 2076-08-05T21:04:25 => 21:04
+  /// Creates a formatter that shows the hour and minute on a 24-hour clock.
+  ///
+  /// For 2076-08-05T21:04:25 it gives `21:04`.
   factory Hm([Language? language]) => .new(HOUR24_MINUTE, language);
 
-  /// 2076-08-05T21:04:25 => 21:04:25
+  /// Creates a formatter that shows the hour, minute and second on a 24-hour
+  /// clock.
+  ///
+  /// For 2076-08-05T21:04:25 it gives `21:04:25`.
   factory Hms([Language? language]) => .new(HOUR24_MINUTE_SECOND, language);
 
-  /// 2076-08-05T21:04:25 => 9 PM / २१
+  /// Creates a formatter that shows the hour in the language's preferred clock.
+  ///
+  /// For 2076-08-05T21:04:25 it gives `9 PM` in English or `२१` in Nepali.
   factory j([Language? language]) => .new(HOUR, language);
 
-  /// 2076-08-05T21:04:25 => 9:04 PM / २१:०४
+  /// Creates a formatter that shows the hour and minute in the language's
+  /// preferred clock.
+  ///
+  /// For 2076-08-05T21:04:25 it gives `9:04 PM` in English or `२१:०४` in
+  /// Nepali.
   factory jm([Language? language]) => .new(HOUR_MINUTE, language);
 
-  /// 2076-08-05T21:04:25 => 9:04:25 PM / २१:०४:२५
+  /// Creates a formatter that shows the hour, minute and second in the
+  /// language's preferred clock.
+  ///
+  /// For 2076-08-05T21:04:25 it gives `9:04:25 PM` in English or `२१:०४:२५` in
+  /// Nepali.
   factory jms([Language? language]) => .new(HOUR_MINUTE_SECOND, language);
 
-  /// 2076-08-05T21:04:25+05:45 => 9:04 PM NPT / २१:०४ NPT
+  /// Creates a formatter that shows the hour and minute with the generic time
+  /// zone.
+  ///
+  /// For 2076-08-05T21:04:25+05:45 it gives `9:04 PM NPT` in English or
+  /// `२१:०४ NPT` in Nepali.
   factory jmv([Language? language]) => .new(HOUR_MINUTE_GENERIC_TZ, language);
 
-  /// 2076-08-05T21:04:25+05:45 => 9:04 PM NPT / २१:०४ NPT
+  /// Creates a formatter that shows the hour and minute with the time zone.
+  ///
+  /// For 2076-08-05T21:04:25+05:45 it gives `9:04 PM NPT` in English or
+  /// `२१:०४ NPT` in Nepali.
   factory jmz([Language? language]) => .new(HOUR_MINUTE_TZ, language);
 
-  /// 2076-08-05T21:04:25+05:45 => 9 PM NPT / २१h NPT
+  /// Creates a formatter that shows the hour with the generic time zone.
+  ///
+  /// For 2076-08-05T21:04:25+05:45 it gives `9 PM NPT` in English or `२१h NPT`
+  /// in Nepali.
   factory jv([Language? language]) => .new(HOUR_GENERIC_TZ, language);
 
-  /// 2076-08-05T21:04:25+05:45 => 9 PM NPT / २१h NPT
+  /// Creates a formatter that shows the hour with the time zone.
+  ///
+  /// For 2076-08-05T21:04:25+05:45 it gives `9 PM NPT` in English or `२१h NPT`
+  /// in Nepali.
   factory jz([Language? language]) => .new(HOUR_TZ, language);
 
-  /// 2076-08-05T21:04:25 => 4
+  /// Creates a formatter that shows the minute.
+  ///
+  /// For 2076-08-05T21:04:25 it gives `4`.
   factory m([Language? language]) => .new(MINUTE, language);
 
-  /// 2076-08-05T21:04:25 => 04:25
+  /// Creates a formatter that shows the minute and second.
+  ///
+  /// For 2076-08-05T21:04:25 it gives `04:25`.
   factory ms([Language? language]) => .new(MINUTE_SECOND, language);
 
-  /// 2076-08-05T21:04:25 => 25
+  /// Creates a formatter that shows the second.
+  ///
+  /// For 2076-08-05T21:04:25 it gives `25`.
   factory s([Language? language]) => .new(SECOND, language);
 
   // Skeleton names, the same as `package:intl`'s `DateFormat` constants.
@@ -350,6 +467,11 @@ final class NepaliDateFormat._(
   /// this formatter.
   ///
   /// Unlike `package:intl`, this does not modify this formatter.
+  ///
+  /// ```dart
+  /// final format = NepaliDateFormat.yMMMd().addPattern('Hm', ' @ ');
+  /// format.pattern; // MMM d, y @ HH:mm
+  /// ```
   NepaliDateFormat addPattern(String? inputPattern, [String separator = ' ']) {
     if (inputPattern == null) return this;
     final added = _resolve(inputPattern, language);
@@ -488,8 +610,15 @@ final class NepaliDateFormat._(
 
   /// Formats [date] according to [pattern] and [language].
   ///
-  /// A plain [DateTime] is converted with [ENepaliDateTime.toNepaliDateTime]
-  /// first, which keeps its time zone.
+  /// A Gregorian [DateTime] is converted with
+  /// [ENepaliDateTime.toNepaliDateTime] first, keeping its time zone, so
+  /// both of these give the same result:
+  ///
+  /// ```dart
+  /// final format = NepaliDateFormat.yMMMd();
+  /// format.format(NepaliDateTime(2080, 1, 15)); // Bai 15, 2080
+  /// format.format(DateTime(2023, 4, 28)); // Bai 15, 2080
+  /// ```
   String format(DateTime date) {
     final nepaliDate = date.toNepaliDateTime();
     final buffer = StringBuffer();
@@ -503,6 +632,8 @@ final class NepaliDateFormat._(
   }
 
   /// Parses [dateString] with [NepaliDateTime.parse] and formats the result.
+  ///
+  /// Throws a [FormatException] if [dateString] cannot be parsed.
   String parseAndFormat(String dateString) =>
       format(NepaliDateTime.parse(dateString));
 

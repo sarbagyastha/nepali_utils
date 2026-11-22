@@ -28,9 +28,8 @@ final class KeyLayout {
   String? operator [](int unit) => unit < 128 ? _table[unit] : null;
 }
 
+// Keys from nepalify (ISC license, © 2020 Suvash Thapaliya).
 /// Madan Puraskar Pustakalaya's *Nepali Unicode Romanized* layout.
-///
-/// Keys from nepalify (ISC license, © 2020 Suvash Thapaliya).
 final KeyLayout mppRomanized = .new({
   'a': 'ा', 'b': 'ब', 'c': 'छ', 'd': 'द', 'e': 'े', 'f': 'उ', 'g': 'ग', //
   'h': 'ह', 'i': 'ि', 'j': 'ज', 'k': 'क', 'l': 'ल', 'm': 'म', 'n': 'न',
@@ -46,9 +45,8 @@ final KeyLayout mppRomanized = .new({
   '.': '।', '>': '॥', '/': '्',
 });
 
+// Keys from nepalify (ISC license, © 2020 Suvash Thapaliya).
 /// Madan Puraskar Pustakalaya's *Nepali Unicode Traditional* layout.
-///
-/// Keys from nepalify (ISC license, © 2020 Suvash Thapaliya).
 final KeyLayout mppTraditional = .new({
   'a': 'ब', 'b': 'द', 'c': 'अ', 'd': 'म', 'e': 'भ', 'f': 'ा', 'g': 'न', //
   'h': 'ज', 'i': 'ष', 'j': 'व', 'k': 'प', 'l': 'ि', 'm': 'ः', 'n': 'ल',

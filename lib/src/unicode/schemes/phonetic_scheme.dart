@@ -48,10 +48,9 @@ final class PhoneticToken {
   final bool independentOnly;
 }
 
+// Tokens are matched longest first. Every table lists the canonical
+// spelling of a letter first; reverse lookups use it.
 /// A romanization scheme, compiled into a token trie and reverse tables.
-///
-/// Tokens are matched longest first. Every table lists the canonical
-/// spelling of a letter first; reverse lookups use it.
 final class PhoneticScheme {
   /// Compiles a scheme.
   ///
@@ -240,8 +239,8 @@ const _aspirates = {
   'त': 'थ', 'द': 'ध', 'प': 'फ', 'ब': 'भ', 'स': 'श', 'ष': 'श',
 };
 
-/// [letters], followed by every letter that has an aspirate spelt with `h`
-/// or `H` after it (`kh` → ख). `chh` is also छ.
+// [letters], followed by every letter that has an aspirate spelt with `h`
+// or `H` after it (`kh` → ख). `chh` is also छ.
 Map<String, String> _withAspirates(Map<String, String> letters) => {
   ...letters,
   for (final MapEntry(:key, :value) in letters.entries)

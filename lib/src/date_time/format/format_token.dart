@@ -29,7 +29,7 @@ final class FieldToken(
   String get text => letter * count;
 }
 
-/// Letters which start a field. Same set as `package:intl`'s `DateFormat`.
+// Letters which start a field; the same set as intl's DateFormat.
 const String _fieldLetters = 'GyMkSEahKHcLQdDmsvzZ';
 const int _quote = 0x27; // '
 
@@ -80,8 +80,8 @@ List<FormatToken> tokenize(String pattern) {
   return List.unmodifiable(tokens);
 }
 
-/// Index of the quote closing the quoted section opened at [start], or
-/// `null` if there is none.
+// Index of the quote closing the quoted section opened at start, or null if
+// there is none.
 int? _closingQuote(String pattern, int start) {
   // `''` on its own is an escaped quote.
   if (start + 1 < pattern.length && pattern.codeUnitAt(start + 1) == _quote) {

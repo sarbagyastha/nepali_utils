@@ -11,7 +11,7 @@ const int _devanagariZero = 0x0966;
 const int _devanagariNine = 0x096F;
 const int _zero = 0x30;
 
-/// Whitespace, including the no-break spaces used by number patterns.
+// Whitespace, including the no-break spaces used by number patterns.
 final RegExp _spaces = RegExp(r'[\s  ]+');
 
 /// Parses [text] as formatted by a `NepaliNumberFormat`.
@@ -120,7 +120,7 @@ Decimal? _parseCore(
   return Decimal.tryParse(core)?.withSign(negate: negative).shift(exponent);
 }
 
-/// Removes spaces, converts Devanagari digits to ASCII and `−` to `-`.
+// Removes spaces, converts Devanagari digits to ASCII and `−` to `-`.
 String _normalize(String text) {
   final buffer = StringBuffer();
   for (final rune in text.replaceAll(_spaces, '').runes) {

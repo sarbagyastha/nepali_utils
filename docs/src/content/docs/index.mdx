@@ -1,0 +1,106 @@
+---
+title: Nepali Utils
+description: Bikram Sambat dates, Nepali number formatting, Unicode and Preeti conversion, relative time, traditional units and phone numbers for Dart and Flutter.
+template: splash
+hero:
+  image:
+    file: ../../assets/logo.png
+  tagline: Bikram Sambat dates, lakh/crore numbers, Nepali Unicode, relative time, ropani and tola, and phone numbers. A pure Dart package that works in any Dart or Flutter app.
+  actions:
+    - text: Get started
+      link: /getting-started/installation/
+      icon: right-arrow
+    - text: Upgrading from 3.x
+      link: /migration/v4/
+      variant: secondary
+    - text: GitHub
+      link: https://github.com/sarbagyastha/nepali_utils
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard, Aside } from '@astrojs/starlight/components';
+
+## Features
+
+<CardGrid>
+  <Card title="Nepali date & time" icon="clock">
+    `NepaliDateTime` is a Bikram Sambat `DateTime`. It converts AD ↔ BS, handles local, UTC and Nepal Time, and supports 1969–2250 BS.
+    [Read the guide →](/guides/date-time/)
+  </Card>
+  <Card title="Date formatting" icon="pencil">
+    `NepaliDateFormat` uses intl's `DateFormat` patterns and skeletons, with English or Nepali names and digits.
+    [Read the guide →](/guides/date-format/)
+  </Card>
+  <Card title="Number formatting" icon="list-format">
+    Lakh/crore grouping, currency, percent, compact (`12.3L`), numbers in words, and parsing of Devanagari digits.
+    [Read the guide →](/guides/number-format/)
+  </Card>
+  <Card title="Relative time" icon="random">
+    `NepaliMoment` gives text like `3 days ago` / `३ दिन पहिले`, calendar text like `Yesterday at 9:04 PM`, and durations.
+    [Read the guide →](/guides/moment/)
+  </Card>
+  <Card title="Nepali Unicode" icon="translate">
+    Converts romanized text to Devanagari and back, in classic, Google Input Tools or MPP keyboard styles, as the user types.
+    [Read the guide →](/guides/unicode/)
+  </Card>
+  <Card title="Preeti & Devanagari" icon="document">
+    Converts legacy Preeti text to Unicode and back. Also detects Devanagari, converts digits and splits text into aksharas.
+    [Read the guide →](/guides/preeti-devanagari/)
+  </Card>
+  <Card title="Measurement units" icon="analytics">
+    Ropani-aana-paisa-daam, bigha-kattha-dhur, tola-lal, dharni-ser and muri-pathi-mana, converted to and from metric.
+    [Read the guide →](/guides/measurement/)
+  </Card>
+  <Card title="Phone numbers" icon="phone">
+    Validates, formats and finds Nepali mobile and landline numbers. Shows the operator (Nepal Telecom, Ncell…) or the district.
+    [Read the guide →](/guides/phone-number/)
+  </Card>
+</CardGrid>
+
+## Install
+
+```sh
+dart pub add nepali_utils
+```
+
+```dart
+import 'package:nepali_utils/nepali_utils.dart';
+```
+
+Requires Dart 3.13 or later. See [Installation](/getting-started/installation/) for Flutter.
+
+## A quick taste
+
+```dart
+import 'package:nepali_utils/nepali_utils.dart';
+
+void main() {
+  // AD → BS, and formatting in Nepali.
+  final date = DateTime(2019, 8, 3, 14, 30, 15).toNepaliDateTime();
+  print(date); // 2076-04-18 14:30:15.000
+  print(NepaliDateFormat.yMMMMEEEEd(.nepali).format(date));
+  // २०७६ श्रावण १८, शनिबार
+
+  // Lakh/crore grouping and numbers in words.
+  print(NepaliNumberFormat.decimalPattern().format(123456789.6548)); // 12,34,56,789.655
+  print(NepaliNumberFormat.words().format(123456));
+  // one lakh twenty-three thousand four hundred fifty-six
+
+  // Romanized text → Devanagari.
+  print(const NepaliUnicode().convert('mero naam {Sarbagya} ho')); // मेरो नाम Sarbagya हो
+
+  // Phone numbers.
+  final phone = NepaliPhoneNumber.parse('+977 ९८४१२३४५६७');
+  print('${phone.format()} (${phone.operator?.label()})'); // 984-1234567 (Nepal Telecom)
+}
+```
+
+<Aside type="tip" title="Upgrading from 3.x?">
+  Version 4.0 is a rewrite, and almost every class has breaking changes. The way `NepaliDateTime.now()` and `toNepaliDateTime()` handle time zones has changed in ways that are easy to miss. Read the [migration guide](/migration/v4/) before you upgrade.
+</Aside>
+
+<CardGrid>
+  <LinkCard title="API reference" href="https://pub.dev/documentation/nepali_utils/latest/" description="Every class and member, on pub.dev." />
+  <LinkCard title="Changelog" href="/reference/changelog/" description="What changed in each release." />
+</CardGrid>

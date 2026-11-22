@@ -7,11 +7,6 @@ import 'package:nepali_utils/src/number/format/decimal.dart';
 
 /// Spells numbers out with the Nepali place values: hundred, thousand,
 /// lakh, crore, arab, kharab, nil, padam and sankha.
-///
-/// ```text
-/// 123456 => one lakh twenty-three thousand four hundred fifty-six
-///        => एक लाख तेइस हजार चार सय छपन्न
-/// ```
 final class NumberWords {
   /// Creates a speller for [symbols].
   ///
@@ -103,7 +98,7 @@ final class NumberWords {
     return parts.join(' ');
   }
 
-  /// A number from 0 to 99.
+  // A number from 0 to 99.
   String _group(int value) =>
       useDigits ? symbols.number(value) : _words.belowHundred[value];
 }

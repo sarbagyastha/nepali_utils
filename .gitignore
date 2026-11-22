@@ -16,3 +16,8 @@ panchang/
 doc/api/
 
 
+
+# Docs site (Astro / Starlight)
+docs/node_modules/
+docs/dist/
+docs/.astro/

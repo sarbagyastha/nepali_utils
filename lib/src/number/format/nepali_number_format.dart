@@ -119,12 +119,18 @@ final class NepaliNumberFormat {
     );
   }
 
-  /// 1234567.891 => 12,34,567.891 / १२,३४,५६७.८९१
+  /// Creates a formatter for plain decimal numbers, grouped in lakhs and
+  /// crores with up to three fraction digits.
+  ///
+  /// For 1234567.891 it gives `12,34,567.891` in English or `१२,३४,५६७.८९१`
+  /// in Nepali.
   factory decimalPattern([Language? language]) =>
       ._fromPattern(decimalPatternString, language);
 
-  /// [NepaliNumberFormat.decimalPattern] with exactly [decimalDigits]
-  /// fraction digits, e.g. 1234.5 => 1,234.50 for 2.
+  /// Creates a [NepaliNumberFormat.decimalPattern] formatter that always
+  /// shows exactly [decimalDigits] fraction digits.
+  ///
+  /// With `decimalDigits: 2`, 1234.5 gives `1,234.50`.
   factory decimalPatternDigits({Language? language, int? decimalDigits}) =>
       ._fromPattern(
         decimalPatternString,
@@ -132,12 +138,16 @@ final class NepaliNumberFormat {
         decimalDigits: decimalDigits,
       );
 
-  /// 0.1234 => 12%
+  /// Creates a formatter for percentages; the number is multiplied by 100.
+  ///
+  /// For 0.1234 it gives `12%`.
   factory percentPattern([Language? language]) =>
       ._fromPattern(percentPatternString, language);
 
-  /// [NepaliNumberFormat.percentPattern] with exactly [decimalDigits]
-  /// fraction digits, e.g. 0.12345 => 12.35% for 2.
+  /// Creates a [NepaliNumberFormat.percentPattern] formatter that always
+  /// shows exactly [decimalDigits] fraction digits.
+  ///
+  /// With `decimalDigits: 2`, 0.12345 gives `12.35%`.
   factory decimalPercentPattern({Language? language, int? decimalDigits}) =>
       ._fromPattern(
         percentPatternString,
@@ -145,7 +155,10 @@ final class NepaliNumberFormat {
         decimalDigits: decimalDigits,
       );
 
-  /// 123456 => NPR 1,23,456.00 / NPR १,२३,४५६.००
+  /// Creates a currency formatter that shows the currency code.
+  ///
+  /// For 123456 it gives `NPR 1,23,456.00` in English or `NPR १,२३,४५६.००`
+  /// in Nepali.
   ///
   /// [symbol] defaults to [name], which defaults to `NPR`. [customPattern]
   /// replaces the default `¤ #,##,##0.00` (with a no-break space), e.g.
@@ -165,7 +178,10 @@ final class NepaliNumberFormat {
     decimalDigits: decimalDigits,
   );
 
-  /// 123456 => Rs. 1,23,456.00 / रु. १,२३,४५६.००
+  /// Creates a currency formatter that shows the rupee symbol.
+  ///
+  /// For 123456 it gives `Rs. 1,23,456.00` in English or `रु. १,२३,४५६.००`
+  /// in Nepali.
   ///
   /// Like [NepaliNumberFormat.currency], but shows the symbol of the
   /// Nepalese rupee instead of its code. Any other [name] is shown as is.
@@ -183,7 +199,15 @@ final class NepaliNumberFormat {
     );
   }
 
-  /// 1234 => 1.23K, 1234567 => 12.3L, 123456789 => 12.3Cr
+  /// Creates a formatter that abbreviates large numbers with a short place
+  /// value: thousand (K), lakh (L), crore (Cr), arab and kharab.
+  ///
+  /// ```dart
+  /// final format = NepaliNumberFormat.compact();
+  /// format.format(1234); // 1.23K
+  /// format.format(1234567); // 12.3L
+  /// format.format(123456789); // 12.3Cr
+  /// ```
   ///
   /// In Nepali, the place value is a word: १.२३ हजार, १२.३ लाख, १२.३ करोड.
   ///
@@ -198,9 +222,11 @@ final class NepaliNumberFormat {
         explicitSign: explicitSign,
       );
 
-  /// 1234 => 1.23 thousand, 1234567 => 12.3 lakh / १२.३ लाख
+  /// Creates a formatter like [NepaliNumberFormat.compact] that spells the
+  /// place value out.
   ///
-  /// See [NepaliNumberFormat.compact].
+  /// For 1234 it gives `1.23 thousand`, and for 1234567 `12.3 lakh` in
+  /// English or `१२.३ लाख` in Nepali.
   factory compactLong({Language? language, bool explicitSign = false}) =>
       ._fromPattern(
         _compactPattern,
@@ -209,10 +235,10 @@ final class NepaliNumberFormat {
         explicitSign: explicitSign,
       );
 
-  /// 1234567 => NPR 12.3L
+  /// Creates a compact currency formatter that shows the currency code.
   ///
-  /// A compact currency format, see [NepaliNumberFormat.compact] and
-  /// [NepaliNumberFormat.currency].
+  /// Combines [NepaliNumberFormat.compact] and [NepaliNumberFormat.currency]:
+  /// 1234567 gives `NPR 12.3L`.
   factory compactCurrency({Language? language, String? name, String? symbol}) =>
       ._fromPattern(
         currencyPatternString,
@@ -222,10 +248,11 @@ final class NepaliNumberFormat {
         style: .compactShort,
       );
 
-  /// 1234567 => Rs. 12.3L / रु. १२.३ लाख
+  /// Creates a compact currency formatter that shows the rupee symbol.
   ///
-  /// A compact currency format, see [NepaliNumberFormat.compact] and
-  /// [NepaliNumberFormat.simpleCurrency].
+  /// Combines [NepaliNumberFormat.compact] and
+  /// [NepaliNumberFormat.simpleCurrency]: 1234567 gives `Rs. 12.3L` in
+  /// English or `रु. १२.३ लाख` in Nepali.
   factory compactSimpleCurrency({Language? language, String? name}) {
     final lang = language ?? NepaliUtils.currentLanguage;
     return .compactCurrency(
@@ -235,20 +262,23 @@ final class NepaliNumberFormat {
     );
   }
 
-  /// Spells numbers out:
-  ///
-  /// ```text
-  /// 123456   => one lakh twenty-three thousand four hundred fifty-six
-  ///          => एक लाख तेइस हजार चार सय छपन्न
-  /// -12.05   => minus twelve point zero five
-  /// ```
+  /// Creates a formatter that spells numbers out in words.
   ///
   /// When [currency] is true, the number is an amount of rupees rounded to
-  /// the paisa: `123.45` => `one hundred twenty-three rupees forty-five
-  /// paisa`.
+  /// the paisa. When [useDigits] is true, each group is written in digits.
   ///
-  /// When [useDigits] is true, each group is written in digits:
-  /// `1 lakh 23 thousand 4 hundred 56` / `१ लाख २३ हजार ४ सय ५६`.
+  /// ```dart
+  /// NepaliNumberFormat.words().format(123456);
+  /// // one lakh twenty-three thousand four hundred fifty-six
+  /// NepaliNumberFormat.words(language: .nepali).format(123456);
+  /// // एक लाख तेइस हजार चार सय छपन्न
+  /// NepaliNumberFormat.words().format(-12.05);
+  /// // minus twelve point zero five
+  /// NepaliNumberFormat.words(currency: true).format(123.45);
+  /// // one hundred twenty-three rupees forty-five paisa
+  /// NepaliNumberFormat.words(useDigits: true).format(123456);
+  /// // 1 lakh 23 thousand 4 hundred 56
+  /// ```
   ///
   /// [parse] isn't supported by this format.
   factory words({
@@ -346,6 +376,13 @@ final class NepaliNumberFormat {
   ///
   /// When the fraction digits conflict, the one passed wins: e.g. a
   /// [minimumFractionDigits] above the current maximum raises the maximum.
+  ///
+  /// ```dart
+  /// final format = NepaliNumberFormat.decimalPattern().copyWith(
+  ///   minimumFractionDigits: 2,
+  /// );
+  /// format.format(1234.5); // 1,234.50
+  /// ```
   NepaliNumberFormat copyWith({
     int? minimumIntegerDigits,
     int? minimumFractionDigits,
@@ -385,7 +422,7 @@ final class NepaliNumberFormat {
     );
   }
 
-  /// Formats [number].
+  /// Formats [number] and returns the text.
   ///
   /// [number] is an [int], a [double], a [BigInt] or a numeric [String]
   /// such as `'-1234.5'` or `'1e21'`. Strings keep every digit, which is
@@ -503,7 +540,7 @@ final class NepaliNumberFormat {
     return sign + _wrap(text, compiled, negative: mantissa.negative);
   }
 
-  /// The digits of [value] (ignoring its sign), grouped and localized.
+  // The digits of value (ignoring its sign), grouped and localized.
   String _digits(Decimal value, int minimumFraction) {
     final integer = _group(
       value.integerDigits.padLeft(minimumIntegerDigits, '0'),
@@ -535,7 +572,7 @@ final class NepaliNumberFormat {
     return fraction.isEmpty ? integer : '$integer.${symbols.digits(fraction)}';
   }
 
-  /// Localizes [digits] and inserts [groupSeparator] between the groups.
+  // Localizes digits and inserts groupSeparator between the groups.
   String _group(String digits) {
     final localized = _symbols.digits(digits);
     final compiled = _compiled!;

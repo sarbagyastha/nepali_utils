@@ -9,28 +9,13 @@ import 'package:nepali_utils/src/moment/moment_unit.dart';
 /// one", e.g. "a day".
 typedef RelativeSpan = ({MomentUnit unit, int count});
 
+// Uses the thresholds of moment.js's fromNow (tabled on
+// NepaliMoment.formatDuration). Months and years are of average length
+// (30.44 and 365.2425 days).
+
 /// The fuzzy span describing [duration], or `null` for "a few seconds".
 ///
-/// Uses the thresholds of moment.js's `fromNow`:
-///
-/// | Range                 | Result              |
-/// |-----------------------|---------------------|
-/// | 0 to 44 seconds       | a few seconds       |
-/// | 45 to 89 seconds      | a minute            |
-/// | 90 seconds to 44 min  | 2 to 44 minutes     |
-/// | 45 to 89 minutes      | an hour             |
-/// | 90 minutes to 21 h    | 2 to 21 hours       |
-/// | 22 to 35 hours        | a day               |
-/// | 36 hours to 25 days   | 2 to 25 days        |
-/// | 26 to 45 days         | a month             |
-/// | 45 days to 319 days   | 2 to 10 months      |
-/// | 320 to 547 days       | a year              |
-/// | 548 days and more     | 2 years and more    |
-///
-/// When [useWeeks] is true, spans from 7 days to a month are given in weeks
-/// ("a week", "2 weeks", "3 weeks").
-///
-/// Months and years are of average length (30.44 and 365.2425 days).
+/// When [useWeeks] is true, spans from 7 days to a month are given in weeks.
 RelativeSpan? relativeSpan(Duration duration, {bool useWeeks = false}) {
   final microseconds = duration.inMicroseconds.abs();
   int round(int unit) => (microseconds / unit).round();

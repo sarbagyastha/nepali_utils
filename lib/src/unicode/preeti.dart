@@ -8,7 +8,7 @@ import 'package:nepali_utils/src/unicode/token_trie.dart';
 /// Converts text written in the legacy Preeti font to Unicode, and back.
 ///
 /// Preeti draws Devanagari over ASCII codes, so a document typed in it
-/// reads as gibberish anywhere the font isn't installed:
+/// reads as gibberish anywhere the font isn't installed. [Preeti] converts it:
 ///
 /// ```dart
 /// Preeti.toUnicode('g]kfn');        // नेपाल
@@ -56,12 +56,12 @@ abstract final class Preeti {
   }
 }
 
-/// Stands for the reph while text is in visual order.
+// Stands for the reph while text is in visual order.
 const int _reph = 0xE000;
 const int _iMatra = 0x093F; // ि
 const int _aaMatra = 0x093E; // ा
 
-/// Glyphs that are written as a sequence of keys.
+// Glyphs that are written as a sequence of keys.
 const _sequences = {
   'cf]': 'ओ', 'cf}': 'औ', 'cf': 'आ', 'P]': 'ऐ', 'O{': 'ई', //
   'km': 'फ', 'Km': 'फ्', 'em': 'झ', 'Em': 'झ्', 'pm': 'ऊ',
@@ -136,8 +136,8 @@ final TokenTrie<String> _reverse = () {
   return trie;
 }();
 
-/// Moves ि after its consonant cluster and the reph before its syllable,
-/// and joins vowels written in two parts.
+// Moves ि after its consonant cluster and the reph before its syllable,
+// and joins vowels written in two parts.
 String _toLogicalOrder(String text) {
   final units = <int>[];
   final source = text.codeUnits;
@@ -163,7 +163,7 @@ String _toLogicalOrder(String text) {
   return String.fromCharCodes(units);
 }
 
-/// The vowel written as [first] then [second], if they form one.
+// The vowel written as [first] then [second], if they form one.
 int? _joinVowel(int first, int second) => switch ((first, second)) {
   (0x0905, 0x093E) => 0x0906, // अ ा → आ
   (0x0906, 0x0947) => 0x0913, // आ े → ओ
@@ -174,7 +174,7 @@ int? _joinVowel(int first, int second) => switch ((first, second)) {
   _ => null,
 };
 
-/// The end of the consonant cluster at [start], or [start] if there is none.
+// The end of the consonant cluster at [start], or [start] if there is none.
 int _clusterEnd(List<int> units, int start) {
   var i = start;
   while (i < units.length && isConsonant(units[i])) {
@@ -232,7 +232,7 @@ void _moveRephs(List<int> units) {
   }
 }
 
-/// Puts ि before its consonant cluster and the reph after its syllable.
+// Puts ि before its consonant cluster and the reph after its syllable.
 String _toVisualOrder(String text) {
   final units = text.codeUnits;
   final out = <int>[];

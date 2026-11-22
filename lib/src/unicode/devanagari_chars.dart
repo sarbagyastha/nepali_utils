@@ -52,14 +52,13 @@ bool isSyllableSign(int unit) =>
 /// Whether [unit] begins a syllable: a consonant or an independent vowel.
 bool isLetter(int unit) => isConsonant(unit) || isIndependentVowel(unit);
 
+// An akshara is a consonant cluster (consonants joined by halants, each
+// optionally with a nukta, a joiner after a halant allowed) followed by a
+// final halant or a matra, then any syllable signs; or an independent vowel
+// followed by signs. Any other character is an akshara of its own, a
+// surrogate pair counting as one character.
 /// The end of the akshara (orthographic syllable) that starts at [start] in
 /// [units].
-///
-/// An akshara is a consonant cluster (consonants joined by halants, each
-/// optionally with a nukta, a joiner after a halant allowed) followed by a
-/// final halant or a matra, then any syllable signs; or an independent vowel
-/// followed by signs. Any other character is an akshara of its own, a
-/// surrogate pair counting as one character.
 int aksharaEnd(List<int> units, int start) {
   final length = units.length;
   final first = units[start];

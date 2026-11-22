@@ -13,5 +13,10 @@ extension ENepaliDateTime on DateTime {
   /// [NepaliDateTime.toNepalTime] to present it in Nepal Time.
   ///
   /// Returns this unchanged if it already is a [NepaliDateTime].
+  ///
+  /// ```dart
+  /// final date = DateTime(2023, 4, 28).toNepaliDateTime();
+  /// print(date); // 2080-01-15 00:00:00.000
+  /// ```
   NepaliDateTime toNepaliDateTime() => .fromDateTime(this);
 }

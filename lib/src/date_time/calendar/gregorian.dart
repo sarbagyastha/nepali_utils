@@ -4,11 +4,11 @@
 
 import 'package:nepali_utils/src/date_time/calendar/epoch_day.dart';
 
-/// Constant-time conversions for the proleptic Gregorian calendar.
-///
-/// Based on Howard Hinnant's `days_from_civil` / `civil_from_days`
-/// algorithms (http://howardhinnant.github.io/date_algorithms.html).
-/// Pure integer arithmetic: no loops, no [DateTime] allocations.
+// Howard Hinnant's days_from_civil / civil_from_days algorithms
+// (http://howardhinnant.github.io/date_algorithms.html): pure integer
+// arithmetic, so no loops and no DateTime allocations.
+
+/// Conversions for the proleptic Gregorian calendar.
 abstract final class Gregorian {
   /// The [EpochDay] of the Gregorian date [year]-[month]-[day].
   ///

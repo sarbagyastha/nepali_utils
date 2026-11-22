@@ -71,7 +71,9 @@ enum PhoneFormat {
   e164,
 }
 
-/// A valid Nepali mobile or landline phone number:
+/// A valid Nepali mobile or landline phone number.
+///
+/// Use it to validate, format and find phone numbers in text:
 ///
 /// ```dart
 /// final phone = NepaliPhoneNumber.parse('+977 ९८४१२३४५६७');
@@ -108,7 +110,9 @@ enum PhoneFormat {
 final class NepaliPhoneNumber {
   const new _(this.nationalNumber, this.type);
 
-  /// The phone number in [text].
+  /// Parses [text] as a Nepali phone number.
+  ///
+  /// See [NepaliPhoneNumber] for the accepted input.
   ///
   /// Throws a [FormatException] if [text] isn't a valid Nepali phone number.
   factory parse(String text) =>
@@ -142,12 +146,18 @@ final class NepaliPhoneNumber {
   /// Whether [text] is a valid Nepali landline number.
   static bool isLandline(String text) => isValid(text, type: .landline);
 
-  /// The phone numbers in [text], of [type] if given, in order.
+  /// Finds the phone numbers in [text], of [type] if given, in order.
   ///
   /// Numbers can be written in any form [NepaliPhoneNumber.parse] accepts.
   /// A number must not be preceded by a digit, a Latin letter or `+`, nor
   /// followed by a digit, so `98412345678` and `ID9841234567` have no
   /// matches. Devanagari text may follow directly, e.g. `९८४१२३४५६७मा`.
+  ///
+  /// ```dart
+  /// final matches = NepaliPhoneNumber.findAll('Call 9841234567 now');
+  /// matches.single.start; // 5
+  /// matches.single.number.format(); // 984-1234567
+  /// ```
   static Iterable<PhoneNumberMatch> findAll(
     String text, {
     PhoneType? type,
@@ -185,8 +195,10 @@ final class NepaliPhoneNumber {
     }
   }
 
-  /// [text] with every phone number found by [findAll] replaced by the
-  /// result of [replace]:
+  /// Returns [text] with every phone number found by [findAll] replaced by
+  /// the result of [replace].
+  ///
+  /// When [type] is given, only numbers of that type are replaced.
   ///
   /// ```dart
   /// NepaliPhoneNumber.replaceAll(
@@ -246,13 +258,13 @@ final class NepaliPhoneNumber {
   /// The number in E.164 format, e.g. `+9779841234567` or `+97714412345`.
   String get e164 => '+977$_significant';
 
-  /// The number without the landline's trunk `0`.
+  // The number without the landline's trunk `0`.
   String get _significant => switch (type) {
     .mobile => nationalNumber,
     .landline => nationalNumber.substring(1),
   };
 
-  /// The number in [style]: `984-1234567`, `+977 984-1234567` or
+  /// Formats the number in [style]: `984-1234567`, `+977 984-1234567` or
   /// `+9779841234567`.
   ///
   /// Digits are Devanagari when [language] is Nepali, e.g. `९८४-१२३४५६७`.
@@ -333,7 +345,7 @@ final class PhoneNumberMatch {
 
 const String _operatorCodes = '456';
 
-/// The most digits a number can be written with: `00977` and 10 digits.
+// The most digits a number can be written with: `00977` and 10 digits.
 const int _maxDigits = 15;
 
 const String _separatorChars = ' \\t\\-.()\u00A0\u202F';

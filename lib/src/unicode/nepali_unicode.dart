@@ -8,12 +8,13 @@ import 'package:nepali_utils/src/unicode/phonetic_engine.dart';
 import 'package:nepali_utils/src/unicode/schemes/key_layout.dart';
 import 'package:nepali_utils/src/unicode/schemes/phonetic_scheme.dart';
 
-/// How `NepaliUnicode` maps Latin text to Devanagari.
+/// How [NepaliUnicode] maps Latin text to Devanagari.
 enum NepaliUnicodeStyle {
-  /// The phonetic rules of earlier versions of this package.
+  /// The default style, with the phonetic rules of earlier versions of this
+  /// package.
   ///
-  /// A consonant takes a halant until a vowel follows, so `ram` gives राम्
-  /// and `rama` gives राम; before a space the halant is dropped. `aa`/`A`
+  /// A consonant takes a halant until a vowel follows, so `ram` gives रम्
+  /// and `rama` gives रम; before a space the halant is dropped. `aa`/`A`
   /// gives ा, `ii`/`I` ी, `uu`/`U` ू, `E`/`ai` ै, `au` ौ; `T`, `D`, `N` and
   /// `S` give ट, ड, ण and ष, and an `h` after a consonant aspirates it
   /// (`kh` ख, `sh` श). `'` gives ं, `''` ँ, `:` ः and `.`, `|`, `/` or `\` ।.
@@ -59,7 +60,7 @@ enum NepaliUnicodeStyle {
 ///
 /// * Text inside `{` and `}` is kept as it is, without the braces.
 /// * Text that is already Devanagari is kept, and romanized text right
-///   after it joins its last syllable, so `कमल` + `aa` gives कमला. This is
+///   after it joins its last syllable, so `कमल` + `a` gives कमला. This is
 ///   what makes converting a text field after every keystroke work; see
 ///   [convertLive].
 ///
@@ -216,7 +217,7 @@ final class _ChunkedConversionSink extends StringConversionSink {
     if (split > 0) _sink.add(_converter.convert(text.substring(0, split)));
   }
 
-  /// The index after the last whitespace that isn't inside an escape.
+  // The index after the last whitespace that isn't inside an escape.
   static int _lastSplit(String text) {
     var split = 0;
     var escaped = false;

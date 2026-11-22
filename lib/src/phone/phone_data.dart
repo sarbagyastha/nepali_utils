@@ -2,12 +2,12 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
+// From the STD code list in "Telephone numbers in Nepal" on Wikipedia, with
+// the towns listed there mapped to their districts. The list isn't
+// exhaustive, so a number with an unlisted area code is still valid.
+
 /// Landline area codes (with the trunk `0`) and the districts they serve,
 /// in English and Nepali.
-///
-/// From the STD code list in "Telephone numbers in Nepal" on Wikipedia,
-/// with the towns listed there mapped to their districts. The list isn't
-/// exhaustive, so a number with an unlisted area code is still valid.
 const Map<String, (String, String)> areaCodes = {
   '01': ('Kathmandu Valley', 'काठमाडौं उपत्यका'),
   '010': ('Nuwakot, Dhading, Rasuwa', 'नुवाकोट, धादिङ, रसुवा'),
