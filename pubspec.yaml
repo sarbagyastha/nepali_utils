@@ -7,10 +7,14 @@ documentation: https://nepali-utils.sarbagyastha.com.np
 
 topics:
   - nepali
-  - date
+  - bikram-sambat
   - calendar
   - unicode
-  - localization
+  - i18n
+
+screenshots:
+  - description: "Nepali Utils logo"
+    path: assets/nepali-utils-logo.png
 
 environment:
   sdk: ^3.13.0

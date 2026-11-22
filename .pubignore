@@ -10,5 +10,7 @@ docs/
 .github/
 node_modules/
 
-# Brand images (README links to them on GitHub)
-assets/
+# Brand images (README links to them on GitHub), except the logo used as the
+# pub.dev screenshot
+assets/*
+!assets/nepali-utils-logo.png
