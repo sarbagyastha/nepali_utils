@@ -21,7 +21,7 @@
 
 `nepali_utils` is a pure Dart package for everything Nepali. It handles **Nepali dates** in the **Bikram Sambat (BS)** calendar, with fast and accurate **AD to BS and BS to AD conversion** and a time-zone aware `NepaliDateTime`. It provides an intl-compatible **Nepali date format** and **Nepali number format**, with lakh/crore grouping, currency, compact numbers (`12.3L`) and **number to words**. It converts **Romanized text and Preeti to Nepali Unicode** (Devanagari), and formats **relative time** ("3 days ago" / "३ दिन पहिले"). It converts land and weight units such as **ropani, aana, bigha** and **tola**, and handles **Nepali phone number validation** with **Nepal Telecom / Ncell** operator detection. Every feature works in English and Nepali, and it runs anywhere Dart runs: Flutter, server and web.
 
-## Features
+## ✨ Features
 
 | | Feature | |
 |---|---|---|
@@ -34,7 +34,7 @@
 | 📐 | **NepaliArea / NepaliWeight / NepaliVolume**: ropani-aana-paisa-daam, bigha-kattha-dhur, tola-lal, muri-pathi-mana | [Docs →](https://nepali-utils.sarbagyastha.com.np/guides/measurement/) |
 | 📞 | **NepaliPhoneNumber**: validate, format and find Nepali mobile and landline numbers, with the operator or district | [Docs →](https://nepali-utils.sarbagyastha.com.np/guides/phone-number/) |
 
-## Install
+## 📦 Install
 
 ```sh
 dart pub add nepali_utils   # or: flutter pub add nepali_utils
@@ -42,7 +42,7 @@ dart pub add nepali_utils   # or: flutter pub add nepali_utils
 
 Requires Dart 3.13 or later.
 
-## Quick taste
+## 🚀 Quick taste
 
 ```dart
 import 'package:nepali_utils/nepali_utils.dart';
@@ -70,16 +70,16 @@ void main() {
 
 Set the default language once with `NepaliUtils.defaultLanguage = Language.nepali`, or pass a `language` to any formatter. See the [full example](https://github.com/sarbagyastha/nepali_utils/blob/develop/example/main.dart) and the [guides](https://nepali-utils.sarbagyastha.com.np) for much more.
 
-## Upgrading from 3.x?
+## 🔄 Upgrading from 3.x?
 
 > [!IMPORTANT]
 > 4.0 is a major rewrite. Some changes are silent, for example `NepaliDateTime.now()` now returns local time, and numbers are rounded instead of truncated.
 > Read the **[migration guide](https://nepali-utils.sarbagyastha.com.np/migration/v4/)** and the [changelog](https://pub.dev/packages/nepali_utils/changelog) before upgrading.
 
-## Contributing
+## 🤝 Contributing
 
 Bug reports, ideas and pull requests are welcome on [GitHub](https://github.com/sarbagyastha/nepali_utils/issues). Please run `dart analyze` and `dart test` before you open a PR. The documentation site lives in [`docs/`](https://github.com/sarbagyastha/nepali_utils/tree/develop/docs) and uses Starlight.
 
-## License
+## 📄 License
 
 [MIT](https://github.com/sarbagyastha/nepali_utils/blob/develop/LICENSE) © Sarbagya Dhaubanjar
