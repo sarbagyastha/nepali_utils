@@ -5,7 +5,7 @@
 [![Top Language](https://img.shields.io/github/languages/top/sarbagyastha/nepali_utils?color=9cf)](https://github.com/sarbagyastha/nepali_utils)
 [![effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://dart.dev/guides/language/effective-dart)
 
-A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Number, Nepali Unicode, Nepali Moments and many more.
+A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Number, Nepali Unicode, Nepali Moments, land, weight & volume conversion and many more.
 
 ## Utility Classes
 * **NepaliDateTime**
@@ -14,6 +14,7 @@ A pure dart package with collection of Nepali Utilities like Date converter, Dat
 * **NepaliNumberFormat**
 * **NepaliUnicode**, **Preeti** & **Devanagari**
 * **NepaliMoment**
+* **NepaliArea**, **NepaliWeight** & **NepaliVolume**
 * many yet to come
 
 Requires Dart 3.13 or later.
@@ -362,6 +363,38 @@ print(NepaliMoment.fromBS(NepaliDateTime.parse('2076-02-32T18:25:14'),
     referenceDate: NepaliDateTime.parse('2076-02-32T18:34:14'))); // 9 minutes ago
 print(NepaliMoment.fromAD(DateTime.parse('2019-06-02T18:22:14'),
     referenceDate: DateTime.parse('2019-06-15T18:34:14'))); // 13 days ago
+```
+
+### Nepali Measurement
+`NepaliArea`, `NepaliWeight` and `NepaliVolume` convert between traditional Nepali units and metric units.
+
+| Quantity | Units |
+|---|---|
+| Land (hills) | 1 ropani = 16 aana = 64 paisa = 256 daam = 5476 sq. ft |
+| Land (Terai) | 1 bigha = 20 kattha = 400 dhur = 72900 sq. ft |
+| Gold | 1 tola = 100 lal = 11.6638038 g |
+| Market weight | 1 dharni = 3 ser = 12 pau = 48 chhatak = 2.3934096 kg |
+| Grain | 1 muri = 20 pathi = 160 mana = 1600 muthi; 1 pathi = 4.54596 L |
+
+```dart
+final plot = NepaliArea.ropani(2, aana: 3, paisa: 1);
+print(plot.to(.squareFoot)); // 12064.3125
+print(plot.ropaniParts); // (aana: 3, daam: 0.0, paisa: 1, ropani: 2)
+print(plot.format(.ropani)); // 2-3-1-0
+print(plot.format(.ropani, long: true, language: .nepali)); // २ रोपनी ३ आना १ पैसा
+print(plot.format(.bigha)); // 0-3-6.2
+
+print(NepaliArea(1000, .squareMeter).format(.ropani)); // 1-15-1-3.21
+print(NepaliArea.bigha(1, kattha: 5).to(.ropani)); // 16.64...
+print(NepaliArea.parse('२-३-१-०', .ropani) == plot); // true
+
+final gold = NepaliWeight.tola(2, lal: 50);
+print(gold.to(.gram)); // 29.1595095
+print(NepaliWeight(5, .kilogram).format(.dharni, long: true)); // 2 dharni 1 pau 0.28 chhatak
+
+final rice = NepaliVolume.muri(1, pathi: 5, mana: 4);
+print(rice.to(.liter)); // 115.92198
+print(rice.format(long: true)); // 1 muri 5 pathi 4 mana
 ```
 
 ## Example

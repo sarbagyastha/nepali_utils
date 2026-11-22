@@ -83,6 +83,16 @@ void main(List<String> arguments) {
   print(Preeti.fromUnicode('काठमाडौं'));
   print(Devanagari.aksharas('संस्कृति'));
   print(Devanagari.toEnglishDigits('२०८१'));
+
+  heading('Nepali Measurement');
+  final plot = NepaliArea.ropani(2, aana: 3, paisa: 1);
+  print('${plot.format(.ropani)} = ${plot.to(.squareFoot)} sq. ft');
+  print(plot.format(.ropani, long: true, language: .nepali));
+  print(plot.format(.bigha, long: true));
+  print(NepaliArea(1000, .squareMeter).format(.ropani));
+  print('${NepaliWeight.tola(2, lal: 50).to(.gram)} g');
+  print(NepaliWeight(5, .kilogram).format(.dharni, long: true));
+  print(NepaliVolume.muri(1, pathi: 5, mana: 4).format(long: true));
 }
 
 void heading(String text) {

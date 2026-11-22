@@ -1,5 +1,5 @@
 name: nepali_utils
-description: A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Numbers, Nepali Unicode, Nepali Moments and many more.
+description: Nepali utilities for Dart: BS dates and formatting, Nepali numbers, Unicode and Preeti, relative time, and land, weight and volume unit conversion.
 version: 4.0.0
 repository: https://github.com/sarbagyastha/nepali_utils
 homepage: https://sarbagyastha.com.np
