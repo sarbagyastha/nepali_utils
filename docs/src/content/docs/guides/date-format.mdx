@@ -1,0 +1,265 @@
+---
+title: Date formatting
+description: Format Bikram Sambat dates in English or Nepali with NepaliDateFormat, using intl-style skeletons and pattern letters.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+`NepaliDateFormat` formats a `NepaliDateTime`, or any `DateTime`, as text in the Bikram Sambat calendar. It works like `DateFormat` from `package:intl`:
+
+- the same **pattern letters** (`yyyy-MM-dd`, `EEE, MMM d`)
+- the same **skeleton constructors** (`NepaliDateFormat.yMMMd()`) and constants (`NepaliDateFormat.YEAR_MONTH_DAY`)
+- the same `addPattern` / `add_*` composition
+
+Skeletons are laid out like intl's `en` locale in English and its `ne` locale in Nepali. Nepali output uses Devanagari digits.
+
+```dart
+final date = NepaliDateTime.parse('2072-01-12T11:56:25');
+
+NepaliDateFormat.MEd().format(date);             // Sat, 1/12
+NepaliDateFormat.MMMMEEEEd().format(date);       // Saturday, Baishakh 12
+NepaliDateFormat.jms().format(date);             // 11:56:25 AM
+NepaliDateFormat.yMd().add_jm().format(date);    // 1/12/2072 11:56 AM
+NepaliDateFormat.yMd(.nepali).add_jm().format(date); // २०७२-०१-१२ ११:५६
+```
+
+## Creating a formatter
+
+```dart
+NepaliDateFormat([String? pattern, Language? language])
+```
+
+- `pattern` is either a **skeleton name** such as `'yMMMd'`, which is resolved to the layout for the language, or an **explicit pattern** such as `'MMMM d, y'`.
+- Without a pattern, the format is `yMMMMd jms`:
+
+  ```dart
+  NepaliDateFormat().format(date);              // Baishakh 12, 2072 11:56:25 AM
+  NepaliDateFormat(null, .nepali).format(date); // २०७२ बैशाख १२ ११:५६:२५
+  ```
+
+- `language` defaults to [`NepaliUtils.currentLanguage`](/getting-started/language/) at the moment you create the formatter.
+
+The resolved pattern is available as `pattern`:
+
+```dart
+NepaliDateFormat.yMd().pattern;          // M/d/y
+NepaliDateFormat.yMd(.nepali).pattern;   // y-MM-dd
+NepaliDateFormat().pattern;              // MMMM d, y h:mm:ss a
+```
+
+`format` accepts any `DateTime`. A plain `DateTime` is converted with `toNepaliDateTime()` first, which **keeps its time zone**:
+
+```dart
+NepaliDateFormat.yMMMMd().format(DateTime(2019, 8, 3)); // Shrawan 18, 2076
+```
+
+`parseAndFormat(string)` parses a BS date string with `NepaliDateTime.parse`, then formats it:
+
+```dart
+NepaliDateFormat.yMMMMEEEEd().parseAndFormat('2080-01-01'); // Friday, Baishakh 1, 2080
+```
+
+## Skeletons
+
+Each skeleton is a named constructor and a constant. For example, `NepaliDateFormat.yMMMd()` is the same as `NepaliDateFormat(NepaliDateFormat.YEAR_ABBR_MONTH_DAY)` and `NepaliDateFormat('yMMMd')`.
+
+Outputs for **2076-08-05 21:04:25** Nepal Time:
+
+| Constructor | Constant | English | Nepali |
+|:--|:--|:--|:--|
+| `d` | `DAY` | 5 | ५ |
+| `E` | `ABBR_WEEKDAY` | Thu | बिहि |
+| `EEEE` | `WEEKDAY` | Thursday | बिहिबार |
+| `EEEEE` | — | T | बि |
+| `LLL` | `ABBR_STANDALONE_MONTH` | Marg | मं |
+| `LLLL` | `STANDALONE_MONTH` | Mangsir | मंसिर |
+| `M` | `NUM_MONTH` | 8 | ८ |
+| `Md` | `NUM_MONTH_DAY` | 8/5 | ०८-०५ |
+| `MEd` | `NUM_MONTH_WEEKDAY_DAY` | Thu, 8/5 | ०८-०५, बिहि |
+| `MMM` | `ABBR_MONTH` | Marg | मं |
+| `MMMd` | `ABBR_MONTH_DAY` | Marg 5 | मं ५ |
+| `MMMEd` | `ABBR_MONTH_WEEKDAY_DAY` | Thu, Marg 5 | मं ५, बिहि |
+| `MMMM` | `MONTH` | Mangsir | मंसिर |
+| `MMMMd` | `MONTH_DAY` | Mangsir 5 | मंसिर ५ |
+| `MMMMEEEEd` | `MONTH_WEEKDAY_DAY` | Thursday, Mangsir 5 | मंसिर ५, बिहिबार |
+| `QQQ` | `ABBR_QUARTER` | Q3 | तेस्रो त्रैमासिक |
+| `QQQQ` | `QUARTER` | 3rd quarter | तेस्रो त्रैमासिक |
+| `y` | `YEAR` | 2076 | २०७६ |
+| `yM` | `YEAR_NUM_MONTH` | 8/2076 | २०७६-०८ |
+| `yMd` | `YEAR_NUM_MONTH_DAY` | 8/5/2076 | २०७६-०८-०५ |
+| `yMEd` | `YEAR_NUM_MONTH_WEEKDAY_DAY` | Thu, 8/5/2076 | २०७६-०८-०५, बिहि |
+| `yMMM` | `YEAR_ABBR_MONTH` | Marg 2076 | २०७६ मं |
+| `yMMMd` | `YEAR_ABBR_MONTH_DAY` | Marg 5, 2076 | २०७६ मं ५ |
+| `yMMMEd` | `YEAR_ABBR_MONTH_WEEKDAY_DAY` | Thu, Marg 5, 2076 | २०७६ मं ५, बिहि |
+| `yMMMM` | `YEAR_MONTH` | Mangsir 2076 | २०७६ मंसिर |
+| `yMMMMd` | `YEAR_MONTH_DAY` | Mangsir 5, 2076 | २०७६ मंसिर ५ |
+| `yMMMMEEEEd` | `YEAR_MONTH_WEEKDAY_DAY` | Thursday, Mangsir 5, 2076 | २०७६ मंसिर ५, बिहिबार |
+| `yQQQ` | `YEAR_ABBR_QUARTER` | Q3 2076 | २०७६ तेस्रो त्रैमासिक |
+| `yQQQQ` | `YEAR_QUARTER` | 3rd quarter 2076 | २०७६ तेस्रो त्रैमासिक |
+| `H` | `HOUR24` | 21 | २१ |
+| `Hm` | `HOUR24_MINUTE` | 21:04 | २१:०४ |
+| `Hms` | `HOUR24_MINUTE_SECOND` | 21:04:25 | २१:०४:२५ |
+| `j` | `HOUR` | 9 PM | २१ |
+| `jm` | `HOUR_MINUTE` | 9:04 PM | २१:०४ |
+| `jms` | `HOUR_MINUTE_SECOND` | 9:04:25 PM | २१:०४:२५ |
+| `jmv` | `HOUR_MINUTE_GENERIC_TZ` | 9:04 PM NPT | २१:०४ NPT |
+| `jmz` | `HOUR_MINUTE_TZ` | 9:04 PM NPT | २१:०४ NPT |
+| `jv` | `HOUR_GENERIC_TZ` | 9 PM NPT | २१h NPT |
+| `jz` | `HOUR_TZ` | 9 PM NPT | २१h NPT |
+| `m` | `MINUTE` | 4 | ४ |
+| `ms` | `MINUTE_SECOND` | 04:25 | ०४:२५ |
+| `s` | `SECOND` | 25 | २५ |
+
+<Aside type="note" title="Narrow no-break space before AM/PM">
+  Like intl, the English `j…` skeletons put a **narrow no-break space** (` `) before AM/PM, not a normal space: `9:04 PM`. It looks the same on screen, but string comparisons in tests must use ` `. Explicit patterns such as `'h:mm a'` use whatever character you write.
+</Aside>
+
+The `j` skeletons use the clock that is usual for the language: 12-hour with AM/PM in English, and 24-hour in Nepali.
+
+## Pattern letters
+
+Write explicit patterns with these letters. Repeating a letter changes the width or form.
+
+Outputs for **2081-12-30 00:05:09.120450** and **2090-11-01 21:59:59** Nepal Time:
+
+| Pattern | Meaning | English | Nepali |
+|:--|:--|:--|:--|
+| `G` | era | BS | बि सं |
+| `GGGG` | era, long | Bikram Sambat | बिक्रम संबत |
+| `y`, `yyyy` | year | 2081 | २०८१ |
+| `yy` | year, 2 digits | 81 | ८१ |
+| `Q` / `QQ` | quarter | 4 / 04 | ४ / ०४ |
+| `QQQ` | quarter, short | Q4 | चौथो त्रैमासिक |
+| `QQQQ` | quarter, long | 4th quarter | चौथो त्रैमासिक |
+| `M` / `MM` | month number | 12 / 12 · 11 / 11 | १२ / १२ · ११ / ११ |
+| `MMM` | month, short | Cha · Fal | चै · फा |
+| `MMMM` | month | Chaitra · Falgun | चैत्र · फाल्गुण |
+| `MMMMM` | month, narrow | C · F | चै · फा |
+| `MMMMMM` | month, colloquial | Chait · Fagun | चैत · फागुन |
+| `L`…`LLLLLL` | standalone month | same as `M`…`MMMMMM` | same as `M`…`MMMMMM` |
+| `d` / `dd` | day of month | 30 · 1 / 01 | ३० · १ / ०१ |
+| `D` | day of year | 365 · 306 | ३६५ · ३०६ |
+| `E`, `EE`, `EEE` | weekday, short | Sat · Mon | शनि · सोम |
+| `EEEE` | weekday | Saturday · Monday | शनिबार · सोमबार |
+| `EEEEE` | weekday, narrow | S · M | श · सो |
+| `ccc` / `cccc` | standalone weekday | Sat / Saturday | शनि / शनिबार |
+| `a` | AM/PM, or time of day in Nepali | AM · PM | बिहान · बेलुकी |
+| `h` / `hh` | hour 1–12 | 12 · 9 / 09 | १२ · ९ / ०९ |
+| `H` / `HH` | hour 0–23 | 0 / 00 · 21 | ० / ०० · २१ |
+| `K` | hour 0–11 | 0 · 9 | ० · ९ |
+| `k` | hour 1–24 | 24 · 21 | २४ · २१ |
+| `m` / `mm` | minute | 5 / 05 | ५ / ०५ |
+| `s` / `ss` | second | 9 / 09 | ९ / ०९ |
+| `S`, `SSS` | fraction of a second, milliseconds | 120 | १२० |
+| `SSSSSS` | fraction of a second, microseconds | 120450 | १२०४५० |
+| `z`, `v` | time zone | NPT | NPT |
+| `zzzz` | time zone, long | Nepal Time | नेपाल समय |
+| `Z` | offset | +0545 | +०५४५ |
+| `ZZZZ` | offset, GMT form | GMT+05:45 | GMT+०५:४५ |
+| `'text'` | quoted literal | `'at'` → at | |
+| `''` | a single quote | `''yy` → '81 | |
+
+In Nepali, `a` gives the time of day instead of AM/PM:
+
+```dart
+for (final hour in [5, 12, 14, 18, 21]) {
+  NepaliDateFormat('h a', .nepali).format(NepaliDateTime(2080, 1, 1, hour));
+}
+// ५ बिहान, १२ मध्यान्न, २ दिउसो, ६ साँझ, ९ बेलुकी
+```
+
+The time-zone letters show the zone of the value: `NPT` for Nepal Time, `UTC` for UTC, and the device's zone name for local values. (intl leaves them empty.)
+
+```dart
+NepaliDateFormat('HH:mm z').format(NepaliDateTime.nepal(2080, 1, 1, 9)); // 09:00 NPT
+NepaliDateFormat('HH:mm Z').format(NepaliDateTime.utc(2080, 1, 1, 9));   // 09:00 +0000
+```
+
+### Examples
+
+```dart
+final date = NepaliDateTime.parse('2072-01-12T11:56:25');
+
+NepaliDateFormat("yyyy.MM.dd G 'at' HH:mm:ss").format(date); // 2072.01.12 BS at 11:56:25
+NepaliDateFormat("EEE, MMM d, ''yy").format(date);           // Sat, Bai 12, '72
+NepaliDateFormat('h:mm a').format(date);                     // 11:56 AM
+NepaliDateFormat("hh 'o''clock' a").format(date);            // 11 o'clock AM
+NepaliDateFormat('yyyy.MMMM.dd GGGG hh:mm a').format(date);
+// 2072.Baishakh.12 Bikram Sambat 11:56 AM
+NepaliDateFormat('yyyy.MMMM.dd GGGG hh:mm a', .nepali).format(date);
+// २०७२.बैशाख.१२ बिक्रम संबत ११:५६ बिहान
+```
+
+<Aside type="caution" title="A pattern that is also a skeleton name is resolved as a skeleton">
+  The constructor checks skeleton names first. `NepaliDateFormat('H')` is the `H` **skeleton**, whose pattern is `HH`, so it prints `00` at midnight. `'H:mm'` isn't a skeleton name, so it prints `0:05`. The same goes for `'d'`, `'M'`, `'MMM'` (pattern `LLL`), `'y'`, `'m'` and `'s'`. Usually the result is the same. If you need the bare letter, add a literal to the pattern.
+</Aside>
+
+## Combining formats
+
+`addPattern(pattern, [separator = ' '])` returns a **new** formatter: this formatter's pattern, then the separator, then `pattern`. A skeleton name passed to it is resolved, as in the constructor. The `add_*()` methods add the skeleton they're named after:
+
+```dart
+NepaliDateFormat.yMd().add_jm().format(date);                      // 1/12/2072 11:56 AM
+NepaliDateFormat.yMMMd().addPattern('Hm', ' · ').format(date);     // Bai 12, 2072 · 11:56
+NepaliDateFormat.yMMMMd().addPattern("'at' h:mm a").format(date);  // Baishakh 12, 2072 at 11:56 AM
+```
+
+<Aside type="caution" title="Formatters are immutable">
+  In `package:intl`, `addPattern` changes the formatter. Here it **returns a new one** and the original doesn't change:
+
+  ```dart
+  final f = NepaliDateFormat.yMd();
+  final f2 = f.add_jm();
+  f.pattern;  // M/d/y
+  f2.pattern; // M/d/y h:mm a
+  ```
+
+  Calling `f.add_jm();` without using the result does nothing.
+</Aside>
+
+## Language
+
+<Tabs>
+  <TabItem label="Per formatter">
+    ```dart
+    NepaliDateFormat.yMMMMEEEEd(.nepali).format(date); // २०७२ बैशाख १२, शनिबार
+    NepaliDateFormat('EEE, d MMM y', .nepali).format(NepaliDateTime(2081, 12, 30));
+    // शनि, ३० चै २०८१
+    ```
+  </TabItem>
+  <TabItem label="Default">
+    ```dart
+    NepaliUtils.defaultLanguage = .nepali;
+    NepaliDateFormat.yMMMMEEEEd().format(date); // २०७२ बैशाख १२, शनिबार
+    ```
+  </TabItem>
+  <TabItem label="Scoped">
+    ```dart
+    final text = NepaliUtils.withLanguage(.nepali, () {
+      return NepaliDateFormat.yMMMd().format(NepaliDateTime(2081, 1, 15));
+    });
+    // २०८१ बै १५
+    ```
+  </TabItem>
+</Tabs>
+
+See [Language](/getting-started/language/) for details.
+
+## Time zones when formatting
+
+The formatter prints the fields **in the value's own time zone**. To format an instant as Nepal Time, convert it first:
+
+```dart
+final instant = DateTime.utc(2024, 1, 1);
+
+NepaliDateFormat('yyyy-MM-dd HH:mm').format(instant);
+// 2080-09-16 00:00 (UTC fields)
+NepaliDateFormat('yyyy-MM-dd HH:mm').format(instant.toNepaliDateTime().toNepalTime());
+// 2080-09-16 05:45
+```
+
+## See also
+
+- [`NepaliDateFormat` API](https://pub.dev/documentation/nepali_utils/latest/nepali_utils/NepaliDateFormat-class.html)
+- [Nepali date & time](/guides/date-time/)
+- [Relative time](/guides/moment/) for text like "3 days ago" and "Yesterday at 9:04 PM"

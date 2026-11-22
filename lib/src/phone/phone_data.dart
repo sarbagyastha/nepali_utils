@@ -1,0 +1,62 @@
+// Copyright 2026 Sarbagya Dhaubanjar. All rights reserved.
+// Use of this source code is governed by a MIT license that can be
+// found in the LICENSE file.
+
+// From the STD code list in "Telephone numbers in Nepal" on Wikipedia, with
+// the towns listed there mapped to their districts. The list isn't
+// exhaustive, so a number with an unlisted area code is still valid.
+
+/// Landline area codes (with the trunk `0`) and the districts they serve,
+/// in English and Nepali.
+const Map<String, (String, String)> areaCodes = {
+  '01': ('Kathmandu Valley', 'काठमाडौं उपत्यका'),
+  '010': ('Nuwakot, Dhading, Rasuwa', 'नुवाकोट, धादिङ, रसुवा'),
+  '011': ('Kavrepalanchok', 'काभ्रेपलाञ्चोक'),
+  '021': ('Morang', 'मोरङ'),
+  '023': ('Jhapa', 'झापा'),
+  '024': ('Panchthar, Taplejung', 'पाँचथर, ताप्लेजुङ'),
+  '025': ('Sunsari', 'सुनसरी'),
+  '026': ('Dhankuta, Terhathum', 'धनकुटा, तेह्रथुम'),
+  '027': ('Ilam', 'इलाम'),
+  '029': ('Bhojpur, Sankhuwasabha', 'भोजपुर, सङ्खुवासभा'),
+  '031': ('Saptari', 'सप्तरी'),
+  '033': ('Siraha', 'सिराहा'),
+  '035': ('Udayapur', 'उदयपुर'),
+  '036': ('Khotang', 'खोटाङ'),
+  '037': ('Okhaldhunga', 'ओखलढुङ्गा'),
+  '041': ('Dhanusha', 'धनुषा'),
+  '044': ('Mahottari', 'महोत्तरी'),
+  '046': ('Sarlahi', 'सर्लाही'),
+  '047': ('Sindhuli', 'सिन्धुली'),
+  '048': ('Ramechhap', 'रामेछाप'),
+  '049': ('Dolakha', 'दोलखा'),
+  '051': ('Parsa', 'पर्सा'),
+  '053': ('Bara', 'बारा'),
+  '055': ('Rautahat', 'रौतहट'),
+  '056': ('Chitwan', 'चितवन'),
+  '057': ('Makwanpur', 'मकवानपुर'),
+  '061': ('Kaski', 'कास्की'),
+  '063': ('Syangja', 'स्याङ्जा'),
+  '064': ('Gorkha', 'गोरखा'),
+  '065': ('Tanahun', 'तनहुँ'),
+  '066': ('Lamjung', 'लमजुङ'),
+  '067': ('Parbat', 'पर्वत'),
+  '068': ('Baglung', 'बागलुङ'),
+  '069': ('Myagdi', 'म्याग्दी'),
+  '071': ('Rupandehi', 'रुपन्देही'),
+  '075': ('Palpa', 'पाल्पा'),
+  '076': ('Kapilvastu', 'कपिलवस्तु'),
+  '077': ('Arghakhanchi', 'अर्घाखाँची'),
+  '078': ('Nawalparasi', 'नवलपरासी'),
+  '079': ('Gulmi', 'गुल्मी'),
+  '081': ('Banke', 'बाँके'),
+  '082': ('Dang', 'दाङ'),
+  '083': ('Surkhet', 'सुर्खेत'),
+  '084': ('Bardiya', 'बर्दिया'),
+  '091': ('Kailali', 'कैलाली'),
+  '093': ('Darchula', 'दार्चुला'),
+  '094': ('Doti', 'डोटी'),
+  '096': ('Dadeldhura', 'डडेल्धुरा'),
+  '097': ('Achham', 'अछाम'),
+  '099': ('Kanchanpur', 'कञ्चनपुर'),
+};

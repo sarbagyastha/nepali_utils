@@ -47,57 +47,51 @@ void main(List<String> arguments) {
   print(date8.format(gorkhaEarthQuake));
 
   heading('Nepali Number Format');
-  final currencyFormat = NepaliNumberFormat(
-    symbol: 'Rs.',
-  );
-  final commaSeparated = NepaliNumberFormat(
+  final currencyFormat = NepaliNumberFormat.simpleCurrency(decimalDigits: 0);
+  final commaSeparated = NepaliNumberFormat.decimalPatternDigits(
     decimalDigits: 2,
-    isMonetory: true,
   );
 
   // Sets default language for nepali utilities to be Nepali.
-  NepaliUtils(Language.nepali);
+  NepaliUtils.defaultLanguage = Language.nepali;
 
-  final inWords = NepaliNumberFormat(
-    inWords: true,
-  );
-  final currencyInWords = NepaliNumberFormat(
-    inWords: true,
-    isMonetory: true,
-    decimalDigits: 2,
-  );
-  print('123456 -> ${currencyFormat.format<int>(123456)}');
-  print('57.0 -> ${commaSeparated.format<double>(57)}');
-  print('100.0 -> ${commaSeparated.format<String>('100.0')}');
-  print('9999.0 -> ${commaSeparated.format<String>('9999.0')}');
-  print('123456789.6548 -> ${commaSeparated.format<double>(123456789.6548)}');
-  print('123456 -> ${inWords.format<String>('123456')}');
-  print('123456789.6548 -> ${currencyInWords.format<num>(123456789.6548)}');
+  final inWords = NepaliNumberFormat.words();
+  final currencyInWords = NepaliNumberFormat.words(currency: true);
+  print('123456 -> ${currencyFormat.format(123456)}');
+  print('57.0 -> ${commaSeparated.format(57)}');
+  print('100.0 -> ${commaSeparated.format('100.0')}');
+  print('9999.0 -> ${commaSeparated.format('9999.0')}');
+  print('123456789.6548 -> ${commaSeparated.format(123456789.6548)}');
+  print('123456 -> ${inWords.format('123456')}');
+  print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
+  print('1234567 -> ${NepaliNumberFormat.compact().format(1234567)}');
+  print('१२,३४,५६७.८९ -> ${commaSeparated.parse('१२,३४,५६७.८९')}');
 
-  final formatter = NepaliNumberFormat(
-    decimalDigits: 2,
-    includeDecimalIfZero: false,
-  );
-  print(
-    '123.00 -> ${formatter.format(123.001)}',
-  );
+  final formatter = commaSeparated.copyWith(includeDecimalIfZero: false);
+  print('123.00 -> ${formatter.format(123.001)}');
 
   heading('Nepali Unicode');
+  const unicode = NepaliUnicode();
   print(
-    NepaliUnicode.convert(
-      "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii",
-    ),
+    unicode.convert("sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"),
   );
-  print(
-    NepaliUnicode.convert('saarwabhauma bhai failiekaa, mecii-mahaakaalii\n'),
-  );
+  print(unicode.convert('saarwabhauma bhai failiekaa, mecii-mahaakaalii'));
+  print(unicode.convert('mero naam {Sarbagya} ho'));
+  print(unicode.toRoman('नेपाली'));
+
+  const google = NepaliUnicode(style: .google);
+  print(google.convert('nepaal ko maayaa, bhagawaan~ ko dayaa'));
+  print(google.toRoman('क्षत्रिय'));
+  print(const NepaliUnicode(style: .mppRomanized).convert('nepal'));
+
+  heading('Preeti & Devanagari');
+  print(Preeti.toUnicode('sfof{no / lxdfn'));
+  print(Preeti.fromUnicode('काठमाडौं'));
+  print(Devanagari.aksharas('संस्कृति'));
+  print(Devanagari.toEnglishDigits('२०८१'));
 
   heading('Nepali Moment - In Nepali');
-  print(
-    NepaliMoment.fromBS(
-      NepaliDateTime.parse('2076-03-22T08:41:14'),
-    ),
-  );
+  print(NepaliMoment.fromBS(NepaliDateTime.parse('2076-03-22T08:41:14')));
 
   print(
     NepaliMoment.fromBS(
@@ -113,12 +107,8 @@ void main(List<String> arguments) {
   );
 
   heading('Nepali Moment - In English');
-  NepaliUtils().language = Language.english;
-  print(
-    NepaliMoment.fromBS(
-      NepaliDateTime.parse('2078-09-27T08:41:14'),
-    ),
-  );
+  NepaliUtils.defaultLanguage = Language.english;
+  print(NepaliMoment.fromBS(NepaliDateTime.parse('2078-09-27T08:41:14')));
 
   print(
     NepaliMoment.fromBS(
@@ -131,6 +121,19 @@ void main(List<String> arguments) {
       DateTime.parse('2019-06-02T18:22:14'),
       referenceDate: DateTime.parse('2019-06-15T18:34:14'),
     ),
+  );
+
+  heading('Nepali Moment - More');
+  final moment = NepaliMoment();
+  final reference = DateTime(2024, 1, 10, 8);
+  print(moment.formatDuration(const Duration(days: 3), withSuffix: true));
+  print(moment.formatUnit(-1, MomentUnit.day, numeric: false));
+  print(moment.calendar(DateTime(2024, 1, 9, 21, 4), reference: reference));
+  print(
+    NepaliMoment(
+      language: Language.nepali,
+      style: MomentStyle.short,
+    ).format(DateTime(2024, 1, 10, 5), reference: reference),
   );
 }
 

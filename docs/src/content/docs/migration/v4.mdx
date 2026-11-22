@@ -1,0 +1,568 @@
+---
+title: Upgrading to 4.0
+description: Step-by-step guide to migrating from nepali_utils 3.x to 4.0, covering the time-zone changes in NepaliDateTime, the intl-style NepaliDateFormat and NepaliNumberFormat, the NepaliMoment wording and the NepaliUnicode converter.
+---
+
+import { Tabs, TabItem, Aside, Steps, Badge } from '@astrojs/starlight/components';
+
+nepali_utils 4.0 is a near-total rewrite. Most of the API is still there, but almost every class has changed. Some changes break the build, so the compiler will point you to them. Others compile fine and **return different values**. This guide covers both kinds.
+
+Changes that compile but behave differently are marked with <Badge text="Silent" variant="caution" />. Changes the compiler will report are marked with <Badge text="Compile error" variant="danger" />.
+
+<Aside type="caution" title="Read the silent changes first">
+These five changes still compile but give different results. Search your code for each of them:
+
+1. `NepaliDateTime.now()` now returns **local** time, not Nepal time. Use `NepaliDateTime.nepalNow()`. [Details](#now-returns-local-time)
+2. `DateTime.toNepaliDateTime()` now **keeps the time zone** of the `DateTime`. Append `.toNepalTime()` to get Nepal time as before. [Details](#tonepalidatetime-keeps-the-time-zone)
+3. `NepaliNumberFormat` **rounds** numbers instead of truncating them, and its defaults are different. [Details](#behaviour-changes)
+4. `NepaliMoment` uses new wording and new thresholds, such as `a few seconds ago` and `a day ago`. [Details](#nepalimoment)
+5. `NepaliUnicode` now leaves text inside `{}` as it is. [Details](#nepaliunicode)
+</Aside>
+
+## TL;DR checklist
+
+<Steps>
+
+1. **Upgrade the SDK.** 4.0 requires Dart `^3.13.0`.
+
+   ```yaml title="pubspec.yaml"
+   environment:
+     sdk: ^3.13.0
+
+   dependencies:
+     nepali_utils: ^4.0.0
+   ```
+
+2. **Import only `package:nepali_utils/nepali_utils.dart`.** The `src/` files have moved, and every public class is now `final`.
+
+3. **Set the default language through the static API.** Replace `NepaliUtils(lang)` with `NepaliUtils.defaultLanguage = lang`.
+
+4. **Check every `NepaliDateTime.now()` call.** Use `NepaliDateTime.nepalNow()` wherever you meant "the current time in Nepal".
+
+5. **Check every `toNepaliDateTime()` call on a UTC or server timestamp.** Append `.toNepalTime()` if you need Nepal time.
+
+6. **Rewrite `NepaliNumberFormat(...)` calls with named arguments.** Use the named constructors: `decimalPattern`, `decimalPatternDigits`, `currency`, `simpleCurrency` and `words`.
+
+7. **Make `NepaliUnicode` an instance.** Write `const NepaliUnicode().convert(text)`.
+
+8. **Update tests that compare strings.** Date skeletons, currency spacing, `NepaliMoment` wording and number rounding all give different output now.
+
+</Steps>
+
+## Platform
+
+### Dart 3.13
+
+<Badge text="Compile error" variant="danger" />
+
+The package uses primary constructors, dot shorthands, records, patterns and extension types, so it needs **Dart 3.13 or later**. Pub won't resolve 4.0 on older SDKs.
+
+### Class modifiers
+
+<Badge text="Compile error" variant="danger" />
+
+Every public class is now `final`. This includes `NepaliDateTime`, `NepaliDateFormat`, `NepaliNumberFormat`, `NepaliMoment` and `NepaliUnicode`. `NepaliUtils`, `Preeti` and `Devanagari` are `abstract final` and contain only static members. You can no longer extend or implement these classes. If you wrapped them, use composition instead.
+
+`NepaliDateTime` still implements `DateTime`, so you can pass it anywhere a `DateTime` is expected.
+
+### Imports
+
+<Badge text="Compile error" variant="danger" />
+
+The `lib/src/` folder has been reorganised. For example, `src/nepali_date_time.dart` is now `src/date_time/nepali_date_time.dart`. Deep imports break, so import the library instead:
+
+```dart
+import 'package:nepali_utils/nepali_utils.dart';
+```
+
+## Language and `NepaliUtils`
+
+`NepaliUtils` was a singleton that stored a mutable `language`. It now works like intl's `Intl.defaultLocale` and `Intl.withLocale`, and it only has static members.
+
+| 3.x | 4.0 |
+|---|---|
+| `NepaliUtils(Language.nepali)` | `NepaliUtils.defaultLanguage = Language.nepali` |
+| `NepaliUtils().language` | `NepaliUtils.currentLanguage` |
+| `NepaliUtils().language = lang` | `NepaliUtils.defaultLanguage = lang` |
+| _(none)_ | `NepaliUtils.withLanguage(lang, () => ...)` |
+
+<Tabs syncKey="version">
+<TabItem label="3.x">
+
+```dart
+NepaliUtils(Language.nepali);
+final isNepali = NepaliUtils().language == Language.nepali;
+```
+
+</TabItem>
+<TabItem label="4.0">
+
+```dart
+NepaliUtils.defaultLanguage = Language.nepali;
+final isNepali = NepaliUtils.currentLanguage == Language.nepali;
+
+// Override the language only for some code, including async work.
+final text = NepaliUtils.withLanguage(Language.english, () {
+  return NepaliDateFormat.yMd().format(NepaliDateTime(2076, 8, 5));
+}); // 8/5/2076
+```
+
+</TabItem>
+</Tabs>
+
+<Aside>
+Formatters read the language **when they are created**, not when they format. A `NepaliNumberFormat` created before you change `NepaliUtils.defaultLanguage` keeps its old language. `withLanguage` only affects formatters created inside the callback.
+</Aside>
+
+`Language` also converts to and from locale identifiers: `Language.parse('ne_NP')`, `Language.tryParse`, `Language.fromLocale`, `localeName` and `toLanguageTag()`. See [Language](/getting-started/language/).
+
+## `NepaliDateTime`
+
+`NepaliDateTime` is now based on an **instant**, just like `DateTime`. It stores `microsecondsSinceEpoch` plus a time zone, and shows its fields in one of three zones: local, UTC or Nepal Time.
+
+In 3.x, a `NepaliDateTime` was a set of fields that were always assumed to be in Nepal Time. This change fixes a lot of incorrect behaviour on devices outside Nepal and with UTC timestamps. It also changes results that used to "just work" in Nepal.
+
+### `now()` returns local time
+
+<Badge text="Silent" variant="caution" />
+
+<Aside type="caution">
+`NepaliDateTime.now()` now behaves like `DateTime.now()` and returns the device's **local** time. On a device outside Nepal, it no longer gives the current time in Nepal. Use `NepaliDateTime.nepalNow()` for that.
+</Aside>
+
+<Tabs syncKey="version">
+<TabItem label="3.x">
+
+```dart
+// Always Nepal time, whatever the device's time zone.
+final today = NepaliDateTime.now();
+```
+
+</TabItem>
+<TabItem label="4.0">
+
+```dart
+// The current time in Nepal (e.g. for "today" in the Nepali calendar).
+final today = NepaliDateTime.nepalNow();
+today.isNepalTime; // true
+
+// Local time, like DateTime.now().
+final local = NepaliDateTime.now();
+```
+
+</TabItem>
+</Tabs>
+
+On a device set to Nepal Time, both calls show the same fields. `nepalNow()` is still the correct choice when you mean Nepal time.
+
+### `toNepaliDateTime()` keeps the time zone
+
+<Badge text="Silent" variant="caution" />
+
+<Aside type="caution">
+`DateTime.toNepaliDateTime()` keeps both the instant **and the time zone**. A UTC `DateTime` gives a UTC `NepaliDateTime`, and a local one gives a local `NepaliDateTime`. In 3.x, the result was always shifted to Nepal Time. This affects **every device, including those in Nepal**, whenever the `DateTime` is UTC, for example a timestamp from an API parsed with `DateTime.parse('...Z')`.
+</Aside>
+
+<Tabs syncKey="version">
+<TabItem label="3.x">
+
+```dart
+final utc = DateTime.utc(2024, 1, 1);
+print(utc.toNepaliDateTime()); // 2080-09-16 05:45:00.000
+```
+
+</TabItem>
+<TabItem label="4.0">
+
+```dart
+final utc = DateTime.utc(2024, 1, 1);
+print(utc.toNepaliDateTime()); // 2080-09-16 00:00:00.000Z
+
+// The 3.x behaviour:
+print(utc.toNepaliDateTime().toNepalTime()); // 2080-09-16 05:45:00.000
+```
+
+</TabItem>
+</Tabs>
+
+The unreleased `toNepaliDateTimeFromInstant()` (only on the `develop` branch) has been removed. Use `toNepaliDateTime().toNepalTime()` instead.
+
+`NepaliDateTime.fromDateTime(dateTime)` is no longer deprecated. It does the same thing as `toNepaliDateTime()`.
+
+### `toDateTime()`, `toUtc()` and `toLocal()`
+
+| Member | 3.x | 4.0 |
+|---|---|---|
+| `toDateTime()` | A local `DateTime` with the same wall-clock fields | The **same instant**: UTC values give a UTC `DateTime`, others give a local one |
+| `toUtc()` | Threw `UnimplementedError` | Converts to UTC |
+| `toLocal()` | Returned `this` | Converts to local time |
+| `toNepalTime()` | _(none)_ | Converts to Nepal Time |
+| `isUtc` / `isNepalTime` | Always `false` / _(none)_ | Reflects the zone |
+| `timeZoneName` / `timeZoneOffset` | Always `Nepal Time` / `+5:45` | The real zone: `NPT` / `5:45` for Nepal Time, `UTC`, or the local zone |
+
+```dart
+final nepal = NepaliDateTime.nepal(2081, 1, 1, 10);
+print(nepal.toUtc()); // 2081-01-01 04:15:00.000Z
+print(nepal.timeZoneName); // NPT
+```
+
+### Equality
+
+<Badge text="Silent" variant="caution" />
+
+`==` and `hashCode` now compare the instant and the time zone. Before, they compared identity, so two equal dates were never `==`. Values used as `Map` keys or in a `Set` now deduplicate as you would expect.
+
+```dart
+NepaliDateTime(2080, 1, 1) == NepaliDateTime(2080, 1, 1); // 3.x: false, 4.0: true
+```
+
+`difference`, `isBefore`, `isAfter`, `isAtSameMomentAs` and `compareTo` now accept any `DateTime`, not only another `NepaliDateTime`.
+
+### Normalisation and range
+
+<Badge text="Silent" variant="caution" />
+
+Out-of-range components roll over like they do in `DateTime`. Years outside **1969–2250 BS** throw a `RangeError`. Before, they only failed an `assert`, which does nothing in release builds.
+
+```dart
+print(NepaliDateTime(2080, 1, 35)); // 2080-02-04 00:00:00.000 (3.x kept day 35)
+print(NepaliDateTime(2080, 13, 1)); // 2081-01-01 00:00:00.000
+NepaliDateTime(2300); // throws RangeError
+```
+
+The constructors are now factories. `NepaliDateTime(...)` creates a **local** value. Use `NepaliDateTime.utc(...)` or `NepaliDateTime.nepal(...)` for the other zones.
+
+### `parse`
+
+<Badge text="Silent" variant="caution" />
+
+`NepaliDateTime.parse` now follows `DateTime.parse`. In 3.x, a `Z` or offset suffix was accepted but ignored.
+
+| Input | 3.x | 4.0 |
+|---|---|---|
+| `2080-01-01T10:00:00` | `10:00`, Nepal Time | `10:00` local |
+| `2080-01-01T10:00:00Z` | `10:00`, Nepal Time | `10:00` UTC |
+| `2080-01-01T10:00:00+05:45` | `10:00`, Nepal Time | `10:00` Nepal Time |
+| `2080-01-01T10:00:00+01:00` | `10:00`, Nepal Time | `09:00` UTC |
+
+### Other changes
+
+- New constructors: `NepaliDateTime.utc`, `.nepal`, `.nepalNow`, `.fromMicrosecondsSinceEpoch` and `.fromMillisecondsSinceEpoch`.
+- New members: `copyWith`, `toNepalTime` and `isNepalTime`.
+- New constants: `NepaliDateTime.sunday` … `saturday` and `baishakh` … `chaitra`.
+- `format(pattern)`, `mergeTime`, `totalDays`, `totalDaysInYear`, `add`, `subtract` and `tryParse` work as before.
+
+## `NepaliDateFormat`
+
+`NepaliDateFormat` now follows `package:intl`'s `DateFormat` exactly. It is an immutable `final class`. Its `format` accepts **any `DateTime`** and keeps that value's time zone.
+
+```dart
+NepaliDateFormat.yMd().format(DateTime(2019, 11, 21)); // 8/5/2076
+NepaliDateFormat(); // no pattern: uses 'yMMMMd jms'
+```
+
+### Skeleton output
+
+<Badge text="Silent" variant="caution" />
+
+The named constructors are now intl's skeletons. English uses intl's `en` layouts and Nepali uses its `ne` layouts. A skeleton name passed to the default constructor, as in `NepaliDateFormat('yMd')`, is resolved the same way. The table shows Mangsir 5, 2076, 9:04 PM:
+
+| Constructor | 3.x | 4.0 English | 4.0 Nepali |
+|---|---|---|---|
+| `yM` | `2076/08` | `8/2076` | `२०७६-०८` |
+| `yMd` | `2076/08/05` | `8/5/2076` | `२०७६-०८-०५` |
+| `yMEd` | `Thu, 2076/08/05` | `Thu, 8/5/2076` | `२०७६-०८-०५, बिहि` |
+| `yMMMd` | `मं ५, २०७६` (Nepali) | `Marg 5, 2076` | `२०७६ मं ५` |
+| `jm` | `बेलुकी ९:०४` (Nepali) | `9:04 PM` | `२१:०४` (24-hour) |
+| `H` (at 9:04 AM) | `9` | `09` | `०९` |
+
+<Aside type="caution">
+English time skeletons (`j`, `jm`, `jms`, …) put a **narrow no-break space** (`U+202F`) before AM/PM, as intl does. A test that expects `'9:04 PM'` with an ordinary space will fail.
+</Aside>
+
+If you need the 3.x layout, pass the old pattern explicitly. For example, `NepaliDateFormat('y/MM/dd')` gives `2076/08/05`.
+
+### Pattern letters
+
+<Badge text="Silent" variant="caution" />
+
+| Pattern | 3.x | 4.0 |
+|---|---|---|
+| `E` / `EE` / `EEE` | `T` / `Thu` / `Thursday` | `Thu` (all three) |
+| `EEEE` / `EEEEE` | not supported (printed as is) | `Thursday` / `T` |
+| `G` / `GG` / `GGG` | `BS` / `B.S.` / `Bikram Sambat` | `BS` (all three); `GGGG` is `Bikram Sambat` |
+| `a` / `aa` (English) | `pm` / `PM` | `PM` |
+| `MMMMM` | `Marga` (colloquial) | `M` (narrow); the colloquial name is now `MMMMMM` |
+| `S` / `SS` | `1` / `12` | `123` (at least 3 digits) |
+| `QQQ` / `QQQQ` (Nepali) | `Q3` / `3rd quarter` | `तेस्रो त्रैमासिक`; `Q` digits are Devanagari |
+
+### Bugs fixed
+
+| Constructor or pattern | 3.x | 4.0 |
+|---|---|---|
+| `NepaliDateFormat.Hm()` | `21:08` (minutes showed the month: `HH:MM`) | `21:04` (`HH:mm`) |
+| `NepaliDateFormat.m()` | `9` (showed the hour) | `4` (`m`) |
+| `NepaliDateFormat.ms()` | `9:04` (`hh:mm`) | `04:00` (`mm:ss`) |
+| `h` at midnight | `0` | `12` |
+| `hh` from 1 PM to 9 PM | `9` (not padded) | `09` |
+
+Skeletons also respect the default language set through `NepaliUtils`.
+
+### Immutability and new API
+
+`NepaliDateFormat` can't be changed after you create it. `addPattern` and the `add_*()` methods return a **new** formatter:
+
+```dart
+final format = NepaliDateFormat.yMd().add_jm();
+format.format(NepaliDateTime(2076, 8, 5, 21, 4)); // 8/5/2076 9:04 PM
+```
+
+4.0 also adds:
+
+- The pattern letters `L`, `c`, `D`, `K`, `k`, `z`/`v` (`NPT`, `UTC`; `zzzz` is `Nepal Time`) and `Z` (`+0545`).
+- The `EEEEE`, `jmv`, `jmz`, `jv` and `jz` constructors.
+- Skeleton constants such as `NepaliDateFormat.YEAR_MONTH_DAY`.
+
+See [Date formatting](/guides/date-format/).
+
+## `NepaliNumberFormat`
+
+`NepaliNumberFormat` now follows `package:intl`'s `NumberFormat` and is an immutable `final class`. The old constructor with named arguments has been removed. <Badge text="Compile error" variant="danger" />
+
+| 3.x | 4.0 |
+|---|---|
+| `NepaliNumberFormat()` | `NepaliNumberFormat.decimalPattern()` (up to 3 fraction digits), or `NepaliNumberFormat([pattern])` |
+| `NepaliNumberFormat(language: lang)` | `NepaliNumberFormat.decimalPattern(lang)` |
+| `NepaliNumberFormat(decimalDigits: 2)` | `NepaliNumberFormat.decimalPatternDigits(decimalDigits: 2)` |
+| `isMonetory: true, symbol: 'Rs.'` | `NepaliNumberFormat.simpleCurrency()` (`Rs. 1,234.00`) or `.currency(symbol: 'Rs.')` |
+| `symbolOnLeft: false` | `.currency(symbol: 'Rs.', customPattern: '#,##,##0.00 ¤')` |
+| `spaceBetweenAmountAndSymbol: false` | `.currency(symbol: 'Rs.', customPattern: '¤#,##,##0.00')` |
+| `inWords: true` | `NepaliNumberFormat.words()`, which now gives real words. Use `words(useDigits: true)` for the old `1 lakh 23 thousand` style |
+| `inWords: true, isMonetory: true` | `NepaliNumberFormat.words(currency: true)` |
+| `delimiter: ''` | `.copyWith(groupSeparator: '')` |
+| `includeDecimalIfZero: false` | `.copyWith(includeDecimalIfZero: false)` |
+| `format<T>(T? number)`, `null` gave `''` | `format(Object number)`; passing `null` is a compile error |
+
+<Tabs syncKey="version">
+<TabItem label="3.x">
+
+```dart
+NepaliNumberFormat(decimalDigits: 2).format(1234567.891);
+// 12,34,567.89
+
+NepaliNumberFormat(isMonetory: true, symbol: 'Rs.').format(1234);
+// Rs. 1,234
+
+NepaliNumberFormat(isMonetory: true, symbol: 'Rs.', symbolOnLeft: false)
+    .format(1234);
+// 1,234 Rs.
+
+NepaliNumberFormat(inWords: true).format(123456);
+// 1 lakh 23 thousand 4 hundred 56
+
+NepaliNumberFormat(inWords: true, isMonetory: true, language: Language.nepali)
+    .format(123.45);
+// १ सय २३ रुपैया ४५ पैसा
+
+NepaliNumberFormat(delimiter: '').format(1234567);
+// 1234567
+```
+
+</TabItem>
+<TabItem label="4.0">
+
+```dart
+NepaliNumberFormat.decimalPatternDigits(decimalDigits: 2).format(1234567.891);
+// 12,34,567.89
+
+NepaliNumberFormat.simpleCurrency(decimalDigits: 0).format(1234);
+// Rs. 1,234
+
+NepaliNumberFormat.currency(
+  symbol: 'Rs.',
+  decimalDigits: 0,
+  customPattern: '#,##,##0 ¤',
+).format(1234);
+// 1,234 Rs.
+
+NepaliNumberFormat.words().format(123456);
+// one lakh twenty-three thousand four hundred fifty-six
+NepaliNumberFormat.words(useDigits: true).format(123456);
+// 1 lakh 23 thousand 4 hundred 56
+
+NepaliNumberFormat.words(language: Language.nepali, currency: true)
+    .format(123.45);
+// एक सय तेइस रुपैयाँ पैंतालीस पैसा
+
+NepaliNumberFormat.decimalPattern().copyWith(groupSeparator: '').format(1234567);
+// 1234567
+```
+
+</TabItem>
+</Tabs>
+
+### Behaviour changes
+
+<Aside type="caution" title="Rounding">
+Numbers are now **rounded half away from zero** instead of truncated. Doubles are rounded as written, so `1.005` gives `1.01`.
+
+```dart
+NepaliNumberFormat.decimalPatternDigits(decimalDigits: 2).format(2.999);
+// 3.00 (3.x gave 2.99)
+```
+</Aside>
+
+- **Default fraction digits.** In 3.x, `decimalDigits` defaulted to `0` for an `int` and `2` for a `double` or `String`, with trailing zeros kept. `decimalPattern()` shows **up to 3** fraction digits and drops trailing zeros. `1234.5` gives `1,234.5` (it was `1,234.50`), and `1234567.891` gives `12,34,567.891`. Use `decimalPatternDigits(decimalDigits: n)` for a fixed number of digits.
+- **Currency always has 2 decimals.** `currency()` and `simpleCurrency()` give `Rs. 1,234.00` for an `int`, where 3.x gave `Rs. 1,234`. Pass `decimalDigits: 0` to keep the old output.
+- **Currency spacing.** Currency patterns are taken from intl's `ne` locale, with a **no-break space** (`U+00A0`) between the symbol and the amount. A test that compares against `'Rs. 1,234.00'` with an ordinary space will fail.
+- **Currency defaults.** `currency()` uses `NPR` when you don't pass a `symbol`. `simpleCurrency()` uses `Rs.` / `रु.`. In 3.x, `isMonetory` without a `symbol` showed no symbol.
+- **Spelling.** In Nepali, rupees is now spelled `रुपैयाँ` (was `रुपैया`).
+- **Words without zero groups.** `words(useDigits: true).format(100000)` gives `1 lakh`. 3.x gave `1 lakh 00 thousand 0 hundred 00`.
+
+4.0 also adds percent and compact formats (`12.3L`, `12.3 lakh`), custom patterns, `parse`/`tryParse` with Devanagari digits, significant digits, and full support for negatives, `BigInt` and long numeric strings. See [Number formatting](/guides/number-format/).
+
+## `NepaliMoment`
+
+`NepaliMoment` is now an immutable formatter in the style of moment.js. `fromBS` and `fromAD` still work as static shorthands, but the `showToday` parameter has been removed. It had no effect. <Badge text="Compile error" variant="danger" />
+
+<Tabs syncKey="version">
+<TabItem label="3.x">
+
+```dart
+NepaliMoment.fromAD(date, referenceDate: now);
+NepaliMoment.fromBS(date, showToday: true);
+```
+
+</TabItem>
+<TabItem label="4.0">
+
+```dart
+NepaliMoment.fromAD(date, referenceDate: now);
+NepaliMoment.fromAD(date, language: Language.nepali);
+
+// Or create a reusable formatter:
+final moment = NepaliMoment(language: Language.nepali);
+moment.format(date, reference: now);
+
+// Instead of showToday:
+NepaliMoment().calendar(date); // e.g. Today at 9:04 PM
+NepaliMoment().formatUnit(0, MomentUnit.day, numeric: false); // today
+```
+
+</TabItem>
+</Tabs>
+
+### Wording
+
+<Badge text="Silent" variant="caution" />
+
+<Aside type="caution">
+Most phrases changed. Update any test or UI that compares `NepaliMoment` output to a fixed string.
+</Aside>
+
+| Span | 3.x English | 4.0 English | 3.x Nepali | 4.0 Nepali |
+|---|---|---|---|---|
+| 10 seconds ago | `few moment ago` | `a few seconds ago` | `केही क्षण पहिले` | `केही क्षण पहिले` |
+| 1 minute ago | `one minute ago` | `a minute ago` | `एक मिनेट पहिले` | `एक मिनेट पहिले` |
+| 5 minutes ago | `5 minute ago` | `5 minutes ago` | `५ मिनेट पहिले` | `५ मिनेट पहिले` |
+| 50 minutes ago | `about an hour ago` | `an hour ago` | `लगभग एक घण्टा पहिले` | `एक घण्टा पहिले` |
+| 22 hours ago | `22 hours ago` | `a day ago` | `२२ घण्टा पहिले` | `एक दिन पहिले` |
+| 30 hours ago | `one day ago` | `a day ago` | `एक दिन पहिले` | `एक दिन पहिले` |
+| 26 days ago | `26 days ago` | `a month ago` | `२६ दिन पहिले` | `एक महिना पहिले` |
+| 45 days ago | `about a month ago` | `a month ago` | `लगभग एक महिना पहिले` | `एक महिना पहिले` |
+| 60 days ago | `2 month ago` | `2 months ago` | `२ महिना पहिले` | `२ महिना पहिले` |
+| 320 days ago | `11 month ago` | `a year ago` | `११ महिना पहिले` | `एक वर्ष पहिले` |
+| 350 days ago | `12 month ago` | `a year ago` | `१२ महिना पहिले` | `एक वर्ष पहिले` |
+| 400 days ago | `about one year ago` | `a year ago` | `लगभग एक वर्ष पहिले` | `एक वर्ष पहिले` |
+| 800 days ago | `2 year ago` | `2 years ago` | `२ वर्ष पहिले` | `२ वर्ष पहिले` |
+| in 3 days | `3 days from now` | `in 3 days` | `३ दिन पछि` | `३ दिन पछि` |
+
+### Thresholds
+
+The thresholds now match moment.js:
+
+| Elapsed time | Output |
+|---|---|
+| under 45 seconds | `a few seconds` |
+| 45 to 89 seconds | `a minute` |
+| 90 seconds to 44 minutes | `2 minutes` … `44 minutes` |
+| 45 to 89 minutes | `an hour` |
+| 90 minutes to 21 hours | `2 hours` … `21 hours` |
+| 22 to 35 hours | `a day` |
+| 36 hours to 25 days | `2 days` … `25 days` |
+| 26 to 45 days | `a month` |
+| 46 to 319 days | `2 months` … `10 months` |
+| 320 to 547 days | `a year` |
+| 548 days or more | `2 years` … |
+
+`NepaliMoment(useWeeks: true)` adds weeks (`3 weeks ago`) for spans between 7 days and a month. `NepaliMoment(style: MomentStyle.short)` abbreviates the units (`3 hr. ago` / `३ घ. पहिले`).
+
+The language now comes from the `language` argument, or from `NepaliUtils.currentLanguage` when the formatter is created. See [Relative time](/guides/moment/) for `formatDuration`, `formatUnit` and `calendar`.
+
+## `NepaliUnicode`
+
+`NepaliUnicode` used to be a class with static methods. It is now an immutable `Converter<String, String>`. <Badge text="Compile error" variant="danger" />
+
+| 3.x | 4.0 |
+|---|---|
+| `NepaliUnicode.convert(text)` | `const NepaliUnicode().convert(text)` |
+| `NepaliUnicode.convert(text, live: true)` | `const NepaliUnicode().convertLive(text)`, or just `convert`. Devanagari followed by romanized text is joined either way |
+
+<Tabs syncKey="version">
+<TabItem label="3.x">
+
+```dart
+NepaliUnicode.convert('kamal');            // कयल्
+NepaliUnicode.convert('mero naam {Sarbagya} ho'); // {षर्बज्ञ्} converted too
+NepaliUnicode.convert(text, live: true);
+```
+
+</TabItem>
+<TabItem label="4.0">
+
+```dart
+const unicode = NepaliUnicode();
+unicode.convert('kamal');                  // कमल्
+unicode.convert('mero naam {Sarbagya} ho'); // मेरो नाम Sarbagya हो
+unicode.convertLive(text);
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="caution" title="Text inside braces is now left alone">
+Anything between `{` and `}` is copied to the output unchanged, and the braces are removed. If your input contains a literal `{`, escape it as `{{}`. For example, `a {{} b` gives `अ { ब्`.
+</Aside>
+
+The default `classic` style keeps the 3.x rules, with these fixes:
+
+| Input | 3.x | 4.0 |
+|---|---|---|
+| `sayau` | `स​यौ` (with a zero width space) | `सयौ` |
+| `kamal` | `कयल्` | `कमल्` |
+| `chhoraa` | `छ्ोरा` | `छोरा` |
+| `gyaan` | `ज्ञ्ान्` | `ज्ञान्` |
+| `singha` | `सिहं` | `सिंह` |
+
+Also:
+
+- Any whitespace now drops a halant, not only a space.
+- `kchy` no longer gives `क्ष`.
+- Digits are still converted to Devanagari (`25` → `२५`). The new `nepaliDigits: false` option keeps ASCII digits.
+
+4.0 also adds the `google`, `mppRomanized` and `mppTraditional` styles, `toRoman` (the reverse conversion) and stream support. See [Nepali Unicode](/guides/unicode/).
+
+## What's new
+
+These modules are new in 4.0, so there is nothing to migrate:
+
+- **[Preeti and Devanagari](/guides/preeti-devanagari/)**: `Preeti.toUnicode` / `Preeti.fromUnicode` convert legacy Preeti-font text. `Devanagari` adds digit conversion, detection and akshara splitting.
+- **[Measurement units](/guides/measurement/)**: `NepaliArea` (ropani-aana-paisa-daam, bigha-kattha-dhur), `NepaliWeight` (tola-lal, dharni-ser) and `NepaliVolume` (muri-pathi-mana). They support conversion, formatting, parsing and arithmetic.
+- **[Phone numbers](/guides/phone-number/)**: `NepaliPhoneNumber` validates mobile and landline numbers, detects the operator (Nepal Telecom, Ncell, …) or the district, formats as national, international or E.164, and finds numbers in text.
+- **[Nepali Unicode](/guides/unicode/)**: Google and MPP input styles, `toRoman`, `{English}` escapes and stream transforms.
+- **[Relative time](/guides/moment/)**: `formatDuration`, `formatUnit` (`yesterday` / `हिजो`), `calendar`, short style and weeks.
+- **[Number formatting](/guides/number-format/)**: compact (`12.3L`, `१२.३ लाख`), percent, custom patterns, parsing and real number-to-words.
+- **[Date formatting](/guides/date-format/)**: time-zone letters, `add_*` chaining and skeleton constants.
+- **[Nepali date and time](/guides/date-time/)**: time zones (`utc`, `nepal`, `nepalNow`), `copyWith`, and constant-time AD ↔ BS conversion that is about 16× faster.
+
+For the complete list, see the [changelog](/reference/changelog/).

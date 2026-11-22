@@ -8,9 +8,10 @@ import 'package:nepali_utils/nepali_utils.dart';
 void main(List<String> arguments) {
   heading('Nepali Date Time');
   final gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
-  //print(
-  //    'Gorkha Earquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}');
-  //print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
+  print('Gorkha Earthquake: $gorkhaEarthQuake');
+  print('Now (local): ${NepaliDateTime.now()}');
+  print('Now (Nepal): ${NepaliDateTime.nepalNow().toIso8601String()}');
+  print('Normalised:  ${NepaliDateTime(2080, 1, 35)}');
 
   heading('Date Converter');
   final nt = DateTime(2019, 5, 14).toNepaliDateTime();
@@ -18,75 +19,98 @@ void main(List<String> arguments) {
   final dt = nt.toDateTime();
   print('In AD = $dt');
 
-  print(NepaliDateTime.now().toIso8601String());
-
   heading('Nepali Date Formatter');
   final date1 = NepaliDateFormat("yyyy.MM.dd G 'at' HH:mm:ss");
   final date2 = NepaliDateFormat("EEE, MMM d, ''yy");
   final date3 = NepaliDateFormat('h:mm a');
-  final date4 = NepaliDateFormat("hh 'o''clock' aa");
-  final date5 = NepaliDateFormat('yyyy.MMMM.dd GGG hh:mm a');
+  final date4 = NepaliDateFormat("hh 'o''clock' a");
+  final date5 = NepaliDateFormat('yyyy.MMMM.dd GGGG hh:mm a', Language.nepali);
+  final date6 = NepaliDateFormat.yMd().add_jm();
   print(date1.format(gorkhaEarthQuake));
   print(date2.format(gorkhaEarthQuake));
   print(date3.format(gorkhaEarthQuake));
   print(date4.format(gorkhaEarthQuake));
   print(date5.format(gorkhaEarthQuake));
+  print(date6.format(gorkhaEarthQuake));
 
   heading('Nepali Number Format');
-  final numberFormat = NepaliNumberFormat(
-    symbol: 'Rs.',
-  );
-  final commaSeparated = NepaliNumberFormat(
+  final numberFormat = NepaliNumberFormat.simpleCurrency(decimalDigits: 0);
+  final commaSeparated = NepaliNumberFormat.decimalPatternDigits(
     decimalDigits: 2,
   );
 
-  final numberFormatWithDefaultDelimiter = NepaliNumberFormat(symbol: 'Rs.');
-  final numberFormatWithEmptyDelimiter = NepaliNumberFormat(
-    symbol: 'Rs.',
-    delimiter: '',
+  final numberFormatWithDefaultDelimiter = numberFormat;
+  final numberFormatWithEmptyDelimiter = numberFormat.copyWith(
+    groupSeparator: '',
   );
 
   // Sets default language for nepali utilities to be Nepali.
-  NepaliUtils(Language.nepali);
+  NepaliUtils.defaultLanguage = Language.fromLocale('ne_NP');
 
-  final inWords = NepaliNumberFormat(
-    inWords: true,
+  final inWords = NepaliNumberFormat.words(language: Language.nepali);
+  final currencyInWords = NepaliNumberFormat.words(
     language: Language.nepali,
+    currency: true,
   );
-  final currencyInWords = NepaliNumberFormat(
-    inWords: true,
-    language: Language.nepali,
-    isMonetory: true,
-  );
+  final compact = NepaliNumberFormat.compact(language: Language.nepali);
   print('123456 -> ${numberFormat.format(123456)}');
   print('123456789.6548 -> ${commaSeparated.format(123456789.6548)}');
   print('123456 -> ${inWords.format(123456)}');
   print('123456789.6548 -> ${currencyInWords.format(123456789.6548)}');
+  print('1234567 -> ${compact.format(1234567)}');
+  print('१२,३४,५६७.८९ -> ${commaSeparated.parse('१२,३४,५६७.८९')}');
 
   heading('Number Format With Delimiter');
   print('12345 -> ${numberFormatWithDefaultDelimiter.format(12345)}');
   print('12345 -> ${numberFormatWithEmptyDelimiter.format(12345)}');
 
   heading('Nepali Unicode');
+  const unicode = NepaliUnicode();
   print(
-    NepaliUnicode.convert(
-      "sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii",
-    ),
+    unicode.convert("sayau' thu''gaa fUlakaa haamii, euTai maalaa nepaalii"),
   );
-  print(
-    NepaliUnicode.convert('saarwabhauma bhai failiekaa, mecii-mahaakaalii\n'),
-  );
+  print(unicode.convert('saarwabhauma bhai failiekaa, mecii-mahaakaalii'));
+  print(unicode.convert('mero naam {Sarbagya} ho'));
+  print(unicode.toRoman('नेपाली'));
+
+  const google = NepaliUnicode(style: .google);
+  print(google.convert('nepaal ko maayaa, bhagawaan~ ko dayaa'));
+  print(google.toRoman('क्षत्रिय'));
+  print(const NepaliUnicode(style: .mppRomanized).convert('nepal'));
+
+  heading('Preeti & Devanagari');
+  print(Preeti.toUnicode('sfof{no / lxdfn'));
+  print(Preeti.fromUnicode('काठमाडौं'));
+  print(Devanagari.aksharas('संस्कृति'));
+  print(Devanagari.toEnglishDigits('२०८१'));
+
+  heading('Nepali Measurement');
+  final plot = NepaliArea.ropani(2, aana: 3, paisa: 1);
+  print('${plot.format(.ropani)} = ${plot.to(.squareFoot)} sq. ft');
+  print(plot.format(.ropani, long: true, language: .nepali));
+  print(plot.format(.bigha, long: true));
+  print(NepaliArea(1000, .squareMeter).format(.ropani));
+  print('${NepaliWeight.tola(2, lal: 50).to(.gram)} g');
+  print(NepaliWeight(5, .kilogram).format(.dharni, long: true));
+  print(NepaliVolume.muri(1, pathi: 5, mana: 4).format(long: true));
+
+  heading('Nepali Phone Number');
+  final phone = NepaliPhoneNumber.parse('+977 ९८४१२३४५६७');
+  print('${phone.format()} (${phone.operator?.label()})');
+  print(phone.format(style: .international, language: .nepali));
+  final office = NepaliPhoneNumber.parse('061-523456');
+  print('${office.format(style: .e164)} (${office.areaName()})');
+  for (final match in NepaliPhoneNumber.findAll(
+    'Call 9801234567 or ०१-४४१२३४५.',
+  )) {
+    print('Found ${match.text} → ${match.number.e164}');
+  }
 }
 
 void heading(String text) {
-  final starLineBuffer = StringBuffer();
-  final padStringBuffer = StringBuffer();
-  final padding = (40 - text.length) ~/ 2;
-
-  starLineBuffer.writeAll([for (var i = 0; i < 40; i++) '*']);
-  padStringBuffer.writeAll([for (var i = 0; i < padding; i++) ' ']);
-
-  print(starLineBuffer);
-  print(padStringBuffer.toString() + text + padStringBuffer.toString());
-  print(starLineBuffer);
+  final padding = ' ' * ((40 - text.length) ~/ 2);
+  final stars = '*' * 40;
+  print(stars);
+  print('$padding$text$padding');
+  print(stars);
 }

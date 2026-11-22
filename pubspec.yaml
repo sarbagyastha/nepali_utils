@@ -1,12 +1,21 @@
 name: nepali_utils
-description: A pure dart package with collection of Nepali Utilities like Date converter, Date formatter, DateTime, Nepali Numbers, Nepali Unicode, Nepali Moments and many more.
-version: 3.0.8
+description: "Nepali utilities for Dart: Bikram Sambat dates, Nepali numbers, Unicode/Preeti conversion, relative time, units, and phone validation."
+version: 4.0.0
 repository: https://github.com/sarbagyastha/nepali_utils
 homepage: https://sarbagyastha.com.np
+documentation: https://nepali-utils.sarbagyastha.com.np
+
+topics:
+  - nepali
+  - date
+  - calendar
+  - unicode
+  - localization
 
 environment:
-  sdk: ">=2.12.0 <4.0.0"
+  sdk: ^3.13.0
 
 dev_dependencies:
-  test: ^1.16.3
-  very_good_analysis: ^5.1.0
+  intl: ^0.20.2
+  test: ^1.33.0
+  very_good_analysis: ^11.0.0

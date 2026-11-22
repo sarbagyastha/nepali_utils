@@ -1,1 +1,7 @@
 include: package:very_good_analysis/analysis_options.yaml
+
+linter:
+  rules:
+    # Needs package:meta's @immutable; this package has no dependencies and
+    # NepaliDateTime is immutable (all fields final), like DateTime.
+    avoid_equals_and_hash_code_on_mutable_classes: false
