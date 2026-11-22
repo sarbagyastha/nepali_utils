@@ -12,13 +12,13 @@ description: Create, convert, compare and do arithmetic with Bikram Sambat dates
 The difference is that `year`, `month` and `day` are BS values, and `weekday` starts on Sunday.
 
 ```dart
-final gorkhaEarthquake = NepaliDateTime.parse('2072-01-12T11:56:25');
+final constitutionDay = NepaliDateTime.parse('2072-06-03T17:00:00');
 
-print(gorkhaEarthquake);              // 2072-01-12 11:56:25.000
-print(gorkhaEarthquake.year);         // 2072
-print(gorkhaEarthquake.month);        // 1 (Baishakh)
-print(gorkhaEarthquake.weekday);      // 7 (Saturday)
-print(gorkhaEarthquake.toDateTime()); // 2015-04-25 11:56:25.000
+print(constitutionDay);              // 2072-06-03 17:00:00.000
+print(constitutionDay.year);         // 2072
+print(constitutionDay.month);        // 6 (Ashwin)
+print(constitutionDay.weekday);      // 1 (Sunday)
+print(constitutionDay.toDateTime()); // 2015-09-20 17:00:00.000
 ```
 
 ## Creating dates
@@ -195,11 +195,11 @@ NepaliDateTime(2072).totalDaysInYear; // 365
 `copyWith` replaces fields and keeps the time zone. The result is normalised like the constructor's:
 
 ```dart
-final date = NepaliDateTime.parse('2072-01-12T11:56:25');
+final date = NepaliDateTime.parse('2072-06-03T17:00:00');
 
-date.copyWith(month: 2);         // 2072-02-12 11:56:25.000
-date.copyWith(day: 40);          // 2072-02-09 11:56:25.000
-date.mergeTime(10, 20, 30);      // 2072-01-12 10:20:30.000
+date.copyWith(month: 2);         // 2072-02-03 17:00:00.000
+date.copyWith(day: 40);          // 2072-07-10 17:00:00.000
+date.mergeTime(10, 20, 30);      // 2072-06-03 10:20:30.000
 ```
 
 `mergeTime(hour, minute, second)` keeps the date, sets the time, and clears milliseconds and microseconds.
@@ -265,11 +265,11 @@ NepaliDateTime.nepal(2080, 1, 1).toIso8601String(); // 2080-01-01T00:00:00.000+0
 For anything else, use `format` or [`NepaliDateFormat`](/guides/date-format/):
 
 ```dart
-final date = NepaliDateTime.parse('2072-01-12T11:56:25');
+final date = NepaliDateTime.parse('2072-06-03T17:00:00');
 
-date.format('yyyy-MM-dd');                   // 2072-01-12
-date.format('yyyy MMMM d, EEEE', .nepali);   // २०७२ बैशाख १२, शनिबार
-NepaliDateFormat.yMMMMEEEEd().format(date);  // Saturday, Baishakh 12, 2072
+date.format('yyyy-MM-dd');                   // 2072-06-03
+date.format('yyyy MMMM d, EEEE', .nepali);   // २०७२ आश्विन ३, आइतबार
+NepaliDateFormat.yMMMMEEEEd().format(date);  // Sunday, Ashwin 3, 2072
 ```
 
 ## Gotchas

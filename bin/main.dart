@@ -7,18 +7,18 @@ import 'package:nepali_utils/nepali_utils.dart';
 
 void main(List<String> arguments) {
   heading('Nepali Date Time');
-  final gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
+  final constitutionDay = NepaliDateTime.parse('2072-06-03T17:00:00');
   print(
-    'Gorkha Earthquake Details\n'
-    'Year = ${gorkhaEarthQuake.year}\n'
-    'Month = ${gorkhaEarthQuake.month}\n'
-    'Day = ${gorkhaEarthQuake.day}\n'
-    'Hour = ${gorkhaEarthQuake.hour}\n'
-    'Minute = ${gorkhaEarthQuake.minute}\n'
-    'WeekDay = ${gorkhaEarthQuake.weekday}',
+    'Constitution Day Details\n'
+    'Year = ${constitutionDay.year}\n'
+    'Month = ${constitutionDay.month}\n'
+    'Day = ${constitutionDay.day}\n'
+    'Hour = ${constitutionDay.hour}\n'
+    'Minute = ${constitutionDay.minute}\n'
+    'WeekDay = ${constitutionDay.weekday}',
   );
   print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
-  print('\nMerged NepaliDateTime = ${gorkhaEarthQuake.mergeTime(10, 20, 30)}');
+  print('\nMerged NepaliDateTime = ${constitutionDay.mergeTime(10, 20, 30)}');
 
   heading('Date Conversion');
   final nt = DateTime(1916, 8, 5, 14, 30, 15).toNepaliDateTime();
@@ -37,14 +37,14 @@ void main(List<String> arguments) {
   final date6 = NepaliDateFormat('h:mm a');
   final date7 = NepaliDateFormat("hh 'o''clock' aa");
   final date8 = NepaliDateFormat('yyyy.MMMM.dd GGG hh:mm a');
-  print(date1.format(gorkhaEarthQuake));
-  print(date2.format(gorkhaEarthQuake));
-  print(date3.format(gorkhaEarthQuake));
-  print(date4.format(gorkhaEarthQuake));
-  print(date5.format(gorkhaEarthQuake));
-  print(date6.format(gorkhaEarthQuake));
-  print(date7.format(gorkhaEarthQuake));
-  print(date8.format(gorkhaEarthQuake));
+  print(date1.format(constitutionDay));
+  print(date2.format(constitutionDay));
+  print(date3.format(constitutionDay));
+  print(date4.format(constitutionDay));
+  print(date5.format(constitutionDay));
+  print(date6.format(constitutionDay));
+  print(date7.format(constitutionDay));
+  print(date8.format(constitutionDay));
 
   heading('Nepali Number Format');
   final currencyFormat = NepaliNumberFormat.simpleCurrency(decimalDigits: 0);

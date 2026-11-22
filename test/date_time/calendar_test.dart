@@ -64,7 +64,7 @@ void main() {
       }
 
       check(1970, 1, 1, 1913, 4, 13);
-      check(2072, 1, 12, 2015, 4, 25); // Gorkha earthquake.
+      check(2072, 6, 3, 2015, 9, 20); // Constitution Day.
       check(2080, 1, 1, 2023, 4, 14);
       check(2081, 1, 1, 2024, 4, 13);
       check(2082, 1, 1, 2025, 4, 14);

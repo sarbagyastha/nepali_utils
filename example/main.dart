@@ -7,8 +7,8 @@ import 'package:nepali_utils/nepali_utils.dart';
 
 void main(List<String> arguments) {
   heading('Nepali Date Time');
-  final gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
-  print('Gorkha Earthquake: $gorkhaEarthQuake');
+  final constitutionDay = NepaliDateTime.parse('2072-06-03T17:00:00');
+  print('Constitution Day: $constitutionDay');
   print('Now (local): ${NepaliDateTime.now()}');
   print('Now (Nepal): ${NepaliDateTime.nepalNow().toIso8601String()}');
   print('Normalised:  ${NepaliDateTime(2080, 1, 35)}');
@@ -26,12 +26,12 @@ void main(List<String> arguments) {
   final date4 = NepaliDateFormat("hh 'o''clock' a");
   final date5 = NepaliDateFormat('yyyy.MMMM.dd GGGG hh:mm a', Language.nepali);
   final date6 = NepaliDateFormat.yMd().add_jm();
-  print(date1.format(gorkhaEarthQuake));
-  print(date2.format(gorkhaEarthQuake));
-  print(date3.format(gorkhaEarthQuake));
-  print(date4.format(gorkhaEarthQuake));
-  print(date5.format(gorkhaEarthQuake));
-  print(date6.format(gorkhaEarthQuake));
+  print(date1.format(constitutionDay));
+  print(date2.format(constitutionDay));
+  print(date3.format(constitutionDay));
+  print(date4.format(constitutionDay));
+  print(date5.format(constitutionDay));
+  print(date6.format(constitutionDay));
 
   heading('Nepali Number Format');
   final numberFormat = NepaliNumberFormat.simpleCurrency(decimalDigits: 0);

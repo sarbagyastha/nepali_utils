@@ -49,9 +49,9 @@ Don't import files under `package:nepali_utils/src/...`. They are internal and c
 import 'package:nepali_utils/nepali_utils.dart';
 
 void main() {
-  final date = NepaliDateTime.parse('2072-01-12T11:56:25');
-  print(NepaliDateFormat.yMMMMEEEEd().format(date)); // Saturday, Baishakh 12, 2072
-  print(date.toDateTime()); // 2015-04-25 11:56:25.000
+  final date = NepaliDateTime.parse('2072-06-03T17:00:00');
+  print(NepaliDateFormat.yMMMMEEEEd().format(date)); // Sunday, Ashwin 3, 2072
+  print(date.toDateTime()); // 2015-09-20 17:00:00.000
 }
 ```
 

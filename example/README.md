@@ -3,8 +3,8 @@
 ### Nepali Date Time
 The class is similar to `dart:core`'s [DateTime]() class, except that, this works with Bikram Sambat.
 ```dart
-NepaliDateTime gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
-print(gorkhaEarthQuake.year); // 2072
+NepaliDateTime constitutionDay = NepaliDateTime.parse('2072-06-03T17:00:00');
+print(constitutionDay.year); // 2072
 
 NepaliDateTime currentTime = NepaliDateTime.now();
 print(currentTime.toIso8601String()); // 2076-02-01T11:25:46.490980
@@ -28,9 +28,9 @@ var date1 = NepaliDateFormat.MEd();
 var date2 = NepaliDateFormat.MMMMEEEEd();
 var date3 = NepaliDateFormat.jms();
 
-print(date1.format(gorkhaEarthQuake)); // Sat, 1/12
-print(date2.format(gorkhaEarthQuake)); // Saturday, Baishakh 12
-print(date3.format(gorkhaEarthQuake)); // 11:56:25 AM
+print(date1.format(constitutionDay)); // Sun, 6/3
+print(date2.format(constitutionDay)); // Sunday, Ashwin 3
+print(date3.format(constitutionDay)); // 5:00:00 PM
 ```
 
 ```dart
@@ -40,11 +40,11 @@ var date3 = NepaliDateFormat("h:mm a");
 var date4 = NepaliDateFormat("hh 'o''clock' a");
 var date5 = NepaliDateFormat("yyyy.MMMM.dd GGGG hh:mm a");
 
-print(date1.format(gorkhaEarthQuake)); // 2072.01.12 BS at 11:56:25
-print(date2.format(gorkhaEarthQuake)); // Sat, Bai 12, '72
-print(date3.format(gorkhaEarthQuake)); // 11:56 AM
-print(date4.format(gorkhaEarthQuake)); // 11 o'clock AM
-print(date5.format(gorkhaEarthQuake)); // 2072.Baishakh.12 Bikram Sambat 11:56 AM
+print(date1.format(constitutionDay)); // 2072.06.03 BS at 17:00:00
+print(date2.format(constitutionDay)); // Sun, Ash 3, '72
+print(date3.format(constitutionDay)); // 5:00 PM
+print(date4.format(constitutionDay)); // 05 o'clock PM
+print(date5.format(constitutionDay)); // 2072.Ashwin.03 Bikram Sambat 05:00 PM
 ```
 
 ### Nepali Number
