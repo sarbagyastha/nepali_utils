@@ -58,11 +58,11 @@ var commaSeparated = NepaliNumberFormat(
 );
 var inWords = NepaliNumberFormat(
     inWords: true,
-    language: Language.NEPALI,
+    language: Language.nepali,
 );
 var currencyInWords = NepaliNumberFormat(
     inWords: true,
-    language: Language.NEPALI,
+    language: Language.nepali,
     isMonetory: true,
 );
 

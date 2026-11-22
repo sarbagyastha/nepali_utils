@@ -8,9 +8,10 @@ import 'package:nepali_utils/nepali_utils.dart';
 void main(List<String> arguments) {
   heading('Nepali Date Time');
   final gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
-  //print(
-  //    'Gorkha Earquake Details\nYear = ${gorkhaEarthQuake.year}\nMonth = ${gorkhaEarthQuake.month}\nDay = ${gorkhaEarthQuake.day}\nHour = ${gorkhaEarthQuake.hour}\nMinute = ${gorkhaEarthQuake.minute}');
-  //print('\nCurrent NepaliDateTime = ${NepaliDateTime.now()}');
+  print('Gorkha Earthquake: $gorkhaEarthQuake');
+  print('Now (local): ${NepaliDateTime.now()}');
+  print('Now (Nepal): ${NepaliDateTime.nepalNow().toIso8601String()}');
+  print('Normalised:  ${NepaliDateTime(2080, 1, 35)}');
 
   heading('Date Converter');
   final nt = DateTime(2019, 5, 14).toNepaliDateTime();
@@ -18,14 +19,12 @@ void main(List<String> arguments) {
   final dt = nt.toDateTime();
   print('In AD = $dt');
 
-  print(NepaliDateTime.now().toIso8601String());
-
   heading('Nepali Date Formatter');
   final date1 = NepaliDateFormat("yyyy.MM.dd G 'at' HH:mm:ss");
   final date2 = NepaliDateFormat("EEE, MMM d, ''yy");
   final date3 = NepaliDateFormat('h:mm a');
   final date4 = NepaliDateFormat("hh 'o''clock' aa");
-  final date5 = NepaliDateFormat('yyyy.MMMM.dd GGG hh:mm a');
+  final date5 = NepaliDateFormat('yyyy.MMMM.dd GGG hh:mm a', Language.nepali);
   print(date1.format(gorkhaEarthQuake));
   print(date2.format(gorkhaEarthQuake));
   print(date3.format(gorkhaEarthQuake));
@@ -33,12 +32,8 @@ void main(List<String> arguments) {
   print(date5.format(gorkhaEarthQuake));
 
   heading('Nepali Number Format');
-  final numberFormat = NepaliNumberFormat(
-    symbol: 'Rs.',
-  );
-  final commaSeparated = NepaliNumberFormat(
-    decimalDigits: 2,
-  );
+  final numberFormat = NepaliNumberFormat(symbol: 'Rs.');
+  final commaSeparated = NepaliNumberFormat(decimalDigits: 2);
 
   final numberFormatWithDefaultDelimiter = NepaliNumberFormat(symbol: 'Rs.');
   final numberFormatWithEmptyDelimiter = NepaliNumberFormat(
@@ -47,12 +42,9 @@ void main(List<String> arguments) {
   );
 
   // Sets default language for nepali utilities to be Nepali.
-  NepaliUtils(Language.nepali);
+  NepaliUtils.fromLocale('ne_NP');
 
-  final inWords = NepaliNumberFormat(
-    inWords: true,
-    language: Language.nepali,
-  );
+  final inWords = NepaliNumberFormat(inWords: true, language: Language.nepali);
   final currencyInWords = NepaliNumberFormat(
     inWords: true,
     language: Language.nepali,
@@ -79,14 +71,9 @@ void main(List<String> arguments) {
 }
 
 void heading(String text) {
-  final starLineBuffer = StringBuffer();
-  final padStringBuffer = StringBuffer();
-  final padding = (40 - text.length) ~/ 2;
-
-  starLineBuffer.writeAll([for (var i = 0; i < 40; i++) '*']);
-  padStringBuffer.writeAll([for (var i = 0; i < padding; i++) ' ']);
-
-  print(starLineBuffer);
-  print(padStringBuffer.toString() + text + padStringBuffer.toString());
-  print(starLineBuffer);
+  final padding = ' ' * ((40 - text.length) ~/ 2);
+  final stars = '*' * 40;
+  print(stars);
+  print('$padding$text$padding');
+  print(stars);
 }

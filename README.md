@@ -16,41 +16,93 @@ A pure dart package with collection of Nepali Utilities like Date converter, Dat
 * **NepaliMoment**
 * many yet to come
 
+Requires Dart 3.13 or later.
+
 ## Language Setup
 Default language for Nepali Utility classes can be set as:
 ```dart
-void main(){
-    NepaliUtils(Language.nepali);
+void main() {
+  NepaliUtils(Language.nepali);
 }
 ```
 
 This is completely optional. Default language will be English if not set.
 
-### Nepali Date Time
-The class is similar to `dart:core`'s [DateTime]() class, except that, this works with Bikram Sambat.
-```dart
-NepaliDateTime gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
-print(gorkhaEarthQuake.year); // 2072
+`Language` converts to and from locale identifiers, which makes it easy to bridge
+with `package:intl` or Flutter's `Locale`:
 
-NepaliDateTime currentTime = NepaliDateTime.now();
-print(currentTime.toIso8601String()); //2076-02-01T11:25:46.490980
-print(gorkhaEarthQuake.mergeTime(10, 20, 30));
-// 2072-01-12 10:20:30.000
+```dart
+Language.parse('ne_NP');               // Language.nepali
+Language.tryParse('fr');               // null
+Language.fromLocale('fr');             // Language.english (fallback)
+Language.nepali.localeName;            // 'ne_NP'
+Language.nepali.toLanguageTag();       // 'ne-NP'
+
+// Flutter
+NepaliUtils.fromLocale(Localizations.localeOf(context).toLanguageTag());
+final locale = Locale(language.languageCode, language.countryCode);
 ```
 
-### Date Conversion
-Converts dates from AD to BS and vice versa.
+### Nepali Date Time
+`NepaliDateTime` works just like `dart:core`'s `DateTime`, except that its
+fields are in Bikram Sambat. It implements `DateTime`, stores the exact instant,
+and is presented either in local time, in UTC, or in Nepal Time (UTC+05:45).
 
 ```dart
-NepaliDateTime nt = DateTime(2019, 8, 03, 14, 30, 15).toNepaliDateTime();
-print('In BS = $nt'); //2076-04-18 14:30:15.000
-DateTime dt = nt.toDateTime(); //2019-08-03 14:30:15.000
-print('In AD = $dt');
+final gorkhaEarthQuake = NepaliDateTime.parse('2072-01-12T11:56:25');
+print(gorkhaEarthQuake.year); // 2072
+
+final now = NepaliDateTime.now();          // local time, like DateTime.now()
+final nowInNepal = NepaliDateTime.nepalNow(); // Nepal Time, on any device
+final utc = NepaliDateTime.utc(2080, 1, 1);
+final npt = NepaliDateTime.nepal(2080, 1, 1);
+
+print(now.toIso8601String());        // 2083-08-06T11:25:46.490980
+print(npt.toIso8601String());        // 2080-01-01T00:00:00.000+05:45
+print(npt.toUtc());                  // 2079-12-30 18:15:00.000Z
+print(gorkhaEarthQuake.mergeTime(10, 20, 30)); // 2072-01-12 10:20:30.000
+print(gorkhaEarthQuake.copyWith(month: 2));    // 2072-02-12 11:56:25.000
+```
+
+Out-of-range values are normalised exactly like `DateTime`:
+
+```dart
+NepaliDateTime(2080, 1, 35); // 2080-02-04 (Baishakh 2080 has 31 days)
+NepaliDateTime(2080, 13);    // 2081-01-01
+NepaliDateTime(2080, 2, 0);  // 2080-01-31
+```
+
+Instant based operations accept any `DateTime`:
+
+```dart
+final bs = NepaliDateTime.utc(2080, 1, 1);
+bs.isBefore(DateTime.now());
+bs.difference(DateTime.utc(2023, 1, 1));
+[DateTime.now(), bs].sort();
+```
+
+> `weekday` runs from `NepaliDateTime.sunday` (1) to `NepaliDateTime.saturday` (7).
+
+Supported range: 1969 BS to 2250 BS.
+
+### Date Conversion
+Converts dates from AD to BS and vice versa. The instant and the time zone
+are preserved.
+
+```dart
+final nt = DateTime(2019, 8, 3, 14, 30, 15).toNepaliDateTime();
+print('In BS = $nt'); // 2076-04-18 14:30:15.000
+final dt = nt.toDateTime();
+print('In AD = $dt'); // 2019-08-03 14:30:15.000
+
+// The Nepali date & time of an instant, regardless of the device time zone.
+final inNepal = DateTime.now().toNepaliDateTime().toNepalTime();
 ```
 
 ### Nepali Date Formatter
-Formats NepaliDateTime into desired format.
-Formats NepaliDateTime into desired format.
+Formats `NepaliDateTime` (or `DateTime`) into the desired format. Patterns use the
+same syntax as `package:intl`'s `DateFormat`. A formatter compiles its pattern once
+and can be reused.
 
 Constructor table for quick formatting:
 
@@ -85,13 +137,13 @@ yMMMMEEEEd|Saturday, Shrawan 18, 2076
 yQQQ|Q2 2076
 yQQQQ|2nd quarter 2076
 H|21
-Hm|21:04
+Hm|21:17
 Hms|21:17:56
 j|9 PM
 jm|9:17 PM
 jms|9:17:56 PM
-m|9
-ms|9:17
+m|17
+ms|17:56
 s|56
 
 #### Example:
@@ -171,11 +223,11 @@ var commaSeparated = NepaliNumberFormat(
 );
 var inWords = NepaliNumberFormat(
     inWords: true,
-    language: Language.NEPALI,
+    language: Language.nepali,
 );
 var currencyInWords = NepaliNumberFormat(
     inWords: true,
-    language: Language.NEPALI,
+    language: Language.nepali,
     isMonetory: true,
     decimalDigits: 2,
 );

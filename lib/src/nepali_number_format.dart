@@ -9,7 +9,7 @@ import 'package:nepali_utils/src/nepali_utils.dart';
 /// Provides the ability to format a number in a Nepali way.
 class NepaliNumberFormat {
   ///Create a nepali number format.
-  NepaliNumberFormat({
+  new({
     this.inWords = false,
     this.isMonetory = false,
     this.decimalDigits,
@@ -112,10 +112,7 @@ class NepaliNumberFormat {
 
     for (var i = 0; i < digitGroups.length - 1; i++) {
       numberInWordBuffer.write(
-        _digitGroupToWord(
-          digitGroups.length - i - 2,
-          digitGroups[i],
-        ),
+        _digitGroupToWord(digitGroups.length - i - 2, digitGroups[i]),
       );
     }
 
@@ -140,8 +137,8 @@ class NepaliNumberFormat {
           (decimal.isEmpty
               ? ' ${_language('rupees')}'
               : ' ${_language('rupees')} '
-                  '${_isEnglish ? decimal : NepaliUnicode.convert(decimal)} '
-                  '${_language('paisa')}');
+                    '${_isEnglish ? decimal : NepaliUnicode.convert(decimal)} '
+                    '${_language('paisa')}');
     }
     return numberInWord.trimRight();
   }
@@ -228,14 +225,16 @@ class NepaliNumberFormat {
       throw Exception('Unexpected input: $number');
     }
 
-    fractionalPart =
-        fractionalPart.padRight(decimalDigits, '0').substring(0, decimalDigits);
+    fractionalPart = fractionalPart
+        .padRight(decimalDigits, '0')
+        .substring(0, decimalDigits);
 
     final hideDecimal =
         !includeDecimalIfZero && RegExp(r'^0+$').hasMatch(fractionalPart);
 
-    fractionalPart =
-        _isEnglish ? fractionalPart : NepaliUnicode.convert(fractionalPart);
+    fractionalPart = _isEnglish
+        ? fractionalPart
+        : NepaliUnicode.convert(fractionalPart);
     if (decimalDigits > 0) {
       fractionalPart = '.$fractionalPart';
     }
@@ -247,8 +246,9 @@ class NepaliNumberFormat {
       return '${_isEnglish ? number0 : NepaliUnicode.convert(number0)}'
           '$fractionalPart';
     } else if (number0.length < 5) {
-      final localizedNum =
-          _isEnglish ? number0 : NepaliUnicode.convert(number0);
+      final localizedNum = _isEnglish
+          ? number0
+          : NepaliUnicode.convert(number0);
       if (hideDecimal) {
         return '${localizedNum[0]}$delimiter${localizedNum.substring(1)}';
       }
@@ -263,16 +263,19 @@ class NepaliNumberFormat {
         if (i < matches.length - 2) {
           formattedString += '${matches.elementAt(i).group(0)}$delimiter';
         } else {
-          formattedString +=
-              number0.substring(number0.length - 3, number0.length);
+          formattedString += number0.substring(
+            number0.length - 3,
+            number0.length,
+          );
           break;
         }
       }
       formattedString = formattedString[0] == '0'
           ? formattedString.substring(1)
           : formattedString;
-      formattedString =
-          _isEnglish ? formattedString : NepaliUnicode.convert(formattedString);
+      formattedString = _isEnglish
+          ? formattedString
+          : NepaliUnicode.convert(formattedString);
 
       if (hideDecimal) return formattedString;
       return '$formattedString$fractionalPart';

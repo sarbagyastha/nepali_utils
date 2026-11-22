@@ -2,9 +2,8 @@
 // Use of this source code is governed by a MIT license that can be
 // found in the LICENSE file.
 
-import 'package:nepali_utils/src/language.dart';
-import 'package:nepali_utils/src/nepali_date_time.dart';
-import 'package:nepali_utils/src/nepali_unicode.dart';
+import 'package:nepali_utils/src/date_time/nepali_date_time.dart';
+import 'package:nepali_utils/src/nepali_digits.dart';
 import 'package:nepali_utils/src/nepali_utils.dart';
 
 /// NepaliMoment describes the moment in Nepali locale.
@@ -48,7 +47,7 @@ class NepaliMoment {
     final months = days / 30;
     final years = days / 365;
 
-    final isEnglish = NepaliUtils().language == Language.english;
+    final isEnglish = NepaliUtils().language == .english;
 
     String momentString;
     if (seconds < 45) {
@@ -85,5 +84,5 @@ class NepaliMoment {
 }
 
 String _nepaliMoment(int number, String label) {
-  return '${NepaliUnicode.convert(number.toString())} $label';
+  return '${toNepaliDigits('$number')} $label';
 }
