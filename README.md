@@ -100,61 +100,71 @@ final inNepal = DateTime.now().toNepaliDateTime().toNepalTime();
 ```
 
 ### Nepali Date Formatter
-Formats `NepaliDateTime` (or `DateTime`) into the desired format. Patterns use the
-same syntax as `package:intl`'s `DateFormat`. A formatter compiles its pattern once
-and can be reused.
+Formats `NepaliDateTime` (or `DateTime`) into the desired format. `NepaliDateFormat` mirrors
+`package:intl`'s `DateFormat`: the same pattern letters, the same skeleton constructors, constants
+(`NepaliDateFormat.YEAR_MONTH_DAY`, ...) and `addPattern` / `add_*` composition.
 
-Constructor table for quick formatting:
+Skeletons are laid out like intl's `en` locale for English and its `ne` locale for Nepali.
+As in intl, English times use a narrow no-break space (`\u202f`) before AM/PM.
 
-Constructor|Result
-:----------|:----:
-d|18
-E|Sat
-EEEE|Saturday
-LLL|Shr
-LLLL|Shrawan
-M|4
-Md|4/18
-MEd|Sat, 4/18
-MMM|Shr
-MMMd|Shr 18
-MMMEd|Saturday, Shr 18
-MMMM|Shrawan
-MMMMd|Shrawan 18
-MMMMEEEEd|Saturday, Shrawan 18
-QQQ|Q2
-QQQQ|2nd quarter
-y|2076
-yM|2076/04
-yMd|2076/04/18
-yMEd|Sat, 2076/04/18
-yMMM|Shr 2076
-yMMMd|Shr 18, 2076
-yMMMEd|Sat, Shr 18, 2076
-yMMMMM|Shrawan 2076
-yMMMMd|Shrawan 18, 2076
-yMMMMEEEEd|Saturday, Shrawan 18, 2076
-yQQQ|Q2 2076
-yQQQQ|2nd quarter 2076
-H|21
-Hm|21:17
-Hms|21:17:56
-j|9 PM
-jm|9:17 PM
-jms|9:17:56 PM
-m|17
-ms|17:56
-s|56
+Constructor table for quick formatting (2076-04-18 21:17:56 NPT):
+
+Constructor|English|Nepali
+:----------|:------|:-----
+d|18|१८
+E|Sat|शनि
+EEEE|Saturday|शनिबार
+EEEEE|S|श
+LLL|Shr|श्रा
+LLLL|Shrawan|श्रावण
+M|4|४
+Md|4/18|०४-१८
+MEd|Sat, 4/18|०४-१८, शनि
+MMM|Shr|श्रा
+MMMd|Shr 18|श्रा १८
+MMMEd|Sat, Shr 18|श्रा १८, शनि
+MMMM|Shrawan|श्रावण
+MMMMd|Shrawan 18|श्रावण १८
+MMMMEEEEd|Saturday, Shrawan 18|श्रावण १८, शनिबार
+QQQ|Q2|दोस्रो त्रैमासिक
+QQQQ|2nd quarter|दोस्रो त्रैमासिक
+y|2076|२०७६
+yM|4/2076|२०७६-०४
+yMd|4/18/2076|२०७६-०४-१८
+yMEd|Sat, 4/18/2076|२०७६-०४-१८, शनि
+yMMM|Shr 2076|२०७६ श्रा
+yMMMd|Shr 18, 2076|२०७६ श्रा १८
+yMMMEd|Sat, Shr 18, 2076|२०७६ श्रा १८, शनि
+yMMMM|Shrawan 2076|२०७६ श्रावण
+yMMMMd|Shrawan 18, 2076|२०७६ श्रावण १८
+yMMMMEEEEd|Saturday, Shrawan 18, 2076|२०७६ श्रावण १८, शनिबार
+yQQQ|Q2 2076|२०७६ दोस्रो त्रैमासिक
+yQQQQ|2nd quarter 2076|२०७६ दोस्रो त्रैमासिक
+H|21|२१
+Hm|21:17|२१:१७
+Hms|21:17:56|२१:१७:५६
+j|9 PM|२१
+jm|9:17 PM|२१:१७
+jms|9:17:56 PM|२१:१७:५६
+jmv|9:17 PM NPT|२१:१७ NPT
+jmz|9:17 PM NPT|२१:१७ NPT
+jv|9 PM NPT|२१h NPT
+jz|9 PM NPT|२१h NPT
+m|17|१७
+ms|17:56|१७:५६
+s|56|५६
 
 #### Example:
 ```dart
 var date1 = NepaliDateFormat.MEd();
 var date2 = NepaliDateFormat.MMMMEEEEd();
 var date3 = NepaliDateFormat.jms();
+var date4 = NepaliDateFormat.yMd().add_jm();
 
-print(date1.format(gorkhaEarthQuake)); // Sat, 1/12 
-print(date2.format(gorkhaEarthQuake)); // Saturday, Baisakh 18
-print(date3.format(gorkhaEarthQuake)); // 11:56:00 AM
+print(date1.format(gorkhaEarthQuake)); // Sat, 1/12
+print(date2.format(gorkhaEarthQuake)); // Saturday, Baishakh 12
+print(date3.format(gorkhaEarthQuake)); // 11:56:25 AM
+print(date4.format(gorkhaEarthQuake)); // 1/12/2072 11:56 AM
 ```
 
 Formats can also be specified with a pattern string.
@@ -162,52 +172,59 @@ Formats can also be specified with a pattern string.
 Symbol|Meaning|Presentation|Example (en / np)
 :-----|:------|:-----------|:------
 G|era designator|(Text)|BS / बि सं
-GG|era designator|(Text)|B.S.  / बि.सं.
-GGG|era designator|(Text)|Bikram Sambat  / बिक्रम संबत
+GGGG|era designator|(Text)|Bikram Sambat / बिक्रम संबत
 y|year|(Number)|1996 / १९९६
 yy|year|(Number)|96 / ९६
 yyyy|year|(Number)|1996 / १९९६
-Q|quarter|(Text)|3
-QQ|quarter|(Text)|03
-QQQ|quarter|(Text)|Q3
-QQQQ|quarter|(Text)|3rd quarter
+Q|quarter|(Number)|3 / ३
+QQ|quarter|(Number)|03 / ०३
+QQQ|quarter|(Text)|Q3 / तेस्रो त्रैमासिक
+QQQQ|quarter|(Text)|3rd quarter / तेस्रो त्रैमासिक
 M|month in year|(Text & Number)|8 / ८
 MM|month in year|(Text & Number)|08 / ०८
 MMM|month in year|(Text & Number)|Marg / मं
 MMMM|month in year|(Text & Number)|Mangsir / मंसिर
-MMMMM|month in year|(Text & Number)|Marga / मार्ग
+MMMMM|month in year|(Text & Number)|M / मं
+MMMMMM|colloquial month name|(Text)|Marga / मार्ग
+L|standalone month|(Text & Number)|same as M
 d|day in month|(Number)|9 / ९
 dd|day in month|(Number)|09 / ०९
-E|day of week|(Text)|M / सो
-EE|day of week|(Text)|Mon / सोम
-EEE|day of week|(Text)|Monday / सोमबार
-a|am/pm marker|(Text)|pm / बेलुकी
-aa|am/pm marker|(Text)|PM / बेलुकी
-h|hour in am/pm(1~12)|(Number)|2 / २
-hh|hour in am/pm(1~12)|(Number)|02 / ०२
+D|day in year|(Number)|189 / १८९
+E|day of week|(Text)|Mon / सोम
+EEEE|day of week|(Text)|Monday / सोमबार
+EEEEE|day of week|(Text)|M / सो
+c|standalone day of week|(Text)|(ccc) Mon, (cccc) Monday
+a|am/pm marker|(Text)|PM / बेलुकी
+h|hour in am/pm (1~12)|(Number)|2 / २
+hh|hour in am/pm (1~12)|(Number)|02 / ०२
 H|hour in day (0~23)|(Number)|14 / १४
-HH|hour in day (0~23)|(Number)|14 / १४
+K|hour in am/pm (0~11)|(Number)|0 / ०
+k|hour in day (1~24)|(Number)|24 / २४
 m|minute in hour|(Number)|3 / ३
-mm|minute in hour|(Number)|03 / ०३  
-s|second in minute|(Number)|55 / ५५
-s|second in minute|(Number)|55 / ५५
+mm|minute in hour|(Number)|03 / ०३
+s|second in minute|(Number)|5 / ५
+ss|second in minute|(Number)|05 / ०५
 S|fractional second|(Number)|978 / ९७८
+z, v|time zone|(Text)|NPT, (zzzz) Nepal Time / नेपाल समय
+Z|time zone offset|(Text)|+0545, (ZZZZ) GMT+05:45
 '|escape for text|(Delimiter)|'Date='
 ''|single quote|(Literal)|'o''clock'
+
+In Nepali, `a` is the time of day (बिहान, मध्यान्न, दिउसो, साँझ, बेलुकी) instead of AM/PM.
 
 #### Example:
 ```dart
 var date1 = NepaliDateFormat("yyyy.MM.dd G 'at' HH:mm:ss");
 var date2 = NepaliDateFormat("EEE, MMM d, ''yy");
 var date3 = NepaliDateFormat("h:mm a");
-var date4 = NepaliDateFormat("hh 'o''clock' aa");
-var date5 = NepaliDateFormat("yyyy.MMMM.dd GGG hh:mm a");
+var date4 = NepaliDateFormat("hh 'o''clock' a");
+var date5 = NepaliDateFormat("yyyy.MMMM.dd GGGG hh:mm a");
 
 print(date1.format(gorkhaEarthQuake)); // 2072.01.12 BS at 11:56:25
-print(date2.format(gorkhaEarthQuake)); // Saturday, Bai 12, '72
-print(date3.format(gorkhaEarthQuake)); // 11:56 am
+print(date2.format(gorkhaEarthQuake)); // Sat, Bai 12, '72
+print(date3.format(gorkhaEarthQuake)); // 11:56 AM
 print(date4.format(gorkhaEarthQuake)); // 11 o'clock AM
-print(date5.format(gorkhaEarthQuake)); // 2072.Baishakh.12 Bikram Sambat 11:56 am
+print(date5.format(gorkhaEarthQuake)); // 2072.Baishakh.12 Bikram Sambat 11:56 AM
 ```
 
 **Note:** Always wrap pattern string in double quote (`"`).

@@ -72,7 +72,42 @@ enum BsMonthName(
   /// Abbreviated name, e.g. Marg / मं.
   String short(Language language) =>
       language == .nepali ? nepaliShort : englishShort;
+
+  /// Narrow name, e.g. M / मं.
+  String narrow(Language language) =>
+      language == .nepali ? nepaliShort : english[0];
 }
+
+/// The era, e.g. BS / बि सं, or Bikram Sambat / बिक्रम संबत when [long].
+String eraName(Language language, {required bool long}) =>
+    switch ((language, long)) {
+      (.nepali, false) => 'बि सं',
+      (.nepali, true) => 'बिक्रम संबत',
+      (_, false) => 'BS',
+      (_, true) => 'Bikram Sambat',
+    };
+
+/// The [quarter] (1-4), e.g. Q3 or 3rd quarter when [long].
+///
+/// Nepali uses the same name for both, like `package:intl`'s `ne` locale.
+String quarterName(int quarter, Language language, {required bool long}) {
+  if (language == .nepali) {
+    const names = ['पहिलो', 'दोस्रो', 'तेस्रो', 'चौथो'];
+    return '${names[quarter - 1]} त्रैमासिक';
+  }
+  if (!long) return 'Q$quarter';
+  const ordinals = ['1st', '2nd', '3rd', '4th'];
+  return '${ordinals[quarter - 1]} quarter';
+}
+
+/// Long name of Nepal Time, or of UTC when [nepal] is false.
+String longZoneName(Language language, {required bool nepal}) =>
+    switch ((nepal, language)) {
+      (true, .nepali) => 'नेपाल समय',
+      (true, _) => 'Nepal Time',
+      (false, .nepali) => 'समन्वित विश्व समय',
+      (false, _) => 'Coordinated Universal Time',
+    };
 
 /// Names of the week days, Sunday first.
 enum WeekdayName(

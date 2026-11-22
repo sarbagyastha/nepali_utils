@@ -23,13 +23,15 @@ void main(List<String> arguments) {
   final date1 = NepaliDateFormat("yyyy.MM.dd G 'at' HH:mm:ss");
   final date2 = NepaliDateFormat("EEE, MMM d, ''yy");
   final date3 = NepaliDateFormat('h:mm a');
-  final date4 = NepaliDateFormat("hh 'o''clock' aa");
-  final date5 = NepaliDateFormat('yyyy.MMMM.dd GGG hh:mm a', Language.nepali);
+  final date4 = NepaliDateFormat("hh 'o''clock' a");
+  final date5 = NepaliDateFormat('yyyy.MMMM.dd GGGG hh:mm a', Language.nepali);
+  final date6 = NepaliDateFormat.yMd().add_jm();
   print(date1.format(gorkhaEarthQuake));
   print(date2.format(gorkhaEarthQuake));
   print(date3.format(gorkhaEarthQuake));
   print(date4.format(gorkhaEarthQuake));
   print(date5.format(gorkhaEarthQuake));
+  print(date6.format(gorkhaEarthQuake));
 
   heading('Nepali Number Format');
   final numberFormat = NepaliNumberFormat(symbol: 'Rs.');

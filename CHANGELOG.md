@@ -12,17 +12,46 @@
   * `difference`, `isBefore`, `isAfter`, `isAtSameMomentAs` and `compareTo` accept any `DateTime`.
   * `parse` follows `DateTime.parse`: values with `Z` or an offset are UTC, except `+05:45` which gives Nepal Time.
   * `NepaliDateTime` is now a `final class`, and its constructors are factories.
-* `NepaliDateFormat`:
-  * Is now a `final class` and accepts any `DateTime` in `format`.
+* `NepaliDateFormat` now follows `package:intl`'s `DateFormat` exactly:
+  * Is now a `final class` and accepts any `DateTime` in `format`, keeping its time zone.
+  * Named constructors use intl's skeletons: the `en` layouts for English and the `ne` layouts for Nepali. A skeleton name passed to the default constructor (`NepaliDateFormat('yMd')`) is resolved the same way.
+
+    | Constructor | 3.x | 4.0 English | 4.0 Nepali |
+    |---|---|---|---|
+    | `yM` | `2076/08` | `8/2076` | `२०७६-०८` |
+    | `yMd` | `2076/08/05` | `8/5/2076` | `२०७६-०८-०५` |
+    | `yMEd` | `Thu, 2076/08/05` | `Thu, 8/5/2076` | `२०७६-०८-०५, बिहि` |
+    | `yMMMd` (Nepali) | `मं ५, २०७६` | | `२०७६ मं ५` |
+    | `j`, `jm`, `jms` (Nepali) | `बेलुकी ९:०४` | | `२१:०४` (24-hour) |
+    | `H` | `9` | `09` | `०९` |
+
+    Like intl, English time skeletons (`j`, `jm`, `jms`, ...) put a narrow no-break space (` `) before AM/PM.
+  * Pattern letters follow intl:
+
+    | Pattern | 3.x | 4.0 |
+    |---|---|---|
+    | `E` / `EE` / `EEE` | `T` / `Thu` / `Thursday` | `Thu` (all three) |
+    | `EEEE` / `EEEEE` | `Thursday` | `Thursday` / `T` |
+    | `G` / `GG` / `GGG` | `BS` / `B.S.` / `Bikram Sambat` | `BS` (all three); `GGGG` is `Bikram Sambat` |
+    | `a` / `aa` (English) | `pm` / `PM` | `PM` |
+    | `MMMMM` | `Marga` (colloquial) | `M` (narrow); the colloquial name is now `MMMMMM` |
+    | `S` / `SS` | `1` / `12` | `123` (at least 3 digits) |
+    | `QQQ` / `QQQQ` (Nepali) | `Q3` / `3rd quarter` | `तेस्रो त्रैमासिक`; `Q` digits are Devanagari |
   * Fixed `h` for midnight (`12` instead of `0`) and `hh` zero padding between 1 PM and 9 PM.
   * Fixed the patterns of `NepaliDateFormat.Hm` (`HH:mm`), `.m` (`m`) and `.ms` (`mm:ss`).
-  * `j`, `jm` and `jms` honour the default language set through `NepaliUtils`.
+  * The skeletons honour the default language set through `NepaliUtils`.
 * Removed the unreleased `toNepaliDateTimeFromInstant()`; use `toNepaliDateTime().toNepalTime()`.
 * `NepaliUtils` is now a `final class`.
 
 **New**
 * `NepaliDateTime.utc`, `.nepal`, `.nepalNow`, `.fromMicrosecondsSinceEpoch`, `.fromMillisecondsSinceEpoch`, `copyWith`, `toNepalTime`, `isNepalTime` and weekday/month constants (`NepaliDateTime.sunday`, `NepaliDateTime.baishakh`, ...).
 * `NepaliDateTime.fromDateTime` is no longer deprecated.
+* `NepaliDateFormat` gains what intl's `DateFormat` has:
+  * The pattern letters `L` (standalone month), `c` (standalone weekday), `D` (day of year), `K` (hour 0-11), `k` (hour 1-24), `z`/`v` (time zone: `NPT`, `UTC`, or the local name; `zzzz` is `Nepal Time`) and `Z` (`+0545`, `GMT+05:45`). intl leaves the time-zone letters empty.
+  * The `EEEEE`, `jmv`, `jmz`, `jv` and `jz` constructors.
+  * The skeleton constants (`NepaliDateFormat.YEAR_MONTH_DAY`, ...).
+  * `addPattern` and `add_*()` (e.g. `NepaliDateFormat.yMd().add_jms()`). These return a new formatter, because `NepaliDateFormat` is immutable.
+  * `NepaliDateFormat()` without a pattern uses `yMMMMd jms`.
 * `Language` converts to and from locales: `languageCode`, `countryCode`, `localeName`, `toLanguageTag()`, `Language.parse`, `Language.tryParse`, `Language.fromLocale` and `NepaliUtils.fromLocale`.
 
 **Performance**
